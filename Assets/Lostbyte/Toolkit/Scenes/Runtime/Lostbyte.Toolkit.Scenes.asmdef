@@ -1,0 +1,18 @@
+{
+    "name": "Lostbyte.Toolkit.Scenes",
+    "rootNamespace": "Lostbyte.Toolkit.Scenes",
+    "references": [
+        "GUID:29d6a0aa3d83cb34cb580e3f4c625d76",
+        "GUID:2d545df2e96ffdd4e98ad0aff1e004fb",
+        "GUID:819f06a97acecf147923817da11f64ef"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

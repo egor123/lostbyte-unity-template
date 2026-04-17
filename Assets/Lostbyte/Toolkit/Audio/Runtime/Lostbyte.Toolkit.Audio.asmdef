@@ -1,0 +1,19 @@
+{
+    "name": "Lostbyte.Toolkit.Audio",
+    "rootNamespace": "Lostbyte.Toolkit.Audio",
+    "references": [
+        "GUID:819f06a97acecf147923817da11f64ef",
+        "GUID:2d545df2e96ffdd4e98ad0aff1e004fb",
+        "GUID:1a65cc50772d20b418ad5c0e90b6b12f",
+        "GUID:29d6a0aa3d83cb34cb580e3f4c625d76"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

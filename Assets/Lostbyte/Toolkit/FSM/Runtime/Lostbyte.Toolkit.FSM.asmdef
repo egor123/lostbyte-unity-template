@@ -1,0 +1,17 @@
+{
+    "name": "Lostbyte.Toolkit.FSM",
+    "rootNamespace": "Lostbyte.Toolkit.FSM",
+    "references": [
+        "GUID:819f06a97acecf147923817da11f64ef",
+        "GUID:1a65cc50772d20b418ad5c0e90b6b12f"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

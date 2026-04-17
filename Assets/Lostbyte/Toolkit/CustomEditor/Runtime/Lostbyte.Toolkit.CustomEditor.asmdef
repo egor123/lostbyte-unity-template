@@ -1,0 +1,14 @@
+{
+    "name": "Lostbyte.Toolkit.CustomEditor",
+    "rootNamespace": "Lostbyte.Toolkit.CustomEditor",
+    "references": [],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

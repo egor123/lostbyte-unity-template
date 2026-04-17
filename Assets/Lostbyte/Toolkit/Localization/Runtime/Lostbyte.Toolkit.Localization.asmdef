@@ -1,0 +1,14 @@
+{
+    "name": "Lostbyte.Toolkit.Localization",
+    "rootNamespace": "Lostbyte.Toolkit.Localization",
+    "references": [],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

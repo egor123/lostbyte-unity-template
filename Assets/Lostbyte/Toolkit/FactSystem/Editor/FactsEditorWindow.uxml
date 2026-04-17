@@ -1,0 +1,17 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="True">
+    <Style src="project://database/Assets/Scripts/Core/Facts/Editor/FactsEditorWindow.uss?fileID=7433441132597879392&amp;guid=3addff597ee9d194da5281c6ee724516&amp;type=3#FactsEditorWindow" />
+    <ui:VisualElement name="header" style="flex-grow: 1; height: 20px; max-height: 20px; flex-direction: row; background-color: rgb(60, 60, 60); border-bottom-color: rgb(35, 35, 35); border-bottom-width: 1px;">
+        <ui:Button text="Compile" parse-escape-sequences="true" display-tooltip-when-elided="true" name="compile-btn" style="margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; background-color: rgb(60, 60, 60);" />
+        <ui:DropdownField label="View" choices="Keys,Facts,Events" name="tab-selector" index="0" />
+    </ui:VisualElement>
+    <Lostbyte.Toolkit.FactSystem.Editor.SplitView name="split-view">
+        <ui:VisualElement name="inspector" style="flex-grow: 1;" />
+        <ui:VisualElement name="main-view" style="flex-grow: 1;">
+            <ui:VisualElement name="tool-bar" style="flex-grow: 1; height: 25px; max-height: 25px; flex-direction: row;">
+                <ui:Button text="+" parse-escape-sequences="true" display-tooltip-when-elided="true" name="add-btn" style="margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; width: 25px; height: 25px;" />
+                <uie:ToolbarSearchField name="search-bar" style="height: 25px; width: 500px; flex-direction: row; align-items: flex-start; justify-content: space-between; min-height: 20px; max-height: 20px; max-width: 250px;" />
+            </ui:VisualElement>
+            <ui:TreeView name="tree-view" />
+        </ui:VisualElement>
+    </Lostbyte.Toolkit.FactSystem.Editor.SplitView>
+</ui:UXML>

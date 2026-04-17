@@ -1,0 +1,17 @@
+{
+    "name": "Lostbyte.Toolkit.Tween.TMP",
+    "rootNamespace": "Lostbyte.Toolkit.Tween.TMP",
+    "references": [
+        "GUID:6055be8ebefd69e48b49212b09b47b2f",
+        "GUID:33a3ff683e365c74593de79851b423de"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

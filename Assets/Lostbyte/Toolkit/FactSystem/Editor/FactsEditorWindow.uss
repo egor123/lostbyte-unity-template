@@ -1,0 +1,3 @@
+.unity-label {
+    min-width: 10px;
+}

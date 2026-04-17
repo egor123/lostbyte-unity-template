@@ -1,0 +1,16 @@
+{
+    "name": "Lostbyte.Toolkit.Injection",
+    "rootNamespace": "Lostbyte.Toolkit.Injection",
+    "references": [
+        "GUID:1a65cc50772d20b418ad5c0e90b6b12f"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

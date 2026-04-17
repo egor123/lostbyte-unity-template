@@ -1,0 +1,18 @@
+{
+    "name": "Lostbyte.Toolkit.Scenes.Editor",
+    "rootNamespace": "Lostbyte.Toolkit.Scenes.Editor",
+    "references": [
+        "GUID:3815adad6d12b314b9e86050f2c9f033"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [
+        "UNITY_EDITOR"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
