@@ -1,0 +1,7 @@
+{
+  "keys": [{
+    "id": "test-key-2",
+    "meta": "short description",
+    "args": ["arg"]
+  }]
+}

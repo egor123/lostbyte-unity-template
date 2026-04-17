@@ -1,0 +1,105 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e6f5ae89348c4124aa5c4568006a4c2e, type: 3}
+  m_Name: LocalizationSettings
+  m_EditorClassIdentifier: 
+  m_locales:
+  - en-US
+  - fr-FR
+  - ru-RU
+  m_locale: en-US
+  m_database: {fileID: 9061851707203649418}
+--- !u!114 &807928198452934000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8f9697e3bfd72cb47aed6d98f1d36d59, type: 3}
+  m_Name: en-US
+  m_EditorClassIdentifier: 
+  m_entries:
+  - rid: 6512821185321107461
+  - rid: 6512821185321107462
+  - rid: 6512821185321107463
+  m_fallback: {fileID: 0}
+  references:
+    version: 2
+    RefIds:
+    - rid: 6512821185321107461
+      type: {class: LocalizedTable/StringEntry, ns: Lostbyte.Toolkit.Localization, asm: Lostbyte.Toolkit.Localization}
+      data:
+        Key: test-key2
+        Value: test {gender:m|f} {count:single|plural}
+    - rid: 6512821185321107462
+      type: {class: LocalizedTable/StringEntry, ns: Lostbyte.Toolkit.Localization, asm: Lostbyte.Toolkit.Localization}
+      data:
+        Key: test-key3
+        Value: asda123sad
+    - rid: 6512821185321107463
+      type: {class: LocalizedTable/StringEntry, ns: Lostbyte.Toolkit.Localization, asm: Lostbyte.Toolkit.Localization}
+      data:
+        Key: test-key4
+        Value: 123
+--- !u!114 &3271467817141266662
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8f9697e3bfd72cb47aed6d98f1d36d59, type: 3}
+  m_Name: ru-RU
+  m_EditorClassIdentifier: 
+  m_entries: []
+  m_fallback: {fileID: 0}
+  references:
+    version: 2
+    RefIds: []
+--- !u!114 &8134699785273162189
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8f9697e3bfd72cb47aed6d98f1d36d59, type: 3}
+  m_Name: fr-FR
+  m_EditorClassIdentifier: 
+  m_entries: []
+  m_fallback: {fileID: 0}
+  references:
+    version: 2
+    RefIds: []
+--- !u!114 &9061851707203649418
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 76a6a91639ccbc04bbda8bf5a4bbbd76, type: 3}
+  m_Name: Database
+  m_EditorClassIdentifier: 
+  m_tables:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}

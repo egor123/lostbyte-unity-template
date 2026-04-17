@@ -1,0 +1,6 @@
+{
+  "test-key2": "test {gender:m|f} {count:single|plural}",
+  "test-key3": "asda123sad",
+  "test-key4": "123",
+  "test-key": null
+}

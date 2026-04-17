@@ -1,0 +1,187 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-3055759980319532786
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1be785bf2dbda3a44928275f491abdb9, type: 3}
+  m_Name: main_volume
+  m_EditorClassIdentifier: 
+  <Guid>k__BackingField: main_volume
+  <IsSerializable>k__BackingField: 1
+  <Description>k__BackingField: 
+  <DefaultValue>k__BackingField: 1
+--- !u!114 &-1139778540106801879
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 09dee09cf1011e34686bb2d8b459687e, type: 3}
+  m_Name: game_state
+  m_EditorClassIdentifier: 
+  <Guid>k__BackingField: game_state
+  <IsSerializable>k__BackingField: 1
+  <Description>k__BackingField: 
+  <DefaultValue>k__BackingField:
+    rid: 6512821185321107456
+  <Values>k__BackingField:
+  - menu
+  - game
+  - exit
+  references:
+    version: 2
+    RefIds:
+    - rid: 6512821185321107456
+      type: {class: Enums/GameState, ns: GameFacts, asm: Assembly-CSharp}
+      data:
+        value__: 0
+--- !u!114 &-140893777799597766
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1be785bf2dbda3a44928275f491abdb9, type: 3}
+  m_Name: music_volume
+  m_EditorClassIdentifier: 
+  <Guid>k__BackingField: music_voulme
+  <IsSerializable>k__BackingField: 1
+  <Description>k__BackingField: 
+  <DefaultValue>k__BackingField: 1
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9629c2912d9691a4497e2e64e38d920c, type: 3}
+  m_Name: FactDatabase
+  m_EditorClassIdentifier: 
+  m_rootKeys:
+  - {fileID: 6628457045445381566}
+  - {fileID: 4283477907835028808}
+  - {fileID: 1706909347228400817}
+  <FactStorage>k__BackingField:
+  - {fileID: -1139778540106801879}
+  - {fileID: -3055759980319532786}
+  - {fileID: -140893777799597766}
+  - {fileID: 12290745125359689}
+  <EventStorage>k__BackingField:
+  - {fileID: 1119735792248758083}
+--- !u!114 &12290745125359689
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1be785bf2dbda3a44928275f491abdb9, type: 3}
+  m_Name: sfx_volume
+  m_EditorClassIdentifier: 
+  <Guid>k__BackingField: sfx_volume
+  <IsSerializable>k__BackingField: 1
+  <Description>k__BackingField: 
+  <DefaultValue>k__BackingField: 1
+--- !u!114 &1119735792248758083
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8da7de9db6a834b408ee34fa4ca64fe9, type: 3}
+  m_Name: test_evt
+  m_EditorClassIdentifier: 
+  <Guid>k__BackingField: test_evt
+--- !u!114 &1706909347228400817
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4baefa7994a536641aaa3035ca43e7e3, type: 3}
+  m_Name: game
+  m_EditorClassIdentifier: 
+  <Guid>k__BackingField: game
+  <IsSerializable>k__BackingField: 1
+  <Description>k__BackingField: 
+  m_children: []
+  <Facts>k__BackingField: []
+  <Events>k__BackingField: []
+  <SerializationOverrides>k__BackingField: []
+  <ValueOverrides>k__BackingField: []
+  references:
+    version: 2
+    RefIds: []
+--- !u!114 &4283477907835028808
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4baefa7994a536641aaa3035ca43e7e3, type: 3}
+  m_Name: env
+  m_EditorClassIdentifier: 
+  <Guid>k__BackingField: env
+  <IsSerializable>k__BackingField: 0
+  <Description>k__BackingField: 
+  m_children: []
+  <Facts>k__BackingField:
+  - {fileID: -1139778540106801879}
+  <Events>k__BackingField: []
+  <SerializationOverrides>k__BackingField: []
+  <ValueOverrides>k__BackingField: []
+  references:
+    version: 2
+    RefIds: []
+--- !u!114 &6628457045445381566
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4baefa7994a536641aaa3035ca43e7e3, type: 3}
+  m_Name: settings
+  m_EditorClassIdentifier: 
+  <Guid>k__BackingField: settings
+  <IsSerializable>k__BackingField: 1
+  <Description>k__BackingField: 
+  m_children: []
+  <Facts>k__BackingField:
+  - {fileID: -3055759980319532786}
+  - {fileID: -140893777799597766}
+  - {fileID: 12290745125359689}
+  <Events>k__BackingField: []
+  <SerializationOverrides>k__BackingField: []
+  <ValueOverrides>k__BackingField: []
+  references:
+    version: 2
+    RefIds: []
