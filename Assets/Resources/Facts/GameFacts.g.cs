@@ -24,6 +24,8 @@ namespace GameFacts
         public static FactDefinition<System.Single> MusicVolume = _MusicVolume != null ? _MusicVolume : _MusicVolume = (FactDefinition<System.Single>) FactDatabase.Instance.GetFact("music_voulme");
         private static FactDefinition<System.Single> _SfxVolume = null;
         public static FactDefinition<System.Single> SfxVolume = _SfxVolume != null ? _SfxVolume : _SfxVolume = (FactDefinition<System.Single>) FactDatabase.Instance.GetFact("sfx_volume");
+        private static FactDefinition<System.Single> _Sensetivity = null;
+        public static FactDefinition<System.Single> Sensetivity = _Sensetivity != null ? _Sensetivity : _Sensetivity = (FactDefinition<System.Single>) FactDatabase.Instance.GetFact("sensetivity");
     }
     //------------- Events -------------
     public static class Events

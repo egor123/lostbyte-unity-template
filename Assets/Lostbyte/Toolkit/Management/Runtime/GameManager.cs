@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Cinemachine;
 using Lostbyte.Toolkit.Common;
 using Lostbyte.Toolkit.CustomEditor;
 using Lostbyte.Toolkit.FactSystem;
@@ -12,20 +13,17 @@ namespace Lostbyte.Toolkit.Management
     {
         [SerializeField, Autowired, Hide] private KeyReference m_key;
         [SerializeField] private EventWrapper m_onGameExit;
+        [SerializeField] private FactWrapper<bool> m_gamePausedFact;
+        [SerializeField] private FactWrapper<bool> m_cursorLockedFact;
 
-        [SerializeField] private Condition m_cursorLockCondition;
-
-        public event Action OnGamePaused;
-        public event Action OnGameResumed;
-
-        public bool IsPaused { get; private set; }
-
-        private float m_previousTimeScale = 1f;
+        private float _previousTimeScale = 1f;
         private readonly SubscriptionGroup _subscriptions = new();
+
         protected override void OnAwake()
         {
             _subscriptions.Subscribe(m_onGameExit, OnExit);
-            _subscriptions.Subscribe(m_cursorLockCondition, m_key, OnCursorLock);
+            _subscriptions.Subscribe(m_gamePausedFact, OnGamePaused, invokeImidiate: true);
+            _subscriptions.Subscribe(m_cursorLockedFact, OnCursorLock, invokeImidiate: true);
         }
 
         private void OnDestroy()
@@ -40,33 +38,11 @@ namespace Lostbyte.Toolkit.Management
             Cursor.visible = !isLocked;
         }
 
-        public void TogglePause()
+        public void OnGamePaused(bool isPaused)
         {
-            if (IsPaused) ResumeGame();
-            else PauseGame();
-        }
-        public void PauseGame()
-        {
-            if (IsPaused) return;
-            Debug.Log("[GameManager] Game is paused");
-            IsPaused = true;
-            m_previousTimeScale = Time.timeScale;
-            Time.timeScale = 0f;
-            OnGamePaused?.Invoke();
-        }
-
-        public void ResumeGame()
-        {
-            if (!IsPaused) return;
-            Debug.Log("[GameManager] Game is resumed");
-            IsPaused = false;
-            Time.timeScale = m_previousTimeScale;
-            OnGameResumed?.Invoke();
-        }
-
-        public void QuitGame()
-        {
-            OnExit();
+            Debug.Log("[GameManager] Game is " + (isPaused ? "paused" : "resumed"));
+            if (isPaused) _previousTimeScale = Time.timeScale;
+            Time.timeScale = isPaused ? 0f : _previousTimeScale;
         }
 
         private void OnExit()

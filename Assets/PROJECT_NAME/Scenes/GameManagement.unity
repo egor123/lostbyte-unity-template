@@ -362,34 +362,12 @@ MonoBehaviour:
   m_onGameExit:
     <Key>k__BackingField: {fileID: 4283477907835028808, guid: 6c08054baf9457644b18f9b93ea7fec1, type: 2}
     <Event>k__BackingField: {fileID: 6175346580498249907, guid: 6c08054baf9457644b18f9b93ea7fec1, type: 2}
-  m_cursorLockCondition:
-    m_rootNode:
-      rid: 6512821297094590469
-  references:
-    version: 2
-    RefIds:
-    - rid: 6512821297094590469
-      type: {class: OPNode, ns: Lostbyte.Toolkit.FactSystem.Nodes, asm: Lostbyte.Toolkit.FactSystem}
-      data:
-        LNode:
-          rid: 6512821297094590470
-        RNode:
-          rid: 6512821297094590471
-        Op: ==
-    - rid: 6512821297094590470
-      type: {class: FactNode, ns: Lostbyte.Toolkit.FactSystem.Nodes, asm: Lostbyte.Toolkit.FactSystem}
-      data:
-        Key: {fileID: 4283477907835028808, guid: 6c08054baf9457644b18f9b93ea7fec1, type: 2}
-        Fact: {fileID: -1139778540106801879, guid: 6c08054baf9457644b18f9b93ea7fec1, type: 2}
-    - rid: 6512821297094590471
-      type: {class: EnumNode, ns: Lostbyte.Toolkit.FactSystem.Nodes, asm: Lostbyte.Toolkit.FactSystem}
-      data:
-        Value:
-          rid: 6512821297094590472
-    - rid: 6512821297094590472
-      type: {class: Enums/GameState, ns: GameFacts, asm: Assembly-CSharp}
-      data:
-        value__: 1
+  m_gamePausedFact:
+    <Key>k__BackingField: {fileID: 4283477907835028808, guid: 6c08054baf9457644b18f9b93ea7fec1, type: 2}
+    <Fact>k__BackingField: {fileID: 4525860068350932383, guid: 6c08054baf9457644b18f9b93ea7fec1, type: 2}
+  m_cursorLockedFact:
+    <Key>k__BackingField: {fileID: 4283477907835028808, guid: 6c08054baf9457644b18f9b93ea7fec1, type: 2}
+    <Fact>k__BackingField: {fileID: 9117608609046563263, guid: 6c08054baf9457644b18f9b93ea7fec1, type: 2}
 --- !u!4 &510686991
 Transform:
   m_ObjectHideFlags: 0
@@ -419,7 +397,7 @@ GameObject:
   - component: {fileID: 622582062}
   - component: {fileID: 622582065}
   m_Layer: 5
-  m_Name: Image
+  m_Name: Fade
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -455,7 +433,7 @@ CanvasGroup:
   m_Alpha: 0
   m_Interactable: 1
   m_BlocksRaycasts: 1
-  m_IgnoreParentGroups: 0
+  m_IgnoreParentGroups: 1
 --- !u!114 &622582063
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1073,14 +1051,14 @@ Canvas:
   m_Enabled: 1
   serializedVersion: 3
   m_RenderMode: 0
-  m_Camera: {fileID: 0}
+  m_Camera: {fileID: 1604192237}
   m_PlaneDistance: 100
   m_PixelPerfect: 0
   m_ReceivesEvents: 1
   m_OverrideSorting: 0
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
-  m_VertexColorAlwaysGammaSpace: 0
+  m_VertexColorAlwaysGammaSpace: 1
   m_AdditionalShaderChannelsFlag: 0
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0

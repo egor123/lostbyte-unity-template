@@ -28,12 +28,13 @@ namespace Lostbyte.Toolkit.Scenes
             float targetAlpha = fadeIn ? 1f : 0f;
             while (time < m_fadeDuration && !_skip)
             {
-                time += Time.deltaTime;
+                time += Time.unscaledDeltaTime;
                 m_transitionGroup.alpha = Mathf.Lerp(startAlpha, targetAlpha, time / m_fadeDuration);
                 yield return null;
             }
             m_transitionGroup.alpha = targetAlpha;
             if (!fadeIn) m_transitionGroup.blocksRaycasts = false;
+            _skip = false;
             InTransition = false;
         }
 

@@ -80,6 +80,9 @@ MonoBehaviour:
   - {fileID: -3055759980319532786}
   - {fileID: -140893777799597766}
   - {fileID: 12290745125359689}
+  - {fileID: 6322980757709942554}
+  - {fileID: 9117608609046563263}
+  - {fileID: 4525860068350932383}
   <EventStorage>k__BackingField:
   - {fileID: 6175346580498249907}
 --- !u!114 &12290745125359689
@@ -139,6 +142,8 @@ MonoBehaviour:
   m_children: []
   <Facts>k__BackingField:
   - {fileID: -1139778540106801879}
+  - {fileID: 9117608609046563263}
+  - {fileID: 4525860068350932383}
   <Events>k__BackingField:
   - {fileID: 6175346580498249907}
   <SerializationOverrides>k__BackingField: []
@@ -146,6 +151,22 @@ MonoBehaviour:
   references:
     version: 2
     RefIds: []
+--- !u!114 &4525860068350932383
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 55bd1434fae716744b112cd489bae88d, type: 3}
+  m_Name: game_paused
+  m_EditorClassIdentifier: 
+  <Guid>k__BackingField: game_paused
+  <IsSerializable>k__BackingField: 1
+  <Description>k__BackingField: 
+  <DefaultValue>k__BackingField: 0
 --- !u!114 &6175346580498249907
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -159,6 +180,22 @@ MonoBehaviour:
   m_Name: on_game_exit
   m_EditorClassIdentifier: 
   <Guid>k__BackingField: on_game_exit
+--- !u!114 &6322980757709942554
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1be785bf2dbda3a44928275f491abdb9, type: 3}
+  m_Name: sensetivity
+  m_EditorClassIdentifier: 
+  <Guid>k__BackingField: sensetivity
+  <IsSerializable>k__BackingField: 1
+  <Description>k__BackingField: 
+  <DefaultValue>k__BackingField: 1
 --- !u!114 &6628457045445381566
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -179,9 +216,26 @@ MonoBehaviour:
   - {fileID: -3055759980319532786}
   - {fileID: -140893777799597766}
   - {fileID: 12290745125359689}
+  - {fileID: 6322980757709942554}
   <Events>k__BackingField: []
   <SerializationOverrides>k__BackingField: []
   <ValueOverrides>k__BackingField: []
   references:
     version: 2
     RefIds: []
+--- !u!114 &9117608609046563263
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 55bd1434fae716744b112cd489bae88d, type: 3}
+  m_Name: cursor_locked
+  m_EditorClassIdentifier: 
+  <Guid>k__BackingField: cursor_locked
+  <IsSerializable>k__BackingField: 1
+  <Description>k__BackingField: 
+  <DefaultValue>k__BackingField: 0
