@@ -28,12 +28,12 @@ namespace GameFacts
     //------------- Events -------------
     public static class Events
     {
-        private static EventDefinition _TestEvt = null;
-        public static EventDefinition TestEvt = _TestEvt != null ? _TestEvt : _TestEvt = (EventDefinition) FactDatabase.Instance.GetEvent("test_evt");
+        private static EventDefinition _OnGameExit = null;
+        public static EventDefinition OnGameExit = _OnGameExit != null ? _OnGameExit : _OnGameExit = (EventDefinition) FactDatabase.Instance.GetEvent("on_game_exit");
     }
     //------------- Enums -------------
     public static class Enums
     {
-        public enum GameState { Menu, Game, Exit }
+        public enum GameState { Menu, Game }
     }
 }

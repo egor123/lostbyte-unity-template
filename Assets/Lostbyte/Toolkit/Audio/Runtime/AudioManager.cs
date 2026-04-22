@@ -30,6 +30,14 @@ namespace Lostbyte.Toolkit.Audio
             if (Avalible)
                 foreach (var group in m_groups)
                     _subscriptions.Subscribe(group.Fact.Subscribe, group.Fact.Unsubscribe, (float v) => SetVolume(v, group.Name));
+
+        }
+        private void Start()
+        {
+            if (Avalible)
+                foreach (var group in m_groups)
+                    SetVolume(group.Fact.Value, group.Name);
+
         }
         private void SetVolume(float value, string name)
         {

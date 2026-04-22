@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Lostbyte.Toolkit.Common;
 using Lostbyte.Toolkit.Management;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -8,7 +9,7 @@ using UnityEngine.SceneManagement;
 namespace Lostbyte.Toolkit.Scenes
 {
     [DefaultExecutionOrder(-100)]
-    public class SceneManager : Manager<SceneManager>
+    public class SceneManager : Manager<SceneManager> //FIXME ???
     {
         private readonly Dictionary<Scene, SceneNode> _loadedNodes = new();
         private SceneNode _rootNode;
@@ -27,6 +28,7 @@ namespace Lostbyte.Toolkit.Scenes
                 return null;
             }
             SceneNode parentNode = parent.HasValue ? _loadedNodes.GetValueOrDefault(parent.Value, null) : null;
+            // Debug.Log($"[SceneManger] Loading: {scene.ScenePath}");
             UnityEngine.SceneManagement.SceneManager.LoadScene(scene.SceneName, LoadSceneMode.Additive);
             int index = UnityEngine.SceneManagement.SceneManager.sceneCount - 1;
             Scene loadedScene = UnityEngine.SceneManagement.SceneManager.GetSceneAt(index);
@@ -42,6 +44,7 @@ namespace Lostbyte.Toolkit.Scenes
             }
 
             SceneNode parentNode = parent.HasValue ? _loadedNodes.GetValueOrDefault(parent.Value, null) : null;
+            // Debug.Log($"[SceneManger] Loading: {scene.ScenePath}");
             var op = UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(scene.SceneName, LoadSceneMode.Additive);
 
             while (!op.isDone)
@@ -52,17 +55,27 @@ namespace Lostbyte.Toolkit.Scenes
             if (parent.HasValue && !_loadedNodes.ContainsKey(parent.Value))
             {
                 Debug.LogWarning($"Parent scene was unloaded while loading '{scene.SceneName}' scene");
-                UnloadSceneAsync(loadedScene);
+                UnloadSceneAsync(loadedScene).Forget();
                 return null;
             }
             return loadedScene;
         }
 
+        public void RegisterChildScene(Scene? parent, Scene child)
+        {
+            RegisterNewNode(child, parent.HasValue ? _loadedNodes.TryGetValue(parent.Value, out var scene) ? scene : null : null);
+        }
 
-        public void UnloadSceneAsync(Scene scene)
+        public async Task UnloadSceneAsync(Scene scene)
         {
             if (_loadedNodes.TryGetValue(scene, out SceneNode node))
-                UnloadNode(node);
+            {
+                List<AsyncOperation> ops = new();
+                UnloadNode(node, ops);
+                foreach (var op in ops)
+                    while (!op.isDone)
+                        await Task.Yield();
+            }
             else
                 Debug.LogWarning($"Scene '{scene.name}' is not loaded!");
         }
@@ -76,6 +89,9 @@ namespace Lostbyte.Toolkit.Scenes
                 foreach (var op in ops)
                     yield return op;
             }
+            else
+                Debug.LogWarning($"Scene '{scene.name}' is not loaded!");
+
         }
 
         private void UnloadNode(SceneNode node, List<AsyncOperation> ops = null)
@@ -86,6 +102,7 @@ namespace Lostbyte.Toolkit.Scenes
 
             if (node != _rootNode)
             {
+                // Debug.Log($"[SceneManger] Unloading: {node.ScenePath}");
                 node.Parent?.Children.Remove(node);
                 var op = UnityEngine.SceneManagement.SceneManager.UnloadSceneAsync(node.ScenePath);
                 ops?.Add(op);

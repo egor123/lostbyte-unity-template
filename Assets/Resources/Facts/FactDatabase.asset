@@ -36,7 +36,6 @@ MonoBehaviour:
   <Values>k__BackingField:
   - menu
   - game
-  - exit
   references:
     version: 2
     RefIds:
@@ -82,7 +81,7 @@ MonoBehaviour:
   - {fileID: -140893777799597766}
   - {fileID: 12290745125359689}
   <EventStorage>k__BackingField:
-  - {fileID: 1119735792248758083}
+  - {fileID: 6175346580498249907}
 --- !u!114 &12290745125359689
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -99,19 +98,6 @@ MonoBehaviour:
   <IsSerializable>k__BackingField: 1
   <Description>k__BackingField: 
   <DefaultValue>k__BackingField: 1
---- !u!114 &1119735792248758083
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8da7de9db6a834b408ee34fa4ca64fe9, type: 3}
-  m_Name: test_evt
-  m_EditorClassIdentifier: 
-  <Guid>k__BackingField: test_evt
 --- !u!114 &1706909347228400817
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -153,12 +139,26 @@ MonoBehaviour:
   m_children: []
   <Facts>k__BackingField:
   - {fileID: -1139778540106801879}
-  <Events>k__BackingField: []
+  <Events>k__BackingField:
+  - {fileID: 6175346580498249907}
   <SerializationOverrides>k__BackingField: []
   <ValueOverrides>k__BackingField: []
   references:
     version: 2
     RefIds: []
+--- !u!114 &6175346580498249907
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8da7de9db6a834b408ee34fa4ca64fe9, type: 3}
+  m_Name: on_game_exit
+  m_EditorClassIdentifier: 
+  <Guid>k__BackingField: on_game_exit
 --- !u!114 &6628457045445381566
 MonoBehaviour:
   m_ObjectHideFlags: 0

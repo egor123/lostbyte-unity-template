@@ -2,7 +2,8 @@
     "name": "Lostbyte.Toolkit.Scenes.Editor",
     "rootNamespace": "Lostbyte.Toolkit.Scenes.Editor",
     "references": [
-        "GUID:3815adad6d12b314b9e86050f2c9f033"
+        "GUID:3815adad6d12b314b9e86050f2c9f033",
+        "GUID:819f06a97acecf147923817da11f64ef"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

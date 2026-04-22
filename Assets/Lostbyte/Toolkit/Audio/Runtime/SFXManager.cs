@@ -12,13 +12,12 @@ namespace Lostbyte.Toolkit.Audio
         private readonly Queue<SFXSource> _sfxSourcePool = new();
 
         internal void AddToSFXPool(SFXSource source) => _sfxSourcePool.Enqueue(source);
-        
-        internal void PlaySFX(SFXTrack track, Vector3 pos, float delay = 0f)
+
+        internal void PlaySFX(Transform parent, Vector3 position, SFXClip track, float delay = 0f)
         {
             if (!_sfxSourcePool.TryDequeue(out var source))
                 source = Instantiate(m_SFXSourcePrefab, transform);
-            source.transform.position = pos;
-            source.Play(track, delay);
+            source.Play(parent, position, track, delay);
         }
     }
 }

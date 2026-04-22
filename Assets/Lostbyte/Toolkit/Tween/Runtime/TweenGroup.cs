@@ -8,7 +8,7 @@ namespace Lostbyte.Toolkit.Tween
     internal interface ITweenGroupElement
     {
         void Play();
-        void Stop();
+        void Pause();
         void Reset();
         void Update();
         bool IsRunning { get; set; }
@@ -36,21 +36,21 @@ namespace Lostbyte.Toolkit.Tween
             IsRunning = true;
             _runningCorutine = Initiator.StartCoroutine(Enumerator());
         }
-        public void Stop()
+        public void Pause()
         {
             IsRunning = false;
             if (_runningCorutine != null) Initiator.StopCoroutine(_runningCorutine);
         }
         public void Reset()
         {
-            Stop();
+            Pause();
             for (int i = Tweens.Count - 1; i >= 0; i--)
                 Tweens[i].Reset();
             _initiated = false;
         }
         public void Finish()
         {
-            Stop();
+            Pause();
             foreach (var tween in Tweens)
                 tween.Finish();
             OnFinish();
@@ -81,7 +81,7 @@ namespace Lostbyte.Toolkit.Tween
 
         void ITweenGroupElement.Init() => Init();
 
-        void ITweenGroupElement.OnFinish()=>OnFinish();
+        void ITweenGroupElement.OnFinish() => OnFinish();
     }
     internal class ParallelTweenGroup : TweenGroup
     {

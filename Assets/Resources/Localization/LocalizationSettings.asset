@@ -65,11 +65,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8f9697e3bfd72cb47aed6d98f1d36d59, type: 3}
   m_Name: ru-RU
   m_EditorClassIdentifier: 
-  m_entries: []
-  m_fallback: {fileID: 0}
+  m_entries:
+  - rid: 6512821185321107464
+  m_fallback: {fileID: 807928198452934000}
   references:
     version: 2
-    RefIds: []
+    RefIds:
+    - rid: 6512821185321107464
+      type: {class: LocalizedTable/StringEntry, ns: Lostbyte.Toolkit.Localization, asm: Lostbyte.Toolkit.Localization}
+      data:
+        Key: test-key2
+        Value: "\u043F\u0440\u0438\u0432\u0435\u0442"
 --- !u!114 &8134699785273162189
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -100,6 +106,6 @@ MonoBehaviour:
   m_Name: Database
   m_EditorClassIdentifier: 
   m_tables:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  - {fileID: 807928198452934000}
+  - {fileID: 8134699785273162189}
+  - {fileID: 3271467817141266662}

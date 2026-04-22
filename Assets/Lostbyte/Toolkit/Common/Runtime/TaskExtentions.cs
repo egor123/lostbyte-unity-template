@@ -6,18 +6,41 @@ using UnityEngine;
 
 namespace Lostbyte.Toolkit.Common
 {
-public static class TaskExtensions
-{
-    public static async void Forget(this Task task)
+    public static class TaskExtensions
     {
-        try
+        public static async void Forget(this Task task)
         {
-            await task;
+            try
+            {
+                await task;
+            }
+            catch (Exception e)
+            {
+                Debug.LogException(e);
+            }
         }
-        catch (Exception e)
+        public static async void Then(this Task task, Action callback)
         {
-            Debug.LogException(e);
+            try
+            {
+                await task;
+                callback?.Invoke();
+            }
+            catch (Exception e)
+            {
+                Debug.LogException(e);
+            }
+        }
+        public static async void Then<T>(this Task<T> task, Action<T> callback)
+        {
+            try
+            {
+                callback?.Invoke(await task);
+            }
+            catch (Exception e)
+            {
+                Debug.LogException(e);
+            }
         }
     }
-}
 }

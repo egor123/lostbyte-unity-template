@@ -36,23 +36,29 @@ namespace Lostbyte.Toolkit.Tween
             _runningCorutine = Initiator.StartCoroutine(Enumerator());
         }
 
+        public void Pause()
+        {
+            IsRunning = false;
+            if (_runningCorutine != null) Initiator.StopCoroutine(_runningCorutine);
+        }
         public void Stop()
         {
             IsRunning = false;
+            _progress = 0f;
             if (_runningCorutine != null) Initiator.StopCoroutine(_runningCorutine);
         }
         public void Reset()
         {
             if (_progress != 0)
             {
-                Stop();
+                Pause();
                 _progress = 0f;
                 DoTween(0f);
             }
         }
         public void Finish()
         {
-            Stop();
+            Pause();
             _progress = Forward ? Duration ?? 1 * MathF.Abs(LoopCount) : 0;
             DoTween(1f);
             OnFinish();

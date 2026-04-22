@@ -20,7 +20,7 @@ namespace Lostbyte.Toolkit.Audio
             if (Sources == null || Sources.Count == 0 || settings.Clips == null || settings.Clips.Length == 0)
                 return;
             ValidatePriorities();
-            
+
             AudioSource source = null;
             int idx = -1;
             int priority = int.MaxValue;

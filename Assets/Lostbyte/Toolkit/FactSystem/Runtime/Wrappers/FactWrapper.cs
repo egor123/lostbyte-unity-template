@@ -1,4 +1,5 @@
 using System;
+using Lostbyte.Toolkit.Common;
 using UnityEngine;
 
 namespace Lostbyte.Toolkit.FactSystem

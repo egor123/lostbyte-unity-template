@@ -13,20 +13,23 @@ namespace Lostbyte.Toolkit.Management
             get
             {
                 if (Quitting) return null;
-                if (_instance) return Instance;
+                if (_instance) return _instance;
                 //TODO management scene loading
                 return _instance = new GameObject($"({nameof(Manager)}){typeof(T)}")
                            .AddComponent<T>();
             }
         }
+#if UNITY_EDITOR
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSplashScreen)]
         static void OnRuntimeMethodLoad()
         {
             _instance = null;
         }
+#endif
         private void Awake()
         {
-            DontDestroyOnLoad(gameObject); //Optional???
+            _instance = gameObject.GetComponent<T>();
+            // DontDestroyOnLoad(gameObject); //Optional???
             OnAwake();
         }
 
