@@ -83,6 +83,7 @@ MonoBehaviour:
   - {fileID: 6322980757709942554}
   - {fileID: 9117608609046563263}
   - {fileID: 4525860068350932383}
+  - {fileID: 4818604433467273284}
   <EventStorage>k__BackingField:
   - {fileID: 6175346580498249907}
 --- !u!114 &12290745125359689
@@ -115,7 +116,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   <Guid>k__BackingField: game
   <IsSerializable>k__BackingField: 1
-  <Description>k__BackingField: 
+  <Description>k__BackingField: Serialized game state
+  m_save:
+    <Enabled>k__BackingField: 1
+    m_formatter:
+      rid: 6512821319454162955
+    m_storage:
+      rid: 6512821319454162959
+    <AutoLoad>k__BackingField: 0
+    <SaveOnChange>k__BackingField: 0
   m_children: []
   <Facts>k__BackingField: []
   <Events>k__BackingField: []
@@ -123,7 +132,16 @@ MonoBehaviour:
   <ValueOverrides>k__BackingField: []
   references:
     version: 2
-    RefIds: []
+    RefIds:
+    - rid: 6512821319454162955
+      type: {class: BinarySaveFormatter, ns: Lostbyte.Toolkit.FactSystem.Persistance, asm: Lostbyte.Toolkit.FactSystem}
+      data: 
+    - rid: 6512821319454162959
+      type: {class: FactPathStorage, ns: Lostbyte.Toolkit.FactSystem.Persistance, asm: Lostbyte.Toolkit.FactSystem}
+      data:
+        m_filePath:
+          <Key>k__BackingField: {fileID: 4283477907835028808}
+          <Fact>k__BackingField: {fileID: 4818604433467273284}
 --- !u!114 &4283477907835028808
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -138,19 +156,30 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   <Guid>k__BackingField: env
   <IsSerializable>k__BackingField: 0
-  <Description>k__BackingField: 
+  <Description>k__BackingField: Non serialized game state
+  m_save:
+    <Enabled>k__BackingField: 1
+    m_formatter:
+      rid: -2
+    m_storage:
+      rid: -2
+    <AutoLoad>k__BackingField: 0
+    <SaveOnChange>k__BackingField: 0
   m_children: []
   <Facts>k__BackingField:
   - {fileID: -1139778540106801879}
   - {fileID: 9117608609046563263}
   - {fileID: 4525860068350932383}
+  - {fileID: 4818604433467273284}
   <Events>k__BackingField:
   - {fileID: 6175346580498249907}
   <SerializationOverrides>k__BackingField: []
   <ValueOverrides>k__BackingField: []
   references:
     version: 2
-    RefIds: []
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
 --- !u!114 &4525860068350932383
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -167,6 +196,22 @@ MonoBehaviour:
   <IsSerializable>k__BackingField: 1
   <Description>k__BackingField: 
   <DefaultValue>k__BackingField: 0
+--- !u!114 &4818604433467273284
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bffbb47a93b240f47af67a17d6902dc2, type: 3}
+  m_Name: save_file
+  m_EditorClassIdentifier: 
+  <Guid>k__BackingField: save_file
+  <IsSerializable>k__BackingField: 1
+  <Description>k__BackingField: 
+  <DefaultValue>k__BackingField: save
 --- !u!114 &6175346580498249907
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -210,7 +255,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   <Guid>k__BackingField: settings
   <IsSerializable>k__BackingField: 1
-  <Description>k__BackingField: 
+  <Description>k__BackingField: Game Settings
+  m_save:
+    <Enabled>k__BackingField: 1
+    m_formatter:
+      rid: 6512821319454162954
+    m_storage:
+      rid: 6512821319454162953
+    <AutoLoad>k__BackingField: 1
+    <SaveOnChange>k__BackingField: 1
   m_children: []
   <Facts>k__BackingField:
   - {fileID: -3055759980319532786}
@@ -222,7 +275,14 @@ MonoBehaviour:
   <ValueOverrides>k__BackingField: []
   references:
     version: 2
-    RefIds: []
+    RefIds:
+    - rid: 6512821319454162953
+      type: {class: StaticPathStorage, ns: Lostbyte.Toolkit.FactSystem.Persistance, asm: Lostbyte.Toolkit.FactSystem}
+      data:
+        m_filePath: settings
+    - rid: 6512821319454162954
+      type: {class: BinarySaveFormatter, ns: Lostbyte.Toolkit.FactSystem.Persistance, asm: Lostbyte.Toolkit.FactSystem}
+      data: 
 --- !u!114 &9117608609046563263
 MonoBehaviour:
   m_ObjectHideFlags: 0

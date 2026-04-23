@@ -15,7 +15,6 @@
   <Project Path="Lostbyte.Toolkit.Scenes.csproj" />
   <Project Path="Lostbyte.Toolkit.Localization.csproj" />
   <Project Path="Lostbyte.Toolkit.FSM.csproj" />
-  <Project Path="Lostbyte.Toolkit.SaveSystem.csproj" />
   <Project Path="Lostbyte.Toolkit.Management.csproj" />
   <Project Path="Lostbyte.Toolkit.Pools.csproj" />
   <Project Path="Lostbyte.Toolkit.Audio.csproj" />

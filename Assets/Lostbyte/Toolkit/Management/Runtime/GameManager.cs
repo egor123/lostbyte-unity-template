@@ -33,16 +33,22 @@ namespace Lostbyte.Toolkit.Management
 
         private void OnCursorLock(bool isLocked)
         {
+            var targetLockState = isLocked ? CursorLockMode.Locked : CursorLockMode.None;
+            var targetVisibility = !isLocked;
+            if (targetLockState == Cursor.lockState && Cursor.visible == targetVisibility) return;
             Debug.Log("[GameManager] Cursor is " + (isLocked ? "locked" : "unlocked"));
-            Cursor.lockState = isLocked ? CursorLockMode.Locked : CursorLockMode.None;
-            Cursor.visible = !isLocked;
+            Cursor.lockState = targetLockState;
+            Cursor.visible = targetVisibility;
         }
 
         public void OnGamePaused(bool isPaused)
         {
+            var targetTimeScale = isPaused ? 0f : _previousTimeScale;
+            var targetPrevioutTimeScale = isPaused ? Time.timeScale : _previousTimeScale;
+            if (targetTimeScale == Time.timeScale && _previousTimeScale == targetPrevioutTimeScale) return;
             Debug.Log("[GameManager] Game is " + (isPaused ? "paused" : "resumed"));
-            if (isPaused) _previousTimeScale = Time.timeScale;
-            Time.timeScale = isPaused ? 0f : _previousTimeScale;
+            Time.timeScale = targetTimeScale;
+            _previousTimeScale = targetPrevioutTimeScale;
         }
 
         private void OnExit()

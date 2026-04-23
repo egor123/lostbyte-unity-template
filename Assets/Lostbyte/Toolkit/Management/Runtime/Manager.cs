@@ -20,7 +20,7 @@ namespace Lostbyte.Toolkit.Management
             }
         }
 #if UNITY_EDITOR
-        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSplashScreen)]
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         static void OnRuntimeMethodLoad()
         {
             _instance = null;
@@ -40,11 +40,15 @@ namespace Lostbyte.Toolkit.Management
     {
         public static bool Quitting { get; private set; }
         public static bool Avalible => !Quitting; //TODO ???
-        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSplashScreen)]
+
+#if UNITY_EDITOR
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         static void OnRuntimeMethodLoad()
         {
             Quitting = false;
         }
+#endif
         private void OnApplicationQuit()
         {
             Quitting = true;

@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Lostbyte.Toolkit.Common;
+using Lostbyte.Toolkit.FactSystem.Persistance;
 using UnityEngine;
 
 namespace Lostbyte.Toolkit.FactSystem
@@ -25,6 +26,11 @@ namespace Lostbyte.Toolkit.FactSystem
         {
             if (invokeImidiate) action.Invoke(key.GetValue(fact), key.GetValue(fact));
             goup.Subscribe(key.Subscribe, key.Unsubscribe, fact, action);
+        }
+        // ------------------
+        public static void Subscribe(this SubscriptionGroup goup, IKeyContainer key, IPersistent persistent)
+        {
+            goup.SubscribeValue(key.Subscribe, key.Unsubscribe, persistent);
         }
         // ------------------
         public static void Subscribe(this SubscriptionGroup goup, IFactWrapper wrapper, Action action, bool invokeImidiate = false)

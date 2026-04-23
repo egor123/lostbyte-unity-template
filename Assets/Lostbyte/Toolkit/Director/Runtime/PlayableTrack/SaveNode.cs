@@ -1,4 +1,3 @@
-using Lostbyte.Toolkit.SaveSystem;
 
 namespace Lostbyte.Toolkit.Director
 {
@@ -13,7 +12,7 @@ namespace Lostbyte.Toolkit.Director
             public override bool IsFinished => true;
             public override IPlayableClipNodeBehaviour GetNext(PlayableTrackBehaviour track)
             {
-                SaveLoader.Instance.Save();
+                // SaveLoader.Instance.Save(); //TODO add key field!
                 return Node.NextNode ? Node.NextNode.GetClip(track) : null;
             }
             public override void OnContinue() { }

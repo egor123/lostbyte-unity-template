@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Lostbyte.Toolkit.CustomEditor.Editor
 {
-    #if UNITY_EDITOR
+#if UNITY_EDITOR
     [CustomPropertyDrawer(typeof(CombinedAttribute), true)]
     public class CombinedAttributeDrawer : PropertyDrawer
     {
@@ -20,14 +20,16 @@ namespace Lostbyte.Toolkit.CustomEditor.Editor
             var previousColor = GUI.color;
             var previousBackgrount = GUI.backgroundColor;
             var previousGUIState = GUI.enabled;
-
+            var drawDefault = true;
             foreach (var atr in Attributes)
             {
                 label = atr.BuildLabel(label);
                 atr.OnGUI(position, property, label);
+                if (!atr.DrawDefaultPropertyField())
+                    drawDefault = false;
             }
 
-            if (Attributes.All(a => a.DrawDefaultPropertyField()))
+            if (drawDefault)
                 EditorGUI.PropertyField(position, property, label, true);
 
             GUI.color = previousColor;
@@ -49,5 +51,5 @@ namespace Lostbyte.Toolkit.CustomEditor.Editor
             return EditorGUI.GetPropertyHeight(property);
         }
     }
-    #endif
+#endif
 }

@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Lostbyte.Toolkit.CustomEditor;
+using Lostbyte.Toolkit.FactSystem.Persistance;
 using UnityEngine;
 
 namespace Lostbyte.Toolkit.FactSystem
@@ -13,6 +15,7 @@ namespace Lostbyte.Toolkit.FactSystem
         public KeyContainer Key => this;
         [field: SerializeField] public bool IsSerializable { get; internal set; }
         [field: SerializeField, TextArea] public string Description { get; internal set; }
+        [SerializeField, ShowIf(nameof(IsSerializable))] private SaveSystem m_save;
         [SerializeField] private List<KeyContainer> m_children = new();
         private List<KeyContainer> _children;
         public List<KeyContainer> Children
@@ -65,20 +68,30 @@ namespace Lostbyte.Toolkit.FactSystem
                     return v.Wrapper.RawValue;
             return defaultValue;
         }
-
-        public void Load(object file = null)
+        private bool UseSaveSystem => IsSerializable && m_save.Enabled;
+        public void Clear()
         {
-            Dictionary<string, object> dict = file as Dictionary<string, object> ?? new();
+#if UNITY_EDITOR
+            if (!Application.isPlaying) return;
+#endif
+            Load();
+        }
+        private readonly Store _store = new();
+        public void Load(object file = null, bool forceReadFile = false)
+        {
+            if (UseSaveSystem && (forceReadFile || m_save.AutoLoad)) _store.SetStore(m_save.Read<Dictionary<string, object>>());
+            else _store.SetStore(file as Dictionary<string, object> ?? new());
+
             _children = null;
             foreach (var key in Children)
             {
-                key.Load(dict.TryGetValue(key.Guid, out var f) ? f : null);
+                key.Load(_store.GetData<Dictionary<string, object>>(key.Guid, null));
             }
             // _factStorage.Clear();
             foreach (var fact in Facts)
             {
                 var wrapper = _factStorage.TryGetValue(fact, out var w) ? w : fact.GetValueWrapper();
-                wrapper.RawValue = dict.TryGetValue(fact.Guid, out var v) ? v : ApplyValueOverride(fact, fact.DefaultValueRaw);
+                wrapper.RawValue = _store.GetData(fact.Guid, ApplyValueOverride(fact, fact.DefaultValueRaw));
                 _factStorage[fact] = wrapper;
                 wrapper.Subscribe(RaiseChange);
             }
@@ -88,10 +101,11 @@ namespace Lostbyte.Toolkit.FactSystem
                 var wrapper = _eventStorage.TryGetValue(@event, out var w) ? w : new EventValueWrapper();
                 _eventStorage[@event] = wrapper;
             }
+            if (UseSaveSystem && (forceReadFile || m_save.AutoLoad)) _store.OnLoad();
         }
         public object Save()
         {
-            Dictionary<string, object> dict = new();
+            _store.SetStore(new());
             foreach (var key in Children)
             {
                 if (key.IsSerializable)
@@ -99,7 +113,7 @@ namespace Lostbyte.Toolkit.FactSystem
                     var data = key.Save();
                     if (data != null)
                     {
-                        dict[key.Guid] = data;
+                        _store.SetData(key.Guid, data);
                     }
                 }
             }
@@ -111,16 +125,23 @@ namespace Lostbyte.Toolkit.FactSystem
                     {
                         if (!v.Wrapper?.RawValue?.Equals(wrapper.RawValue) ?? true)
                         {
-                            dict[fact.Guid] = wrapper.RawValue;
+                            _store.SetData(fact.Guid, wrapper.RawValue);
                         }
                     }
                     else if (!fact.DefaultValueRaw.Equals(wrapper.RawValue))
                     {
-                        dict[fact.Guid] = wrapper.RawValue;
+                        _store.SetData(fact.Guid, wrapper.RawValue);
                     }
                 }
             }
-            return dict.Count > 0 ? dict : null;
+
+            if (UseSaveSystem)
+            {
+                _store.OnSave();
+                m_save.Write(_store.GetStore());
+            }
+
+            return _store.IsEmpty ? null : _store.GetStore();
         }
         private bool TryGetSerializationOverride(FactDefinition fact, out FactSerializationOverride serializationOverride)
         {
@@ -160,6 +181,8 @@ namespace Lostbyte.Toolkit.FactSystem
         public void RemoveOnFactAddedListener(Action<FactDefinition> callback) => OnFactAdded += callback;
         public void AddOnChangeListener(Action callback) => OnChange += callback;
         public void RemoveOnChangeListener(Action callback) => OnChange -= callback;
+        public void Subscribe(IPersistent persistent) => _store.Subscribe(persistent);
+        public void Unsubscribe(IPersistent persistent) => _store.Unsubscribe(persistent);
         public void Subscribe(FactDefinition fact, Action<object> callback) => GetWrapper(fact).Subscribe(callback);
         public void Unsubscribe(FactDefinition fact, Action<object> callback) => GetWrapper(fact).Unsubscribe(callback);
         public void Subscribe(FactDefinition fact, Action callback) => GetWrapper(fact).Subscribe(callback);
@@ -172,7 +195,11 @@ namespace Lostbyte.Toolkit.FactSystem
         public void Unsubscribe<T>(FactDefinition<T> fact, Action<T, T> callback) => GetWrapper(fact).Unsubscribe(callback);
         public void Subscribe(EventDefinition @event, Action callback) => GetWrapper(@event).Subscribe(callback);
         public void Unsubscribe(EventDefinition @event, Action callback) => GetWrapper(@event).Unsubscribe(callback);
-        private void RaiseChange() => OnChange?.Invoke();
+        private void RaiseChange()
+        {
+            if (UseSaveSystem && m_save.SaveOnChange) Save();
+            OnChange?.Invoke();
+        }
         public IFactWrapper<T> GetWrapper<T>(FactDefinition<T> fact)
         {
             if (_factStorage.TryGetValue(fact, out var wrapperRaw) == false || wrapperRaw is not IFactWrapper<T> wrapper)

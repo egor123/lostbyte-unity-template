@@ -1,4 +1,5 @@
 using System;
+using Lostbyte.Toolkit.FactSystem.Persistance;
 
 namespace Lostbyte.Toolkit.FactSystem
 {
@@ -13,6 +14,8 @@ namespace Lostbyte.Toolkit.FactSystem
         void RemoveOnFactAddedListener(Action<FactDefinition> callback);
         void AddOnChangeListener(Action callback);
         void RemoveOnChangeListener(Action callback);
+        void Subscribe(IPersistent persistent);
+        void Unsubscribe(IPersistent persistent);
         void Subscribe(FactDefinition fact, Action<object> callback);
         void Unsubscribe(FactDefinition fact, Action<object> callback);
         void Subscribe<T>(FactDefinition<T> fact, Action callback);

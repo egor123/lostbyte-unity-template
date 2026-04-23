@@ -46,8 +46,11 @@ namespace Lostbyte.Toolkit.Localization
             }
         }
         internal static LocalizationSettings TryLoad() => Resources.Load<LocalizationSettings>("");
-        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSplashScreen)]
+
+#if UNITY_EDITOR
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         static void OnRuntimeMethodLoad() => _instance = null;
+#endif
         public static void AddListenerOnLocaleChange(Action<string> callback) => Instance.onLocaleChange += callback;
         public static void RemoveListenerOnLocaleChange(Action<string> callback) => Instance.onLocaleChange -= callback;
     }

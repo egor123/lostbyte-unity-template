@@ -6,12 +6,11 @@ using UnityEngine;
 
 namespace Lostbyte.Toolkit.FactSystem
 {
-    internal class FactSettings : ScriptableObject
+    public class FactSettings : ScriptableObject
     {
         [SerializeField] private FactDatabase m_Database;
-        [SerializeField] private string m_saveExtension = ".bin";
-        [SerializeField] private string m_tempExtension = ".tmp";
-        [SerializeField, SerializeReference, UniqeReference] private SaveFormatter m_formatter;
+        [field: SerializeField] public string SaveExtension { get; private set; } = ".bin";
+        [field: SerializeField] public string TempExtension { get; private set; } = ".tmp";
 
         public FactDatabase Database => m_Database;
         public static FactSettings TryLoad()
@@ -21,17 +20,5 @@ namespace Lostbyte.Toolkit.FactSystem
             return settings;
         }
 
-    }
-    public abstract class SaveFormatter
-    {
-        public object Deserialize(Stream serializationStream)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void Serialize(Stream serializationStream, object graph)
-        {
-            throw new System.NotImplementedException();
-        }
     }
 }

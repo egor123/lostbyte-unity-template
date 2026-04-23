@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Lostbyte.Toolkit.FactSystem.Persistance;
 using UnityEngine;
 
 namespace Lostbyte.Toolkit.FactSystem
@@ -33,10 +34,12 @@ namespace Lostbyte.Toolkit.FactSystem
         public void RemoveOnChangeListener(Action callback) => Key.RemoveOnChangeListener(callback);
         public void RemoveOnFactAddedListener(Action<FactDefinition> callback) => Key.RemoveOnFactAddedListener(callback);
         public void SetValue<T>(FactDefinition<T> fact, T value) => Key.SetValue(fact, value);
+        public void Subscribe(IPersistent persistent) => Key.Subscribe(persistent);
         public void Subscribe(FactDefinition fact, Action<object> callback) => Key.Subscribe(fact, callback);
         public void Subscribe<T>(FactDefinition<T> fact, Action callback) => Key.Subscribe(fact, callback);
         public void Subscribe<T>(FactDefinition<T> fact, Action<T> callback) => Key.Subscribe(fact, callback);
         public void Subscribe<T>(FactDefinition<T> fact, Action<T, T> callback) => Key.Subscribe(fact, callback);
+        public void Unsubscribe(IPersistent persistent) => Key.Unsubscribe(persistent);
         public void Unsubscribe(FactDefinition fact, Action<object> callback) => Key.Unsubscribe(fact, callback);
         public void Unsubscribe<T>(FactDefinition<T> fact, Action callback) => Key.Unsubscribe(fact, callback);
         public void Unsubscribe<T>(FactDefinition<T> fact, Action<T> callback) => Key.Unsubscribe(fact, callback);

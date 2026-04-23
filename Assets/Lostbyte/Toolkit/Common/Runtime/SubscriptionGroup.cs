@@ -5,101 +5,156 @@ using UnityEngine.Events;
 
 namespace Lostbyte.Toolkit.Common
 {
-    public class SubscriptionGroup : IDisposable
+    public sealed class SubscriptionGroup : IDisposable
     {
         private readonly List<Action> _unsubscribers = new();
 
-        public void Subscribe(Action @event, Action action)
+        // --------------------------------------------------
+        // CORE
+        // --------------------------------------------------
+
+        public void Add(Action unsubscribe)
         {
-            @event += action;
-            _unsubscribers.Add(() => @event -= action);
-        }
-        public void Subscribe<T>(Action<T> @event, Action<T> action)
-        {
-            @event += action;
-            _unsubscribers.Add(() => @event -= action);
-        }
-        public void Subscribe<T>(Action<T, T> @event, Action<T, T> action)
-        {
-            @event += action;
-            _unsubscribers.Add(() => @event -= action);
+            if (unsubscribe != null)
+                _unsubscribers.Add(unsubscribe);
         }
 
-
-        public void Subscribe(UnityEvent @event, Action action)
+        public void Subscribe(Action subscribe, Action unsubscribe)
         {
-            UnityAction unityAction = new(action);
-            @event.AddListener(unityAction);
-            _unsubscribers.Add(() => @event.RemoveListener(unityAction));
-        }
-        public void Subscribe<T>(UnityEvent<T> @event, Action<T> action)
-        {
-            UnityAction<T> unityAction = new(action);
-            @event.AddListener(unityAction);
-            _unsubscribers.Add(() => @event.RemoveListener(unityAction));
-        }
-        public void Subscribe<T>(UnityEvent<T> @event, Action action)
-        {
-            void unityAction(T v) => action.Invoke();
-            @event.AddListener(unityAction);
-            _unsubscribers.Add(() => @event.RemoveListener(unityAction));
+            subscribe?.Invoke();
+            Add(unsubscribe);
         }
 
-        public delegate void SubscriptionHandler(Action action);
-        public delegate void UnsubscriptionHandler(Action action);
-        public void Subscribe(SubscriptionHandler subscribe, SubscriptionHandler unsubscribe, Action action)
+        // --------------------------------------------------
+        // STANDARD C# EVENTS (via accessors, NOT delegates!)
+        // --------------------------------------------------
+
+        public void Subscribe(Action<Action> add, Action<Action> remove, Action handler)
         {
-            subscribe.Invoke(action);
-            _unsubscribers.Add(() => unsubscribe.Invoke(action));
+            add(handler);
+            Add(() => remove(handler));
         }
-        public delegate void SubscriptionHandler<Value>(Action<Value> action);
-        public delegate void UnsubscriptionHandler<Value>(Action<Value> action);
-        public void Subscribe<T>(SubscriptionHandler<T> subscribe, UnsubscriptionHandler<T> unsubscribe, Action<T> action)
+
+        public void Subscribe<T>(Action<Action<T>> add, Action<Action<T>> remove, Action<T> handler)
         {
-            subscribe.Invoke(action);
-            _unsubscribers.Add(() => unsubscribe.Invoke(action));
+            add(handler);
+            Add(() => remove(handler));
         }
-        public delegate void OnChangeSubscriptionHandler<Value>(Action<Value, Value> action);
-        public delegate void OnChangeUnsubscriptionHandler<Value>(Action<Value, Value> action);
-        public void Subscribe<T>(OnChangeSubscriptionHandler<T> subscribe, OnChangeUnsubscriptionHandler<T> unsubscribe, Action<T, T> action)
+
+        public void Subscribe<T>(Action<Action<T, T>> add, Action<Action<T, T>> remove, Action<T, T> handler)
         {
-            subscribe.Invoke(action);
-            _unsubscribers.Add(() => unsubscribe.Invoke(action));
+            add(handler);
+            Add(() => remove(handler));
         }
-        public delegate void KeySubscriptionHandler<Key>(Key key, Action action);
-        public delegate void KeyUnsubscriptionHandler<Key>(Key key, Action action);
-        public void Subscribe<K>(KeySubscriptionHandler<K> subscribe, KeyUnsubscriptionHandler<K> unsubscribe, K key, Action action)
+
+        // --------------------------------------------------
+        // UNITY EVENTS
+        // --------------------------------------------------
+
+        public void Subscribe(UnityEvent evt, Action handler)
         {
-            subscribe.Invoke(key, action);
-            _unsubscribers.Add(() => unsubscribe.Invoke(key, action));
+            UnityAction unityAction = handler.Invoke;
+            evt.AddListener(unityAction);
+            Add(() => evt.RemoveListener(unityAction));
         }
-        public delegate void KeySubscriptionHandler<Key, Value>(Key key, Action<Value> action);
-        public delegate void KeyUnsubscriptionHandler<Key, Value>(Key key, Action<Value> action);
-        public void Subscribe<K, T>(KeySubscriptionHandler<K, T> subscribe, KeyUnsubscriptionHandler<K, T> unsubscribe, K key, Action<T> action)
+
+        public void Subscribe<T>(UnityEvent<T> evt, Action<T> handler)
         {
-            subscribe.Invoke(key, action);
-            _unsubscribers.Add(() => unsubscribe.Invoke(key, action));
+            UnityAction<T> unityAction = handler.Invoke;
+            evt.AddListener(unityAction);
+            Add(() => evt.RemoveListener(unityAction));
         }
-        public delegate void KeyOnChangeSubscriptionHandler<Key, Value>(Key key, Action<Value, Value> action);
-        public delegate void KeyOnChangeUnsubscriptionHandler<Key, Value>(Key key, Action<Value, Value> action);
-        public void Subscribe<K, T>(KeyOnChangeSubscriptionHandler<K, T> subscribe, KeyOnChangeUnsubscriptionHandler<K, T> unsubscribe, K key, Action<T, T> action)
+
+        public void Subscribe<T>(UnityEvent<T> evt, Action handler)
         {
-            subscribe.Invoke(key, action);
-            _unsubscribers.Add(() => unsubscribe.Invoke(key, action));
+            void Wrapper(T _) => handler();
+            evt.AddListener(Wrapper);
+            Add(() => evt.RemoveListener(Wrapper));
         }
+
+        // --------------------------------------------------
+        // GENERIC "VALUE" SUBSCRIPTIONS
+        // --------------------------------------------------
+
+        public void SubscribeValue<T>(
+            Action<T> subscribe,
+            Action<T> unsubscribe,
+            T value)
+        {
+            subscribe(value);
+            Add(() => unsubscribe(value));
+        }
+
+        public void SubscribeCallback<T>(
+            Action<Action<T>> subscribe,
+            Action<Action<T>> unsubscribe,
+            Action<T> handler)
+        {
+            subscribe(handler);
+            Add(() => unsubscribe(handler));
+        }
+
+        public void SubscribeCallback<T>(
+            Action<Action<T, T>> subscribe,
+            Action<Action<T, T>> unsubscribe,
+            Action<T, T> handler)
+        {
+            subscribe(handler);
+            Add(() => unsubscribe(handler));
+        }
+
+        // --------------------------------------------------
+        // KEYED SUBSCRIPTIONS
+        // --------------------------------------------------
+
+        public void Subscribe<K>(
+            Action<K, Action> subscribe,
+            Action<K, Action> unsubscribe,
+            K key,
+            Action handler)
+        {
+            subscribe(key, handler);
+            Add(() => unsubscribe(key, handler));
+        }
+
+        public void Subscribe<K, T>(
+            Action<K, Action<T>> subscribe,
+            Action<K, Action<T>> unsubscribe,
+            K key,
+            Action<T> handler)
+        {
+            subscribe(key, handler);
+            Add(() => unsubscribe(key, handler));
+        }
+
+        public void Subscribe<K, T>(
+            Action<K, Action<T, T>> subscribe,
+            Action<K, Action<T, T>> unsubscribe,
+            K key,
+            Action<T, T> handler)
+        {
+            subscribe(key, handler);
+            Add(() => unsubscribe(key, handler));
+        }
+
+        // --------------------------------------------------
+        // CLEANUP
+        // --------------------------------------------------
+
         public void Dispose()
         {
-            foreach (var unsubscribe in _unsubscribers)
+            for (int i = _unsubscribers.Count - 1; i >= 0; i--)
             {
                 try
                 {
-                    unsubscribe?.Invoke();
+                    _unsubscribers[i]?.Invoke();
                 }
                 catch (Exception e)
                 {
                     Debug.LogError(e);
                 }
             }
+
             _unsubscribers.Clear();
         }
     }
