@@ -1,12 +1,9 @@
-using System.Collections;
-using System.Collections.Generic;
 using Lostbyte.Toolkit.Audio;
 using Lostbyte.Toolkit.Common;
 using Lostbyte.Toolkit.CustomEditor;
 using Lostbyte.Toolkit.Tween;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
@@ -64,7 +61,7 @@ namespace Lostbyte.Toolkit.UI
             }
             if (m_enableHoverAnim)
             {
-                _tween = this.Tween(transform).Scale(m_hoverScale).SetAnimation(m_hoverAnimType).SetDuration(m_hoverAnimDuration);
+                _tween = this.Tween(transform).Scale(m_hoverScale).SetAnimation(m_hoverAnimType).SetDuration(m_hoverAnimDuration).SetDeltaType(TimeDeltaType.Unscaled);
             }
         }
         private bool ShouldDisableOnCurrentPlatform()

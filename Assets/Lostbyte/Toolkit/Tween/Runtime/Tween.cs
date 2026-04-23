@@ -14,6 +14,7 @@ namespace Lostbyte.Toolkit.Tween
         private Coroutine _runningCorutine;
         public bool IsRunning { get; internal set; }
 
+        protected internal TimeDeltaType DeltaType { get; set; } = TimeDeltaType.Scaled;
         protected internal WrapMode Loop { get; set; } = WrapMode.Clamp;
         protected internal int LoopCount { get; set; } = 1;
         protected internal bool Forward { get; set; } = true;
@@ -86,8 +87,12 @@ namespace Lostbyte.Toolkit.Tween
             AnimationCurve.postWrapMode = Loop;
             float maxDuration = LoopCount >= 0 ? LoopCount : float.MaxValue;
             float minDuration = LoopCount >= 0 ? 0 : float.MinValue;
-
-            float delta = Time.deltaTime / Duration.Value;
+            float delta = DeltaType switch
+            {
+                TimeDeltaType.Scaled => Time.deltaTime,
+                TimeDeltaType.Unscaled => Time.unscaledDeltaTime,
+                _ => Time.deltaTime
+            } / Duration.Value;
             if (Forward) _progress += delta;
             else _progress -= delta;
             _progress = Mathf.Clamp(_progress, minDuration, maxDuration);

@@ -2626,7 +2626,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 459377fada872d643b55a6e156ede589, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_disableOnPlatforms: 2
+  m_disableOnPlatforms: 0
   m_enableHoverAnim: 1
   m_hoverAnimType: 3
   m_hoverAnimDuration: 0.1

@@ -11,6 +11,7 @@ namespace Lostbyte.Toolkit.Tween
         public static T SetCallback<T>(this T t, Action callback) where T : Tween => Base(t, () => t.Callback = callback);
         public static T SetLoop<T>(this T t, WrapMode mode = WrapMode.PingPong, int repeat = -1) where T : Tween => Base(t, () => { t.Loop = mode; t.LoopCount = repeat; });
         public static T ClearLoop<T>(this T t) where T : Tween => Base(t, () => { t.Loop = WrapMode.Clamp; t.LoopCount = 1; });
+        public static T SetDeltaType<T>(this T t, TimeDeltaType type) where T : Tween => Base(t, () => { t.DeltaType = type; });
 
         //-----------------------------------------------------------------------------------------
         public static TweenGroup TweenGroup(this MonoBehaviour initiator) => new SequantialTweenGroup(initiator);
