@@ -1,8 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Localization;
-using UnityEngine.Localization.Settings;
+// using UnityEngine.Localization;
+// using UnityEngine.Localization.Settings;
 using UnityEngine.Playables;
 
 namespace Lostbyte.Toolkit.Director
@@ -26,26 +26,26 @@ namespace Lostbyte.Toolkit.Director
                     time = (float)iPlayable.GetTime();
                     duration = (float)iPlayable.GetDuration();
                     var iBehaviour = iPlayable.GetBehaviour();
-                    text = GetText(iBehaviour.SubtitleText);
+                    // text = GetText(iBehaviour.SubtitleText);
                 }
             }
             manager.SetFrame(Actor, text, time, duration);//FIXME
         }
 
-        private string GetText(LocalizedString text)
-        {
-#if UNITY_EDITOR
-            if (!Application.isPlaying)
-            {
-                var collection = UnityEditor.Localization.LocalizationEditorSettings.GetStringTableCollection(text.TableReference);
-                if (collection == null) return "";
-                var table = collection.GetTable(UnityEditor.Localization.LocalizationEditorSettings.GetLocales()[0].Identifier); //FIXME
-                if (table is not UnityEngine.Localization.Tables.StringTable stringTable) return "";
-                var entry = stringTable.GetEntry(text.TableEntryReference.KeyId);
-                return entry?.LocalizedValue ?? "";
-            }
-#endif
-            return LocalizationSettings.StringDatabase.GetLocalizedString(text.TableReference, text.TableEntryReference, text.Arguments) ?? "";
-        }
+        //         private string GetText(LocalizedString text)
+        //         {
+        // #if UNITY_EDITOR
+        //             if (!Application.isPlaying)
+        //             {
+        //                 var collection = UnityEditor.Localization.LocalizationEditorSettings.GetStringTableCollection(text.TableReference);
+        //                 if (collection == null) return "";
+        //                 var table = collection.GetTable(UnityEditor.Localization.LocalizationEditorSettings.GetLocales()[0].Identifier); //FIXME
+        //                 if (table is not UnityEngine.Localization.Tables.StringTable stringTable) return "";
+        //                 var entry = stringTable.GetEntry(text.TableEntryReference.KeyId);
+        //                 return entry?.LocalizedValue ?? "";
+        //             }
+        // #endif
+        //             return LocalizationSettings.StringDatabase.GetLocalizedString(text.TableReference, text.TableEntryReference, text.Arguments) ?? "";
+        //         }
     }
 }

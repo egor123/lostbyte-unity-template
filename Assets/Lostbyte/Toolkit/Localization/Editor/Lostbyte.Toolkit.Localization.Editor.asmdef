@@ -2,7 +2,10 @@
     "name": "Lostbyte.Toolkit.Localization.Editor",
     "rootNamespace": "Lostbyte.Toolkit.Localization.Editor",
     "references": [
-        "GUID:7269d21dfbe3374449d18e335f93d5a8"
+        "GUID:7269d21dfbe3374449d18e335f93d5a8",
+        "GUID:2d545df2e96ffdd4e98ad0aff1e004fb",
+        "GUID:819f06a97acecf147923817da11f64ef",
+        "GUID:937a7c93307f8544da928de24743a8ff"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

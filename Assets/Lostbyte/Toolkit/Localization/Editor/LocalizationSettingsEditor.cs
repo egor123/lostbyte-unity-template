@@ -8,66 +8,80 @@ using System.Linq;
 using System;
 using Newtonsoft.Json;
 using UnityEditor.UIElements;
+using System.Reflection;
+using Lostbyte.Toolkit.Common;
+using Lostbyte.Toolkit.FactSystem;
+using Lostbyte.Toolkit.FactSystem.Editor;
 
 namespace Lostbyte.Toolkit.Localization.Editor
 {
-    [CustomEditor(typeof(LocalizationSettings))]
+    [UnityEditor.CustomEditor(typeof(LocalizationSettings))]
     public class LocalizationSettingsEditor : UnityEditor.Editor
     {
         public override VisualElement CreateInspectorGUI()
         {
+            object targetObj = serializedObject.targetObject;
+            Type targetType = targetObj.GetType();
+            FieldInfo fieldInfo = targetType.GetField("onLocaleChange", BindingFlags.NonPublic | BindingFlags.Instance);
+            Action<string> onLocaleChangeAction = fieldInfo.GetValue(targetObj) as Action<string>;
+
             var root = new VisualElement();
+            var localeFactProp = serializedObject.FindProperty("m_localeFact");
             var localesProp = serializedObject.FindProperty("m_locales");
-            var localeProp = serializedObject.FindProperty("m_locale");
-            var popup = new PopupField<string> { label = "Locale" };
-            void RefreshChoices()
-            {
-                serializedObject.Update();
+            // var localeProp = serializedObject.FindProperty("m_locale");
+            // var popup = new PopupField<string> { label = "Locale" };
 
-                var choices = new List<string>();
+            root.Add(new PropertyField(localeFactProp, "Locale"));
 
-                if (localesProp != null && localesProp.isArray)
-                {
-                    for (int i = 0; i < localesProp.arraySize; i++)
-                    {
-                        choices.Add(localesProp
-                            .GetArrayElementAtIndex(i)
-                            .stringValue);
-                    }
-                }
+            // void RefreshChoices()
+            // {
+            //     serializedObject.Update();
 
-                popup.choices = choices;
+            //     var choices = new List<string>();
 
-                // Sync selected value with m_locale
-                if (choices.Contains(localeProp.stringValue))
-                    popup.value = localeProp.stringValue;
-                else if (choices.Count > 0)
-                    popup.value = choices[0];
-            }
+            //     if (localesProp != null && localesProp.isArray)
+            //     {
+            //         for (int i = 0; i < localesProp.arraySize; i++)
+            //         {
+            //             choices.Add(localesProp
+            //                 .GetArrayElementAtIndex(i)
+            //                 .stringValue);
+            //         }
+            //     }
 
-            // When user changes dropdown → update m_locale
-            popup.RegisterValueChangedCallback(evt =>
-            {
-                serializedObject.Update();
-                localeProp.stringValue = evt.newValue;
-                serializedObject.ApplyModifiedProperties();
-            });
+            //     popup.choices = choices;
 
-            RefreshChoices();
+            //     // Sync selected value with m_locale
+            //     if (choices.Contains(localeProp.stringValue))
+            //         popup.value = localeProp.stringValue;
+            //     else if (choices.Count > 0)
+            //         popup.value = choices[0];
+            // }
 
-            root.Add(popup);
+            // // When user changes dropdown → update m_locale
+            // popup.RegisterValueChangedCallback(evt =>
+            // {
+            //     serializedObject.Update();
+            //     localeProp.stringValue = evt.newValue;
+            //     serializedObject.ApplyModifiedProperties();
+            //     onLocaleChangeAction?.Invoke(evt.newValue);
+            // });
 
-            // Track changes to locales array
-            root.TrackPropertyValue(localesProp, _ =>
-            {
-                RefreshChoices();
-            });
+            // RefreshChoices();
 
-            // Track changes to selected locale
-            root.TrackPropertyValue(localeProp, _ =>
-            {
-                RefreshChoices();
-            });
+            // root.Add(popup);
+
+            // // Track changes to locales array
+            // root.TrackPropertyValue(localesProp, _ =>
+            // {
+            //     RefreshChoices();
+            // });
+
+            // // Track changes to selected locale
+            // root.TrackPropertyValue(localeProp, _ =>
+            // {
+            //     RefreshChoices();
+            // });
 
 
             // root.Add(new Label("Locales"));
@@ -103,19 +117,6 @@ namespace Lostbyte.Toolkit.Localization.Editor
             return root;
         }
 
-
-        [Serializable]
-        public struct SourceFile
-        {
-            public SourceItem[] keys;
-            [Serializable]
-            public struct SourceItem
-            {
-                public string id;
-                public string meta;
-                public string[] args;
-            }
-        }
         [Serializable]
         public struct ConfFile
         {
@@ -178,13 +179,18 @@ namespace Lostbyte.Toolkit.Localization.Editor
         {
             return Directory.GetDirectories(localesFolder).Select(d => Path.GetFileName(d)).ToArray();
         }
-        private Dictionary<string, SourceFile> GetSourceFiles(string sourceFolder)
+        private Dictionary<string, LocalizationDatabase.SourceFile> GetSourceFiles(string sourceFolder)
         {
             return Directory.GetFiles(sourceFolder, "*.*", SearchOption.AllDirectories)
                 .Where(f => f.EndsWith(".json") && !f.StartsWith("conf"))
                 .ToDictionary(
                     f => Path.Combine(Path.GetDirectoryName(f[(sourceFolder.Length + 1)..]) ?? "", Path.GetFileName(f)),
-                    f => LoadFile<SourceFile>(f)
+                    f =>
+                    {
+                        var o = LoadFile<LocalizationDatabase.SourceFile>(f);
+                        o.Name = Path.GetFileNameWithoutExtension(f);
+                        return o;
+                    }
                 );
         }
         private void UpdateLocalization()
@@ -193,6 +199,8 @@ namespace Lostbyte.Toolkit.Localization.Editor
             var settings = (LocalizationSettings)serializedObject.targetObject;
             var assetPath = AssetDatabase.GetAssetPath(settings);
             var localesProp = serializedObject.FindProperty("m_locales");
+            var localeFactProp = serializedObject.FindProperty("m_localeFact");
+
 
             if (string.IsNullOrEmpty(assetPath))
             {
@@ -213,29 +221,42 @@ namespace Lostbyte.Toolkit.Localization.Editor
             var locales = GetLocales(localesFolder);
             var db = GetClearedDB();
             var dbSO = new SerializedObject(db);
+
+            var itemsProp = dbSO.FindProperty("m_sourceItems");
             var tablesProp = dbSO.FindProperty("m_tables");
-            tablesProp.arraySize = 0;
             localesProp.arraySize = locales.Length;
+            itemsProp.arraySize = 0;
+            tablesProp.arraySize = 0;
+
+            foreach ((var sourcePath, var content) in sourceFiles)
+            {
+                var name = Path.GetFileNameWithoutExtension(sourcePath);
+                itemsProp.arraySize++;
+                itemsProp.GetArrayElementAtIndex(itemsProp.arraySize - 1).boxedValue = content;
+            }
+
             for (int i = 0; i < locales.Length; i++)
                 localesProp.GetArrayElementAtIndex(i).stringValue = locales[i];
             Debug.Log("Detected locales: " + string.Join(',', GetLocales(localesFolder)));
             Dictionary<string, LocalizedTable> tables = new();
             foreach (var locale in locales)
             {
-                var localeFolder = VerefyFolderPath(localesFolder, locale);
-                var table = CreateInstance<LocalizedTable>();
-                table.name = locale;
-                AssetDatabase.AddObjectToAsset(table, db);
-                AssetDatabase.SaveAssets();
-                AssetDatabase.Refresh();
-                tablesProp.arraySize++;
-                tablesProp.GetArrayElementAtIndex(tablesProp.arraySize - 1).objectReferenceValue = table;
-                tables[locale] = table;
-                var tableSO = new SerializedObject(table);
-                var entriesProp = tableSO.FindProperty("m_entries");
-                entriesProp.arraySize = 0;
                 foreach ((var sourcePath, var content) in sourceFiles)
                 {
+                    var name = $"{Path.GetFileNameWithoutExtension(sourcePath)}_{locale}";
+                    var localeFolder = VerefyFolderPath(localesFolder, locale);
+                    var table = CreateInstance<LocalizedTable>();
+                    table.name = name;
+                    AssetDatabase.AddObjectToAsset(table, db);
+                    AssetDatabase.SaveAssets();
+                    AssetDatabase.Refresh();
+                    tablesProp.arraySize++;
+                    tablesProp.GetArrayElementAtIndex(tablesProp.arraySize - 1).boxedValue = new SerializedTuple<string, LocalizedTable>(name, table);
+                    tables[name] = table;
+                    var tableSO = new SerializedObject(table);
+                    var entriesProp = tableSO.FindProperty("m_entries");
+                    entriesProp.arraySize = 0;
+
                     var targetFilePath = Path.Combine(
                         localeFolder,
                         sourcePath
@@ -252,7 +273,7 @@ namespace Lostbyte.Toolkit.Localization.Editor
                         Debug.Log("Created: " + targetFilePath);
                     }
 
-                    var data = LoadFile<Dictionary<string, string>>(targetFilePath);
+                    var data = LoadFile<Dictionary<string, string>>(targetFilePath) ?? new();
                     foreach (var key in content.keys)
                         if (!data.ContainsKey(key.id))
                             data[key.id] = null;
@@ -272,7 +293,7 @@ namespace Lostbyte.Toolkit.Localization.Editor
                             //TODO check for invalid args
                             entriesProp.arraySize++;
                             var elementProp = entriesProp.GetArrayElementAtIndex(entriesProp.arraySize - 1);
-                            elementProp.managedReferenceValue = new LocalizedTable.StringEntry() { Key = key, Value = value };
+                            elementProp.boxedValue = new LocalizedTable.StringEntry() { Key = key, Value = value };
                         }
                     }
 
@@ -283,27 +304,40 @@ namespace Lostbyte.Toolkit.Localization.Editor
             }
             foreach (var locale in locales)
             {
-                var table = tables[locale];
-                var tableSO = new SerializedObject(table);
-                var fallbackProp = tableSO.FindProperty("m_fallback");
-                var confPath = Path.Combine(localesFolder, locale, "conf.json");
-                if (!File.Exists(confPath))
+                foreach ((var sourcePath, var content) in sourceFiles)
                 {
-                    File.WriteAllText(confPath, JsonConvert.SerializeObject(new ConfFile() { }, Formatting.Indented));
-                    Debug.Log("Created: " + confPath);
-                }
-                var conf = LoadFile<ConfFile>(confPath);
-                if (!string.IsNullOrEmpty(conf.fallback))
-                {
-                    if (tables.ContainsKey(conf.fallback))
+                    var name = $"{Path.GetFileNameWithoutExtension(sourcePath)}_{locale}";
+                    var table = tables[name];
+                    var tableSO = new SerializedObject(table);
+                    var fallbackProp = tableSO.FindProperty("m_fallback");
+                    var confPath = Path.Combine(localesFolder, locale, "conf.json");
+                    if (!File.Exists(confPath))
                     {
-                        fallbackProp.objectReferenceValue = tables[conf.fallback];
-                        tableSO.ApplyModifiedPropertiesWithoutUndo();
-                        EditorUtility.SetDirty(table);
+                        File.WriteAllText(confPath, JsonConvert.SerializeObject(new ConfFile() { }, Formatting.Indented));
+                        Debug.Log("Created: " + confPath);
                     }
-                    else Debug.LogWarning($"Unknown fallback locale '{conf.fallback}' in {confPath}");
+                    var conf = LoadFile<ConfFile>(confPath);
+                    if (!string.IsNullOrEmpty(conf.fallback))
+                    {
+                        var fallbackName = $"{Path.GetFileNameWithoutExtension(sourcePath)}_{conf.fallback}";
+                        if (tables.ContainsKey(fallbackName))
+                        {
+                            fallbackProp.objectReferenceValue = tables[fallbackName];
+                            tableSO.ApplyModifiedPropertiesWithoutUndo();
+                            EditorUtility.SetDirty(table);
+                        }
+                        else Debug.LogWarning($"Unknown fallback table '{fallbackName}': {confPath}");
+                    }
                 }
             }
+
+            if (localeFactProp.FindPropertyRelative($"<{nameof(FactWrapper<Enum>.Fact)}>k__BackingField").objectReferenceValue is EnumFactDefinition fact)
+            {
+                var prop = fact.GetType().GetProperty(nameof(EnumFactDefinition.Values), BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+                prop.SetValue(fact, locales.ToList());
+                FactCodeGenerator.Generate(FactSettings.TryLoad().Database);
+            }
+
             AssetDatabase.Refresh();
             dbSO.ApplyModifiedPropertiesWithoutUndo();
             serializedObject.ApplyModifiedPropertiesWithoutUndo();

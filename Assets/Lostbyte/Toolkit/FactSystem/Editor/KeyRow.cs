@@ -43,11 +43,12 @@ namespace Lostbyte.Toolkit.FactSystem.Editor
         private void AddSerializationField()
         {
             var prop = _so.FindProperty($"<{nameof(KeyContainer.IsSerializable)}>k__BackingField");
-
+            var saveEnabledProp = _so.FindProperty("m_save.<Enabled>k__BackingField");
 
             var toggle = new Toggle();
             toggle.SetEnabled(!Application.isPlaying);
             toggle.BindProperty(prop);
+
             var icon = new Image
             {
                 image = EditorGUIUtility.IconContent(toggle.value ? "SaveAs" : "CrossIcon").image,
@@ -56,14 +57,45 @@ namespace Lostbyte.Toolkit.FactSystem.Editor
             icon.style.width = 16;
             icon.style.height = 16;
             icon.style.marginLeft = 0;
+
             toggle.RegisterValueChangedCallback(evt =>
             {
                 icon.image = EditorGUIUtility.IconContent(evt.newValue ? "SaveAs" : "CrossIcon").image;
             });
+
             toggle.RemoveAt(0);
             toggle.Add(icon);
-
             Add(toggle);
+
+            var fileSaveIcon = new Image
+            {
+                image = EditorGUIUtility.IconContent("TextAsset Icon").image,
+                tooltip = "This key is currently configured to save to a file."
+            };
+            fileSaveIcon.style.width = 16;
+            fileSaveIcon.style.height = 16;
+            fileSaveIcon.style.marginLeft = 4;
+            fileSaveIcon.style.alignSelf = Align.Center;
+
+            void UpdateFileIconVisibility()
+            {
+                bool isSerializable = prop != null && prop.boolValue;
+                bool isSaveEnabled = saveEnabledProp != null && saveEnabledProp.boolValue;
+
+                fileSaveIcon.style.display = (isSerializable && isSaveEnabled)
+                    ? DisplayStyle.Flex
+                    : DisplayStyle.None;
+            }
+
+            UpdateFileIconVisibility();
+
+            if (prop != null)
+                this.TrackPropertyValue(prop, _ => UpdateFileIconVisibility());
+
+            if (saveEnabledProp != null)
+                this.TrackPropertyValue(saveEnabledProp, _ => UpdateFileIconVisibility());
+
+            Add(fileSaveIcon);
         }
     }
 }

@@ -1,5 +1,28 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-4404997938984261563
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 09dee09cf1011e34686bb2d8b459687e, type: 3}
+  m_Name: locale
+  m_EditorClassIdentifier: 
+  <Guid>k__BackingField: locale
+  <IsSerializable>k__BackingField: 1
+  <Description>k__BackingField: 
+  <DefaultValue>k__BackingField:
+    rid: -2
+  <Values>k__BackingField: []
+  references:
+    version: 2
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
 --- !u!114 &-3055759980319532786
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -84,6 +107,7 @@ MonoBehaviour:
   - {fileID: 9117608609046563263}
   - {fileID: 4525860068350932383}
   - {fileID: 4818604433467273284}
+  - {fileID: -4404997938984261563}
   <EventStorage>k__BackingField:
   - {fileID: 6175346580498249907}
 --- !u!114 &12290745125359689
@@ -139,9 +163,8 @@ MonoBehaviour:
     - rid: 6512821319454162959
       type: {class: FactPathStorage, ns: Lostbyte.Toolkit.FactSystem.Persistance, asm: Lostbyte.Toolkit.FactSystem}
       data:
-        m_filePath:
-          <Key>k__BackingField: {fileID: 4283477907835028808}
-          <Fact>k__BackingField: {fileID: 4818604433467273284}
+        m_key: {fileID: 4283477907835028808}
+        m_fact: {fileID: 4818604433467273284}
 --- !u!114 &4283477907835028808
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -158,7 +181,7 @@ MonoBehaviour:
   <IsSerializable>k__BackingField: 0
   <Description>k__BackingField: Non serialized game state
   m_save:
-    <Enabled>k__BackingField: 1
+    <Enabled>k__BackingField: 0
     m_formatter:
       rid: -2
     m_storage:
@@ -266,6 +289,7 @@ MonoBehaviour:
     <SaveOnChange>k__BackingField: 1
   m_children: []
   <Facts>k__BackingField:
+  - {fileID: -4404997938984261563}
   - {fileID: -3055759980319532786}
   - {fileID: -140893777799597766}
   - {fileID: 12290745125359689}

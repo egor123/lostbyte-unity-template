@@ -284,6 +284,10 @@ namespace Lostbyte.Toolkit.FactSystem.Editor
                                     .ToList();
                                 enumValues.ForEach(v => eFact.Values.Add(v));
                             }
+                            else
+                            {
+                                fact.DefaultValueRaw = value;
+                            }
                             fact.name = name;
                             fact.Guid = GenerateGuid(name);
                             fact.IsSerializable = IsSerializable;

@@ -5,8 +5,8 @@ using Core.CustomEditor.Editor;
 using UnityEditor.Experimental.GraphView;
 using UnityEditor.Search;
 using UnityEngine;
-using UnityEngine.Localization;
-using UnityEngine.Localization.Settings;
+// using UnityEngine.Localization;
+// using UnityEngine.Localization.Settings;
 using UnityEngine.UIElements;
 
 namespace Lostbyte.Toolkit.Director.Editor
@@ -64,17 +64,17 @@ namespace Lostbyte.Toolkit.Director.Editor
         private string GetStringValue(string key)
         {
             var pair = key.Split('/');
-            if (key != "/" && pair.Length == 2)
-                return LocalizationSettings.StringDatabase.GetLocalizedString(pair[0], pair[1], LocalizationSettings.ProjectLocale) ?? "Null";
+            // if (key != "/" && pair.Length == 2)
+            //     return LocalizationSettings.StringDatabase.GetLocalizedString(pair[0], pair[1], LocalizationSettings.ProjectLocale) ?? "Null";
             return "Null";
 
         }
 
         public override void Load()
         {
-            _actorField.value = (Node as DialogueNode).Actor;
-            (Node as DialogueNode).Paragraphs.ForEach(p => AddParagraph(p.Pause, p.Duration, p.String?.TableReference.TableCollectionName, p.String?.TableEntryReference.Key));
-            Graph.Connect(OutputPort, Graph.GetNodeView((Node as DialogueNode).NextNode)?.InputPort);
+            // _actorField.value = (Node as DialogueNode).Actor;
+            // (Node as DialogueNode).Paragraphs.ForEach(p => AddParagraph(p.Pause, p.Duration, p.String?.TableReference.TableCollectionName, p.String?.TableEntryReference.Key));
+            // Graph.Connect(OutputPort, Graph.GetNodeView((Node as DialogueNode).NextNode)?.InputPort);
         }
 
         public override void Save()
@@ -88,7 +88,7 @@ namespace Lostbyte.Toolkit.Director.Editor
                 {
                     Pause = (e.ElementAt(0) as FloatField).value,
                     Duration = (e.ElementAt(1) as FloatField).value,
-                    String = p.Length == 2 ? new(p[0], p[1]) : new()
+                    // String = p.Length == 2 ? new(p[0], p[1]) : new()
                 };
             }
             ).ToList();

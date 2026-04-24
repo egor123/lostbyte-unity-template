@@ -1,19 +1,20 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using Lostbyte.Toolkit.Common;
 using Lostbyte.Toolkit.FactSystem.Persistance;
-using UnityEngine;
 
 namespace Lostbyte.Toolkit.FactSystem
 {
-    public static class SubscriptionGroupExtentions
+    public static class SubscriptionGroupFactExtentions
     {
         public static void Subscribe<T>(this SubscriptionGroup goup, IKeyContainer key, FactDefinition<T> fact, Action action)
         {
             goup.Subscribe(key.Subscribe, key.Unsubscribe, fact, action);
         }
         public static void Subscribe(this SubscriptionGroup goup, IKeyContainer key, FactDefinition fact, Action<object> action)
+        {
+            goup.Subscribe(key.Subscribe, key.Unsubscribe, fact, action);
+        }
+        public static void Subscribe(this SubscriptionGroup goup, IKeyContainer key, FactDefinition fact, Action action)
         {
             goup.Subscribe(key.Subscribe, key.Unsubscribe, fact, action);
         }
@@ -36,6 +37,11 @@ namespace Lostbyte.Toolkit.FactSystem
         public static void Subscribe(this SubscriptionGroup goup, IFactWrapper wrapper, Action action, bool invokeImidiate = false)
         {
             if (invokeImidiate) action.Invoke();
+            goup.Subscribe(wrapper.Subscribe, wrapper.Unsubscribe, action);
+        }
+        public static void Subscribe(this SubscriptionGroup goup, IFactWrapper wrapper, Action<object> action, bool invokeImidiate = false)
+        {
+            if (invokeImidiate) action.Invoke(wrapper.RawValue);
             goup.Subscribe(wrapper.Subscribe, wrapper.Unsubscribe, action);
         }
         public static void Subscribe<T>(this SubscriptionGroup goup, IFactWrapper<T> wrapper, Action<T> action, bool invokeImidiate = false)
@@ -90,5 +96,6 @@ namespace Lostbyte.Toolkit.FactSystem
         {
             goup.Subscribe(key.AddOnFactAddedListener, key.RemoveOnFactAddedListener, onFactAddedAction);
         }
+        // ------------------
     }
 }

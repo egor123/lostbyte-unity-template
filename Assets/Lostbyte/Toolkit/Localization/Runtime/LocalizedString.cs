@@ -15,12 +15,12 @@ namespace Lostbyte.Toolkit.Localization
         {
             get
             {
-                if (_value == null || _locale != LocalizationSettings.Locale)
-                {
-                    _locale = LocalizationSettings.Locale;
-                    if (m_args != null && m_args.Length > 0) _value = LocalizationSettings.Database.CurrentTable.GetString(m_key, m_args);
-                    _value = LocalizationSettings.Database.CurrentTable.GetString(m_key);
-                }
+                // if (_value == null || _locale != LocalizationSettings.Locale)
+                // {
+                //     _locale = LocalizationSettings.Locale;
+                //     if (m_args != null && m_args.Length > 0) _value = LocalizationSettings.Database.CurrentTable.GetString(m_key, m_args);
+                //     _value = LocalizationSettings.Database.CurrentTable.GetString(m_key);
+                // }
                 return _value;
             }
         }
@@ -40,21 +40,21 @@ namespace Lostbyte.Toolkit.Localization
             _locale = null;
             onChange = null;
         }
-        public void AddListener(Action<string> callback)
-        {
-            if (onChange?.GetInvocationList().Length == 0)
-                LocalizationSettings.AddListenerOnLocaleChange(OnLocaleChange);
-            onChange += callback;
-            callback?.Invoke(Value);
-        }
-        public void RemoveListener(Action<string> callback)
-        {
-            onChange -= callback;
-            if (onChange?.GetInvocationList().Length == 0)
-                LocalizationSettings.RemoveListenerOnLocaleChange(OnLocaleChange);
+        // public void AddListener(Action<Enum> callback)
+        // {
+        //     if (onChange?.GetInvocationList().Length == 0)
+        //         LocalizationSettings.AddListenerOnLocaleChange(OnLocaleChange);
+        //     onChange += callback;
+        //     callback?.Invoke(Value);
+        // }
+        // public void RemoveListener(Action<string> callback)
+        // {
+        //     onChange -= callback;
+        //     if (onChange?.GetInvocationList().Length == 0)
+        //         LocalizationSettings.RemoveListenerOnLocaleChange(OnLocaleChange);
 
-        }
-        private void OnLocaleChange(string locale) => onChange?.Invoke(Value);
-        public override string ToString() => Value;
+        // }
+        // private void OnLocaleChange(string locale) => onChange?.Invoke(Value);
+        // public override string ToString() => Value;
     }
 }

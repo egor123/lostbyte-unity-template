@@ -1,0 +1,11 @@
+{
+  "start_btn": "Play",
+  "resume_btn": "Resume",
+  "menu_btn": "Menu",
+  "exit_btn": "Exit",
+  "main_volume_field": "Main Volume",
+  "music_volume_field": "Music Volume",
+  "sfx_volume_field": "SFX Volume",
+  "mouse_sensetivity_field": "Sensetivity",
+  "save_file_field": "Save File"
+}

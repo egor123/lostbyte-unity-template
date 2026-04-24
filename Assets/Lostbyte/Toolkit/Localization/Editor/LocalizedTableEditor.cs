@@ -7,7 +7,7 @@ using UnityEngine.UIElements;
 
 namespace Lostbyte.Toolkit.Localization.Editor
 {
-    [CustomEditor(typeof(LocalizedTable))]
+    [UnityEditor.CustomEditor(typeof(LocalizedTable))]
     public class LocalizedTableEditor : UnityEditor.Editor
     {
         public override VisualElement CreateInspectorGUI()

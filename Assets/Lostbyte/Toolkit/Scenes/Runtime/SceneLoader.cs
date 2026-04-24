@@ -117,7 +117,7 @@ namespace Lostbyte.Toolkit.Scenes
 
         private void OnDestroy()
         {
-            if (Manager.Avalible) _subscriptions.Dispose();
+            _subscriptions.Dispose();
         }
     }
 }

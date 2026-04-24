@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Localization;
+// using UnityEngine.Localization;
 
 namespace Lostbyte.Toolkit.Director
 {
@@ -16,9 +16,9 @@ namespace Lostbyte.Toolkit.Director
         {
             public float Pause;
             public float Duration;
-            public LocalizedString String;
+            // public LocalizedString String;
         }
-        
+
     }
     public class DialogueNodeBehaviour : PlayableClipNodeBehaviour<DialogueNode>
     {
@@ -50,7 +50,7 @@ namespace Lostbyte.Toolkit.Director
             if (Time > paragraph.Pause && !_isSet)
             {
                 _isSet = true;
-                SubtitlesManager.Instance.Set(_actor, paragraph.String.TableReference, paragraph.String.TableEntryReference, paragraph.Duration);
+                // SubtitlesManager.Instance.Set(_actor, paragraph.String.TableReference, paragraph.String.TableEntryReference, paragraph.Duration);
             }
             if (Time > paragraph.Pause + paragraph.Duration)
             {

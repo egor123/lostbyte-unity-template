@@ -1,7 +1,11 @@
 {
     "name": "Lostbyte.Toolkit.Localization",
     "rootNamespace": "Lostbyte.Toolkit.Localization",
-    "references": [],
+    "references": [
+        "GUID:2d545df2e96ffdd4e98ad0aff1e004fb",
+        "GUID:1a65cc50772d20b418ad5c0e90b6b12f",
+        "GUID:819f06a97acecf147923817da11f64ef"
+    ],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,

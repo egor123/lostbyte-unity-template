@@ -1,7 +1,6 @@
 using UnityEditor;
 using UnityEngine;
 using System;
-using Unity.VisualScripting;
 
 namespace Lostbyte.Toolkit.FactSystem.Editor
 {

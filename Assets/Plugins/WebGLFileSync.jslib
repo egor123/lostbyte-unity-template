@@ -1,3 +1,4 @@
+
 mergeInto(LibraryManager.library, {
   SyncFiles: function () {
     if (window.syncFSTimeout !== undefined) {

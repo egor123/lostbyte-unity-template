@@ -1,0 +1,13 @@
+{
+  "keys": [
+    { "id": "start_btn" },
+    { "id": "resume_btn" },
+    { "id": "menu_btn" },
+    { "id": "exit_btn" },
+    { "id": "main_volume_field" },
+    { "id": "music_volume_field" },
+    { "id": "sfx_volume_field" },
+    { "id": "mouse_sensetivity_field" },
+    { "id": "save_file_field" }
+  ]
+}

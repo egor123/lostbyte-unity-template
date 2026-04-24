@@ -113,7 +113,7 @@ namespace Lostbyte.Toolkit.FactSystem.Editor
             {
                 EditorGUILayout.HelpBox($"Unsupported type: {type.Name}", MessageType.None);
             }
-                // return Enum.GetValues(eFact.EnumType).GetValue(EditorGUILayout.Popup(label, (int)value, Enum.GetNames(eFact.EnumType)));
+            // return Enum.GetValues(eFact.EnumType).GetValue(EditorGUILayout.Popup(label, (int)value, Enum.GetNames(eFact.EnumType)));
             else
                 EditorGUILayout.HelpBox($"Unsupported type: {type.Name}", MessageType.None);
             return null;
@@ -164,7 +164,10 @@ namespace Lostbyte.Toolkit.FactSystem.Editor
             else if (type == typeof(Color))
                 return EditorGUI.ColorField(position, label, (Color)value);
             else if (type == typeof(Enum) && fact is EnumFactDefinition eFact)
+            {
+                if (eFact.EnumType == null) return null;
                 return Enum.GetValues(eFact.EnumType).GetValue(EditorGUI.Popup(position, label, (int)value, Enum.GetNames(eFact.EnumType)));
+            }
             else
                 EditorGUILayout.HelpBox($"Unsupported type: {type.Name}", MessageType.None);
             return null;

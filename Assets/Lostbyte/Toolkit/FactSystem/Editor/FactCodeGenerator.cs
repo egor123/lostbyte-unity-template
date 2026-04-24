@@ -77,6 +77,8 @@ namespace Lostbyte.Toolkit.FactSystem.Editor
             Directory.CreateDirectory(Path.GetDirectoryName(path)!);
             File.WriteAllText(path, sb.ToString());
             AssetDatabase.Refresh();
+
+            GenerateJsBridge();
             Debug.Log("Fact code generation complete.");
         }
 
@@ -117,5 +119,52 @@ namespace Lostbyte.Toolkit.FactSystem.Editor
             else if (values.Count == 0) Debug.LogWarning("Enum type must at least one value!");
             else sb.AppendLine($"{indent}public enum {type} {{ {string.Join(", ", values.Select(FactUtils.MakeSafeIdentifier))} }}");
         }
+
+        private static void GenerateJsBridge()
+        {
+            string directoryPath = "Assets/Plugins";
+            string filePath = Path.Combine(directoryPath, "WebGLFileSync.jslib");
+            string jsContent = @"
+mergeInto(LibraryManager.library, {
+  SyncFiles: function () {
+    if (window.syncFSTimeout !== undefined) {
+      clearTimeout(window.syncFSTimeout);
+    }
+
+    window.syncFSTimeout = setTimeout(function () {
+      window.isSyncingFS = true;
+      window.syncFSTimeout = undefined;
+
+      FS.syncfs(false, function (err) {
+        window.isSyncingFS = false;
+        if (err) {
+          console.error(""WebGL FS Sync Error: "" + err);
+        } else {
+          console.log(""WebGL FS Sync Complete."");
+        }
+      });
+    }, 500);
+
+    if (!window.fsBeforeUnloadAdded) {
+      window.fsBeforeUnloadAdded = true;
+      window.addEventListener(""beforeunload"", function (e) {
+        if (window.syncFSTimeout !== undefined || window.isSyncingFS) {
+          e.preventDefault();
+          e.returnValue = """";
+        }
+      });
+    }
+  },
+});";
+            if (!Directory.Exists(directoryPath))
+            {
+                Directory.CreateDirectory(directoryPath);
+            }
+
+            File.WriteAllText(filePath, jsContent);
+            AssetDatabase.Refresh();
+        }
+
+
     }
 }

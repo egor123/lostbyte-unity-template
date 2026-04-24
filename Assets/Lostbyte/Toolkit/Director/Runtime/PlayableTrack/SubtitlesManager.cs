@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
-using UnityEngine.Localization;
+// using UnityEngine.Localization;
 using UnityEngine.Rendering;
 
 namespace Lostbyte.Toolkit.Director

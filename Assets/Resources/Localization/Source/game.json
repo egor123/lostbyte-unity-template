@@ -1,7 +1,7 @@
 {
   "keys": [
     {
-      "id": "test-key",
+      "id": "test_key",
       "meta": "short description",
       "args": ["arg1", "arg2"]
     }

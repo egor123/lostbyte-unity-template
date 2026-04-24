@@ -30,6 +30,10 @@ namespace GameFacts
         public static FactDefinition<System.Boolean> CursorLocked = _CursorLocked != null ? _CursorLocked : _CursorLocked = (FactDefinition<System.Boolean>) FactDatabase.Instance.GetFact("cursor_locked");
         private static FactDefinition<System.Boolean> _GamePaused = null;
         public static FactDefinition<System.Boolean> GamePaused = _GamePaused != null ? _GamePaused : _GamePaused = (FactDefinition<System.Boolean>) FactDatabase.Instance.GetFact("game_paused");
+        private static FactDefinition<System.String> _SaveFile = null;
+        public static FactDefinition<System.String> SaveFile = _SaveFile != null ? _SaveFile : _SaveFile = (FactDefinition<System.String>) FactDatabase.Instance.GetFact("save_file");
+        private static FactDefinition<System.Enum> _Locale = null;
+        public static FactDefinition<System.Enum> Locale = _Locale != null ? _Locale : _Locale = (FactDefinition<System.Enum>) FactDatabase.Instance.GetFact("locale");
     }
     //------------- Events -------------
     public static class Events
@@ -41,5 +45,6 @@ namespace GameFacts
     public static class Enums
     {
         public enum GameState { Menu, Game }
+        public enum Locale { EnUS, RuRU }
     }
 }

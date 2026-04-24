@@ -1,8 +1,6 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using Lostbyte.Toolkit.Common;
-using Lostbyte.Toolkit.CustomEditor;
 using Lostbyte.Toolkit.FactSystem;
 using Lostbyte.Toolkit.Management;
 using UnityEngine;
@@ -59,8 +57,7 @@ namespace Lostbyte.Toolkit.Audio
 
         private void OnDisable()
         {
-            if (Avalible)
-                _subscriptions.Dispose();
+            _subscriptions.Dispose();
         }
     }
 }
