@@ -61,6 +61,13 @@ namespace Lostbyte.Toolkit.FactSystem
         private readonly Dictionary<FactDefinition, IFactWrapper> _factStorage = new();
         private readonly Dictionary<EventDefinition, IEventWrapper> _eventStorage = new();
 
+        internal void ClearStorages()
+        {
+            _factStorage.Clear();
+            _eventStorage.Clear();
+            m_children.ForEach(k => k.ClearStorages());
+        }
+
         private object ApplyValueOverride(FactDefinition fact, object defaultValue)
         {
             foreach (var v in ValueOverrides)
@@ -76,6 +83,7 @@ namespace Lostbyte.Toolkit.FactSystem
 #endif
             Load();
         }
+
         private readonly Store _store = new();
         public void Load(object file = null, bool forceReadFile = false)
         {
