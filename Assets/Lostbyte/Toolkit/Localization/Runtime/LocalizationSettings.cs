@@ -44,13 +44,17 @@ namespace Lostbyte.Toolkit.Localization
                     if (_instance == null)
                     {
                         Debug.LogError("Localization Settings asset is missing!");
+                        return null;
                     }
                     _instance.m_localeFact.Subscribe(_instance.OnChangeLocale);
                 }
                 return _instance;
             }
         }
-        private void OnChangeLocale() => onLocaleChange?.Invoke(m_localeFact.Value);
+        private void OnChangeLocale()
+        {
+            onLocaleChange?.Invoke(m_localeFact.Value);
+        }
         internal static LocalizationSettings TryLoad() => Resources.LoadAll<LocalizationSettings>("").FirstOrDefault();
 
 #if UNITY_EDITOR

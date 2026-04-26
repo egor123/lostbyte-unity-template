@@ -45,9 +45,9 @@ namespace Lostbyte.Toolkit.FactSystem
         private static void Initialize()
         {
             _instance = FactSettings.TryLoad().Database;
-#if UNITY_EDITOR
-            _instance.m_rootKeys.ForEach(k => k.ClearStorages());
-#endif
+            // #if UNITY_EDITOR
+            //             _instance.m_rootKeys.ForEach(k => k.ClearStorages());
+            // #endif
             _instance.Init();
         }
         private void Init()

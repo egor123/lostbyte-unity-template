@@ -29,7 +29,6 @@ namespace Lostbyte.Toolkit.UI
         private void OnDestroy()
         {
             _subscriptions.Dispose();
-
         }
 
         private void OnLocaleChange()

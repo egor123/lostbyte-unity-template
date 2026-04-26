@@ -98,10 +98,13 @@ namespace Lostbyte.Toolkit.FactSystem
             // _factStorage.Clear();
             foreach (var fact in Facts)
             {
-                var wrapper = _factStorage.TryGetValue(fact, out var w) ? w : fact.GetValueWrapper();
+                if (_factStorage.TryGetValue(fact, out var wrapper) == false)
+                {
+                    wrapper = fact.GetValueWrapper();
+                    wrapper.Subscribe(RaiseChange);
+                    _factStorage[fact] = wrapper;
+                }
                 wrapper.RawValue = _store.GetData(fact.Guid, ApplyValueOverride(fact, fact.DefaultValueRaw));
-                _factStorage[fact] = wrapper;
-                wrapper.Subscribe(RaiseChange);
             }
             // _eventStorage.Clear();
             foreach (var @event in Events)
