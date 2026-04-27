@@ -37,7 +37,7 @@ namespace Lostbyte.Toolkit.Localization.Editor
                 bindItem = (element, index) =>
                     {
                         var itemProp = entries.GetArrayElementAtIndex(index);
-                        var value = itemProp.managedReferenceValue as LocalizedTable.StringEntry;
+                        var value = itemProp.boxedValue as LocalizedTable.StringEntry;
                         ((TextField)element).label = value.Key;
                         ((TextField)element).value = value.Value;
                     }

@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &-2616004610381743224
+--- !u!114 &-2805038397446878736
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -10,28 +10,28 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8f9697e3bfd72cb47aed6d98f1d36d59, type: 3}
-  m_Name: ui_en-US
+  m_Name: game_en-US
   m_EditorClassIdentifier: 
   m_entries:
-  - Key: start_btn
-    Value: Play
-  - Key: resume_btn
-    Value: Resume
-  - Key: menu_btn
-    Value: Menu
-  - Key: exit_btn
-    Value: Exit
-  - Key: main_volume_field
-    Value: Main Volume
-  - Key: music_volume_field
-    Value: Music Volume
-  - Key: sfx_volume_field
-    Value: SFX Volume
-  - Key: mouse_sensetivity_field
-    Value: Sensetivity
-  - Key: save_file_field
-    Value: Save File
+  - Key: test_key
+    Value: 'Test: {0:F2}, {1}'
   m_fallback: {fileID: 0}
+--- !u!114 &-160149641314704940
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8f9697e3bfd72cb47aed6d98f1d36d59, type: 3}
+  m_Name: game_ru-RU
+  m_EditorClassIdentifier: 
+  m_entries:
+  - Key: test_key
+    Value: "\u0422\u0435\u0441\u0442 {0:F2}, {1}"
+  m_fallback: {fileID: -2805038397446878736}
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -51,37 +51,7 @@ MonoBehaviour:
   - en-US
   - ru-RU
   m_database: {fileID: 9061851707203649418}
---- !u!114 &1387117233796125741
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8f9697e3bfd72cb47aed6d98f1d36d59, type: 3}
-  m_Name: game_ru-RU
-  m_EditorClassIdentifier: 
-  m_entries: []
-  m_fallback: {fileID: 2535590570451023512}
---- !u!114 &2535590570451023512
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8f9697e3bfd72cb47aed6d98f1d36d59, type: 3}
-  m_Name: game_en-US
-  m_EditorClassIdentifier: 
-  m_entries:
-  - Key: test_key
-    Value: 'Test: {0}, {1}'
-  m_fallback: {fileID: 0}
---- !u!114 &4935337990063747803
+--- !u!114 &88562288594533540
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -113,7 +83,39 @@ MonoBehaviour:
     Value: "\u0427\u0443\u0432\u0441\u0442\u0432\u0438\u0442\u0435\u043B\u044C\u043D\u043E\u0441\u0442\u044C"
   - Key: save_file_field
     Value: "\u0424\u0430\u0439\u043B \u0421\u043E\u0445\u0440\u0430\u043D\u0435\u043D\u0438\u044F"
-  m_fallback: {fileID: -2616004610381743224}
+  m_fallback: {fileID: 4943602553266122378}
+--- !u!114 &4943602553266122378
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8f9697e3bfd72cb47aed6d98f1d36d59, type: 3}
+  m_Name: ui_en-US
+  m_EditorClassIdentifier: 
+  m_entries:
+  - Key: start_btn
+    Value: Play
+  - Key: resume_btn
+    Value: Resume
+  - Key: menu_btn
+    Value: Menu
+  - Key: exit_btn
+    Value: Exit
+  - Key: main_volume_field
+    Value: Main Volume
+  - Key: music_volume_field
+    Value: Music Volume
+  - Key: sfx_volume_field
+    Value: SFX Volume
+  - Key: mouse_sensetivity_field
+    Value: Sensetivity
+  - Key: save_file_field
+    Value: Save File
+  m_fallback: {fileID: 0}
 --- !u!114 &9061851707203649418
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -165,10 +167,10 @@ MonoBehaviour:
       args: []
   m_tables:
   - <Item1>k__BackingField: game_en-US
-    <Item2>k__BackingField: {fileID: 2535590570451023512}
+    <Item2>k__BackingField: {fileID: -2805038397446878736}
   - <Item1>k__BackingField: ui_en-US
-    <Item2>k__BackingField: {fileID: -2616004610381743224}
+    <Item2>k__BackingField: {fileID: 4943602553266122378}
   - <Item1>k__BackingField: game_ru-RU
-    <Item2>k__BackingField: {fileID: 1387117233796125741}
+    <Item2>k__BackingField: {fileID: -160149641314704940}
   - <Item1>k__BackingField: ui_ru-RU
-    <Item2>k__BackingField: {fileID: 4935337990063747803}
+    <Item2>k__BackingField: {fileID: 88562288594533540}

@@ -3,10 +3,13 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
 using Lostbyte.Toolkit.FactSystem.Nodes;
+using Lostbyte.Toolkit.CustomEditor.Editor;
 
 namespace Lostbyte.Toolkit.FactSystem.Editor
 {
-    public class ConditionField : VisualElement
+
+    [CustomField(typeof(Condition))]
+    public class ConditionField : BindableElement // FIXME Bindable
     {
         public new class UxmlFactory : UxmlFactory<ConditionField, UxmlTraits> { }
 
@@ -16,7 +19,7 @@ namespace Lostbyte.Toolkit.FactSystem.Editor
         private bool _hasErrors = false;
         private INode _parsedNode;
 
-        public Condition Value
+        public Condition value
         {
             get
             {
@@ -35,9 +38,17 @@ namespace Lostbyte.Toolkit.FactSystem.Editor
         public Label Label { get; private set; }
         public ConditionField()
         {
+            Init(null);
+        }
+        public ConditionField(string label)
+        {
+            Init(label);
+        }
+        private void Init(string label)
+        {
             style.flexDirection = FlexDirection.Row;
 
-            Label = new Label(string.Empty)
+            Label = new Label(label)
             {
                 style = {
                     width = 120,
@@ -76,7 +87,6 @@ namespace Lostbyte.Toolkit.FactSystem.Editor
 
             ParseCondition(string.Empty);
         }
-
         private void ParseCondition(string text)
         {
             _conditionText = text;
@@ -99,7 +109,6 @@ namespace Lostbyte.Toolkit.FactSystem.Editor
             _textField.SetValueWithoutNotify(text);
             ParseCondition(text);
         }
-
         public void BindProperty(SerializedProperty property)
         {
             var conditionProp = property.FindPropertyRelative("m_rootNode");

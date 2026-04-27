@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace Lostbyte.Toolkit.FactSystem.Editor
 {
-    [CustomEditor(typeof(KeyReference))]
+    [UnityEditor.CustomEditor(typeof(KeyReference))]
     public class KeyReferenceEditor : UnityEditor.Editor
     {
         private SerializedProperty _parentKeyProp;

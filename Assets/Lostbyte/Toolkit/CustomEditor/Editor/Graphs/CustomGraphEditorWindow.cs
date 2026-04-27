@@ -25,6 +25,7 @@ namespace Lostbyte.Toolkit.CustomEditor.Editor.Graphs
         private void CreateGraphView()
         {
             _graphView = new TGraph { name = "Graph" };
+            _graphView.Initialize(this);
             _graphView.StretchToParentSize();
             rootVisualElement.Add(_graphView);
         }

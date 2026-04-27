@@ -1,22 +1,27 @@
 using System;
 using System.Collections.Generic;
+using Lostbyte.Toolkit.CustomEditor.Graphs;
+using Lostbyte.Toolkit.FactSystem;
+using Lostbyte.Toolkit.Localization;
 using UnityEngine;
 // using UnityEngine.Localization;
 
 namespace Lostbyte.Toolkit.Director
 {
+    [CustomGraphNode("Dialogue Node")]
     public class DialogueNode : PlayableTrackNode
     {
-        public ScriptableObject Actor;
-        public PlayableTrackNode NextNode;
-        public List<Paragraph> Paragraphs = new();
+        [GraphIn("In")] public PlayableTrackNode[] In;
+        [GraphOut("Out")] public PlayableTrackNode Out;
+        [GraphField] public KeyContainer Actor;
+        [GraphField] public List<Paragraph> Paragraphs = new();
+
         public override IPlayableClipNodeBehaviour GetClip(PlayableTrackBehaviour track) => new DialogueNodeBehaviour(this, Actor, track);
         [Serializable]
         public struct Paragraph
         {
-            public float Pause;
-            public float Duration;
-            // public LocalizedString String;
+            [GraphField] public LocalizedString String;
+            [GraphField] public float Gap;
         }
 
     }
@@ -28,7 +33,7 @@ namespace Lostbyte.Toolkit.Director
         public DialogueNodeBehaviour(DialogueNode node, ScriptableObject actor, PlayableTrackBehaviour track) : base(node, track) => _actor = actor;
         public override bool IsReady => true;
         public override bool IsFinished => _idx >= Node.Paragraphs.Count;
-        public override IPlayableClipNodeBehaviour GetNext(PlayableTrackBehaviour track) => Node.NextNode ? Node.NextNode.GetClip(track) : null;
+        public override IPlayableClipNodeBehaviour GetNext(PlayableTrackBehaviour track) => Node.Out ? Node.Out.GetClip(track) : null;
         public override void OnStart() { }
         public override void OnContinue() => _isSet = false;
         public override void OnEnd()
@@ -47,12 +52,12 @@ namespace Lostbyte.Toolkit.Director
         public override void OnUpdate()
         {
             var paragraph = Node.Paragraphs[_idx];
-            if (Time > paragraph.Pause && !_isSet)
+            if (Time > paragraph.Gap && !_isSet)
             {
                 _isSet = true;
                 // SubtitlesManager.Instance.Set(_actor, paragraph.String.TableReference, paragraph.String.TableEntryReference, paragraph.Duration);
             }
-            if (Time > paragraph.Pause + paragraph.Duration)
+            if (Time > paragraph.Gap + paragraph.Gap) // FIXME
             {
                 _isSet = false;
                 Time = 0;

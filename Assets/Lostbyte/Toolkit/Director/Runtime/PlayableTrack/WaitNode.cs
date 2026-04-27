@@ -1,9 +1,14 @@
+using Lostbyte.Toolkit.CustomEditor.Graphs;
+
 namespace Lostbyte.Toolkit.Director
 {
+    [CustomGraphNode("Wait Node")]
     public class WaitNode : PlayableTrackNode
     {
-        public PlayableTrackNode NextNode;
-        public float Time;
+        [GraphIn("In")] public PlayableTrackNode[] In;
+        [GraphOut("Out")] public PlayableTrackNode NextNode;
+
+        [GraphField] public float Time;
         public override IPlayableClipNodeBehaviour GetClip(PlayableTrackBehaviour track) => new WaitNodeBehaviour(this, track);
     }
     public class WaitNodeBehaviour : PlayableClipNodeBehaviour<WaitNode>

@@ -1,13 +1,25 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Lostbyte.Toolkit.Common;
+using Lostbyte.Toolkit.CustomEditor.Graphs;
 using Lostbyte.Toolkit.FactSystem;
 
 namespace Lostbyte.Toolkit.Director
 {
+    [CustomGraphNode("Switch Node")]
     public class SwitchNode : PlayableTrackNode
     {
-        public List<SerializedTuple<Condition, PlayableTrackNode>> Nodes;
+        [GraphIn("In")] public PlayableTrackNode[] In;
+
+        [GraphField] public List<Option> Nodes;
+
+        [Serializable]
+        public struct Option
+        {
+            [GraphField] public Condition Condition;
+            [GraphOut("Out")] public PlayableTrackNode Out;
+        }
         public override IPlayableClipNodeBehaviour GetClip(PlayableTrackBehaviour track) => new SwitchNodeBehaviour(this, track);
     }
 
@@ -15,7 +27,7 @@ namespace Lostbyte.Toolkit.Director
     {
         public SwitchNodeBehaviour(SwitchNode node, PlayableTrackBehaviour track) : base(node, track)
         {
-            _nodes = Node.Nodes?.Select(n => new SerializedTuple<Condition, IPlayableClipNodeBehaviour>(n.Item1, n.Item2 != null ? n.Item2.GetClip(track) : null)).ToList();
+            _nodes = Node.Nodes?.Select(n => new SerializedTuple<Condition, IPlayableClipNodeBehaviour>(n.Condition, n.Out != null ? n.Out.GetClip(track) : null)).ToList();
         }
         private IPlayableClipNodeBehaviour _nextNode;
         private readonly List<SerializedTuple<Condition, IPlayableClipNodeBehaviour>> _nodes;

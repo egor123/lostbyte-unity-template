@@ -1,10 +1,15 @@
+using Lostbyte.Toolkit.CustomEditor.Graphs;
+
 namespace Lostbyte.Toolkit.Director
 {
+    [CustomGraphNode("Checkpoint Node")]
     public class CheckpointNode : PlayableTrackNode
     {
-        public PlayableTrackNode NextNode;
-        public PlayableTrackNode OnContinueNode;
-        public CheckpointBehaviour CheckpointBehaviour = CheckpointBehaviour.Continue;
+        [GraphIn("In")] public PlayableTrackNode[] In;
+        [GraphOut("Out")] public PlayableTrackNode NextNode;
+        [GraphOut("On Continue")] public PlayableTrackNode OnContinueNode;
+
+        [GraphField] public CheckpointBehaviour CheckpointBehaviour = CheckpointBehaviour.Continue;
         public override IPlayableClipNodeBehaviour GetClip(PlayableTrackBehaviour track)
         {
             track.Checkpoint = this;

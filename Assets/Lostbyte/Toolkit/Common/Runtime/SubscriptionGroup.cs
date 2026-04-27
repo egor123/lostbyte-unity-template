@@ -12,7 +12,7 @@ namespace Lostbyte.Toolkit.Common
         // --------------------------------------------------
         // CORE
         // --------------------------------------------------
-
+        public int Count => _unsubscribers.Count;
         public void Add(Action unsubscribe)
         {
             if (unsubscribe != null)

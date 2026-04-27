@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Core.CustomEditor.Editor;
+using Lostbyte.Toolkit.CustomEditor.Graphs;
 using UnityEditor;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
@@ -18,14 +19,11 @@ namespace Lostbyte.Toolkit.CustomEditor.Editor.Graphs
     {
         public TAsset Asset { get; private set; }
         private static Dictionary<Type, NodeInfo> _nodeTypes;
+        protected EditorWindow _window;
 
-        public CustomGraphView()
+        public void Initialize(EditorWindow window)
         {
-            OnGraphInit();
-        }
-
-        protected virtual void OnGraphInit()
-        {
+            _window = window;
             SetupZoom(ContentZoomer.DefaultMinScale, ContentZoomer.DefaultMaxScale);
             this.AddManipulator(new ContentDragger());
             this.AddManipulator(new SelectionDragger());
@@ -38,7 +36,7 @@ namespace Lostbyte.Toolkit.CustomEditor.Editor.Graphs
         protected virtual void RegisterSearchWindow()
         {
             CustomNodeSearchWindow searchWindow = ScriptableObject.CreateInstance<CustomNodeSearchWindow>();
-            searchWindow.Initialize(GetNodeInfos(), CreateNode);
+            searchWindow.Initialize(_window, this, GetNodeInfos(), CreateNode);
             nodeCreationRequest = context => SearchWindow.Open(new SearchWindowContext(context.screenMousePosition), searchWindow);
         }
 
@@ -47,25 +45,44 @@ namespace Lostbyte.Toolkit.CustomEditor.Editor.Graphs
             graphElements.ForEach(RemoveElement);
         }
 
-        private static Dictionary<Type, NodeInfo> GetNodeTypeDict() => _nodeTypes ??= UniqeReferenceAttribute
-            .GetSubClasses(typeof(TNodeView))
-            .Where(t => t.GetCustomAttribute<NodeTypeAttribute>() != null)
-            .ToDictionary(t => t.GetCustomAttribute<NodeTypeAttribute>().Type, t => new NodeInfo()
-            {
-                Name = t.GetCustomAttribute<NodeTypeAttribute>().Name,
-                NodeType = t.GetCustomAttribute<NodeTypeAttribute>().Type,
-                ViewType = t
-            });
+        private static Dictionary<Type, NodeInfo> GetNodeTypeDict()
+        {
+            if (_nodeTypes != null) return _nodeTypes;
+
+
+            var views = UniqeReferenceAttribute
+                .GetSubClasses(typeof(TNodeView))
+                .Where(t => t.GetCustomAttribute<NodeTypeAttribute>() != null)
+                .ToDictionary(t => t.GetCustomAttribute<NodeTypeAttribute>().Type, t => new NodeInfo()
+                {
+                    Name = t.GetCustomAttribute<NodeTypeAttribute>().Name,
+                    NodeType = t.GetCustomAttribute<NodeTypeAttribute>().Type,
+                    ViewType = t
+                });
+
+            var models = UniqeReferenceAttribute
+                .GetSubClasses(typeof(TNodeBase))
+                .Where(t => t.GetCustomAttribute<CustomGraphNodeAttribute>() != null)
+                .Where(t => !views.ContainsKey(t))
+                .ToDictionary(t => t, t => new NodeInfo()
+                {
+                    Name = t.GetCustomAttribute<CustomGraphNodeAttribute>().Name,
+                    NodeType = t,
+                    ViewType = typeof(TNodeView)
+                });
+
+            _nodeTypes = views.Concat(models).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+            return _nodeTypes;
+        }
+
         public NodeInfo[] GetNodeInfos() => GetNodeTypeDict().Values.ToArray();
-
-
 
         public override List<Port> GetCompatiblePorts(Port startPort, NodeAdapter nodeAdapter)
         {
             List<Port> compatiblePorts = new();
             foreach (var port in ports)
                 if (startPort != port && startPort.node != port.node)
-                    if (startPort.portType == port.portType 
+                    if (startPort.portType == port.portType
                         || startPort.portType == typeof(Unsafe) || port.portType == typeof(Unsafe)
                         || (port.direction == Direction.Input && port.portType == typeof(object)) || (startPort.direction == Direction.Input && startPort.portType == typeof(object)))
                         compatiblePorts.Add(port);
@@ -92,14 +109,14 @@ namespace Lostbyte.Toolkit.CustomEditor.Editor.Graphs
         }
         public virtual Vector2 GetDefaultNodeSize() => new(200, 150);
 
-        public virtual TNodeView GetNodeView(TNodeBase node)
+        public virtual TNodeView GetNodeView(TNodeBase node, Vector2? position = null)
         {
             if (node == null) return null;
             if (nodes.FirstOrDefault(v => v is TNodeView dv && dv.Node == node) is TNodeView view && view != null) return view;
             if (!GetNodeTypeDict().TryGetValue(node.GetType(), out var info)) return null;
             view = Activator.CreateInstance(info.ViewType, new object[] { Asset, this, node }) as TNodeView;
             view.title = node.name;
-            view.SetPosition(new Rect(view.LoadPosition(), GetDefaultNodeSize()));
+            view.SetPosition(new Rect(position ?? view.LoadPosition(), GetDefaultNodeSize()));
             AddElement(view);
             return view;
         }
@@ -107,12 +124,24 @@ namespace Lostbyte.Toolkit.CustomEditor.Editor.Graphs
         {
             TNodeBase newNode = ScriptableObject.CreateInstance(nodeType) as TNodeBase;
             newNode.name = name;
-            GetNodeView(newNode);
+            GetNodeView(newNode, position);
         }
         public void Connect(Port outputPort, Port inputPort)
         {
             if (outputPort == null || inputPort == null) return;
             AddElement(outputPort.ConnectTo(inputPort));
+        }
+        public void Disconnect(Port port)
+        {
+            if (port == null) return;
+            var ports = port.connections.ToArray();
+            foreach (var edge in ports)
+            {
+                edge.input?.Disconnect(edge);
+                edge.output?.Disconnect(edge);
+                RemoveElement(edge);
+            }
+
         }
         public void Save(TAsset asset)
         {
