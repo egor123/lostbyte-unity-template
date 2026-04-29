@@ -28,63 +28,8 @@ namespace Lostbyte.Toolkit.Localization.Editor
             var root = new VisualElement();
             var localeFactProp = serializedObject.FindProperty("m_localeFact");
             var localesProp = serializedObject.FindProperty("m_locales");
-            // var localeProp = serializedObject.FindProperty("m_locale");
-            // var popup = new PopupField<string> { label = "Locale" };
-
             root.Add(new PropertyField(localeFactProp, "Locale"));
 
-            // void RefreshChoices()
-            // {
-            //     serializedObject.Update();
-
-            //     var choices = new List<string>();
-
-            //     if (localesProp != null && localesProp.isArray)
-            //     {
-            //         for (int i = 0; i < localesProp.arraySize; i++)
-            //         {
-            //             choices.Add(localesProp
-            //                 .GetArrayElementAtIndex(i)
-            //                 .stringValue);
-            //         }
-            //     }
-
-            //     popup.choices = choices;
-
-            //     // Sync selected value with m_locale
-            //     if (choices.Contains(localeProp.stringValue))
-            //         popup.value = localeProp.stringValue;
-            //     else if (choices.Count > 0)
-            //         popup.value = choices[0];
-            // }
-
-            // // When user changes dropdown → update m_locale
-            // popup.RegisterValueChangedCallback(evt =>
-            // {
-            //     serializedObject.Update();
-            //     localeProp.stringValue = evt.newValue;
-            //     serializedObject.ApplyModifiedProperties();
-            //     onLocaleChangeAction?.Invoke(evt.newValue);
-            // });
-
-            // RefreshChoices();
-
-            // root.Add(popup);
-
-            // // Track changes to locales array
-            // root.TrackPropertyValue(localesProp, _ =>
-            // {
-            //     RefreshChoices();
-            // });
-
-            // // Track changes to selected locale
-            // root.TrackPropertyValue(localeProp, _ =>
-            // {
-            //     RefreshChoices();
-            // });
-
-
-            // root.Add(new Label("Locales"));
             var listView = new ListView
             {
                 reorderable = false,
@@ -299,6 +244,7 @@ namespace Lostbyte.Toolkit.Localization.Editor
 
                     SaveFile(targetFilePath, data);
                     tableSO.ApplyModifiedPropertiesWithoutUndo();
+                    LocalizationCodeGenerator.Generate(db);
                     EditorUtility.SetDirty(table);
                 }
             }

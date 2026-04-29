@@ -3,7 +3,7 @@
     {
       "id": "test_key",
       "meta": "short description",
-      "args": ["arg1", "arg2"]
+      "args": ["arg1:float", "arg2"]
     }
   ]
 }

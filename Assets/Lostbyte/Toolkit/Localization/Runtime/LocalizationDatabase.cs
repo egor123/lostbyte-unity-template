@@ -26,7 +26,7 @@ namespace Lostbyte.Toolkit.Localization
             }
         }
         private readonly Dictionary<string, LocalizedTable> _tables = new();
-
+        public IReadOnlyList<SourceFile> GetSourceData() => m_sourceItems;
         public LocalizedTable GetTable(string tableName) => _tables.TryGetValue($"{tableName}_{LocalizationSettings.LocaleName}", out var val) ? val : null;
 
         public void OnBeforeSerialize() { }

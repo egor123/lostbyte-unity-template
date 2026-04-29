@@ -36,7 +36,35 @@ namespace Lostbyte.Toolkit.CustomEditor.Editor.Graphs
             titleContainer.Clear();
             titleContainer.Add(TitleField);
 
+            UpdateStyles();
             GenerateUI();
+        }
+
+        public virtual void UpdateStyles()
+        {
+            Color backgroundColor = new(.25f, .25f, .25f);
+            Color borderColor = Color.gray;
+            int borderRadius = 10;
+            int borderWidth = 2;
+
+            contentContainer.style.backgroundColor = new StyleColor(backgroundColor);
+            contentContainer.style.borderBottomWidth = borderWidth;
+            contentContainer.style.borderLeftWidth = borderWidth;
+            contentContainer.style.borderRightWidth = borderWidth;
+            contentContainer.style.borderTopWidth = borderWidth;
+
+            contentContainer.style.borderBottomColor = new StyleColor(borderColor);
+            contentContainer.style.borderTopColor = new StyleColor(borderColor);
+            contentContainer.style.borderLeftColor = new StyleColor(borderColor);
+            contentContainer.style.borderRightColor = new StyleColor(borderColor);
+
+            contentContainer.style.borderTopLeftRadius = new StyleLength(borderRadius);
+            contentContainer.style.borderTopRightRadius = new StyleLength(borderRadius);
+            contentContainer.style.borderBottomLeftRadius = new StyleLength(borderRadius);
+            contentContainer.style.borderBottomRightRadius = new StyleLength(borderRadius);
+            contentContainer.style.paddingTop = 0;
+            contentContainer.style.paddingLeft = 0;
+            contentContainer.style.paddingRight = 0;
         }
         public virtual void GenerateUI()
         {
@@ -99,13 +127,14 @@ namespace Lostbyte.Toolkit.CustomEditor.Editor.Graphs
         private BindableElement AddField(FieldInfo field)
         {
             BindableElement propField = CustomEditorUtils.CreatePropertyField(field.FieldType, field.Name);
-            Label labelNode = propField.Q<Label>();
-            if (labelNode != null)
+
+            propField.Query<Label>().ForEach(label =>
             {
-                labelNode.style.minWidth = 0;
-                labelNode.style.width = StyleKeyword.Auto;
-                labelNode.style.marginRight = 5;
-            }
+                label.style.minWidth = 0;
+                label.style.width = StyleKeyword.Auto;
+                label.style.marginRight = 5;
+            });
+
             return propField;
         }
 

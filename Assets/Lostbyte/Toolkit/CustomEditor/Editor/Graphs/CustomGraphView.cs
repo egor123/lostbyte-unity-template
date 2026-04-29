@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using Core.CustomEditor.Editor;
@@ -28,11 +29,30 @@ namespace Lostbyte.Toolkit.CustomEditor.Editor.Graphs
             this.AddManipulator(new ContentDragger());
             this.AddManipulator(new SelectionDragger());
             this.AddManipulator(new RectangleSelector());
+
             var grid = new GridBackground();
             Insert(0, grid);
-            grid.StretchToParentSize();
+
+
+
+            var miniMap = new MiniMap { anchored = true };
+            miniMap.SetPosition(new Rect(10, 30, 200, 140));
+            Add(miniMap);
+
+            InitStyles();
             RegisterSearchWindow();
+
+            // graphViewChanged += OnGraphViewChanged;
         }
+        protected virtual void InitStyles()
+        {
+            StyleSheet gridStyleSheet = EditorGUIUtility.Load("Assets/Lostbyte/Toolkit/CustomEditor/Editor/Graphs/GraphViewStyles.uss") as StyleSheet;
+            if (gridStyleSheet != null)
+            {
+                styleSheets.Add(gridStyleSheet);
+            }
+        }
+
         protected virtual void RegisterSearchWindow()
         {
             CustomNodeSearchWindow searchWindow = ScriptableObject.CreateInstance<CustomNodeSearchWindow>();

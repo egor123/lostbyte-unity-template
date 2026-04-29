@@ -10,8 +10,6 @@ namespace Lostbyte.Toolkit.Localization
     {
         [SerializeField] private string m_table;
         [SerializeField] private string m_key;
-
-        // Used only if serialized in inspector
         [SerializeField] private SerializedTuple<KeyContainer, FactDefinition>[] m_facts;
 
         private IFactWrapper[] _facts;
@@ -22,8 +20,7 @@ namespace Lostbyte.Toolkit.Localization
         private string _value;
         private bool _isSubscribedToLocale;
         private bool _requiresRuntimeInitialization = false;
-
-        public Enum Locale { get; private set; }
+        public Enum Locale { get; private set; } = null;
 
         public string Value
         {
@@ -31,20 +28,18 @@ namespace Lostbyte.Toolkit.Localization
             {
                 RuntimeInitialization();
                 if (!ValueIsValid) OnLocaleChange(LocalizationSettings.Locale);
-
                 return _value;
             }
             private set => _value = value;
         }
 
-        private bool ValueIsValid => _isSubscribedToLocale || (_value != null && LocalizationSettings.Locale != null && LocalizationSettings.Locale.Equals(Locale));
+        private bool ValueIsValid => _isSubscribedToLocale || (_value != null && LocalizationSettings.Locale.Equals(Locale));
         private bool NeedsLocaleSubscription => OnChange != null || _factCount > 0;
 
         public LocalizedString(string key, string table, params object[] args)
         {
             m_key = key;
             m_table = table;
-
             SetArgs(args);
         }
 
@@ -88,17 +83,14 @@ namespace Lostbyte.Toolkit.Localization
 
             for (int i = 0; i < args.Length; i++)
             {
-                if (args[i] is IFactWrapper fact)
-                    SetArg(i, fact);
-                else
-                    SetArg(i, args[i]);
+                if (args[i] is IFactWrapper fact) SetArg(i, fact);
+                else SetArg(i, args[i]);
             }
         }
 
         public void SetArg(int idx, object arg)
         {
             ClearFactAt(idx);
-
             _values[idx] = arg;
             UpdateValue();
         }
@@ -138,6 +130,7 @@ namespace Lostbyte.Toolkit.Localization
             {
                 LocalizationSettings.AddListenerOnLocaleChange(OnLocaleChange);
                 _isSubscribedToLocale = true;
+                UpdateValue();
             }
             else if (!needsSub && _isSubscribedToLocale)
             {
@@ -154,10 +147,13 @@ namespace Lostbyte.Toolkit.Localization
 
         private void UpdateValue()
         {
-            for (int i = 0; i < _facts.Length; i++)
+            if (_facts != null)
             {
-                IFactWrapper fact = _facts[i];
-                if (fact != null) _values[i] = fact.RawValue;
+                for (int i = 0; i < _facts.Length; i++)
+                {
+                    IFactWrapper fact = _facts[i];
+                    if (fact != null) _values[i] = fact.RawValue;
+                }
             }
             _value = LocalizationSettings.Database.GetTable(m_table).GetString(m_key, _values);
             OnChange?.Invoke(_value);
@@ -186,10 +182,8 @@ namespace Lostbyte.Toolkit.Localization
                     ClearFactAt(i);
                 }
             }
-
             OnChange = null;
             UpdateLocaleSubscription();
-
             GC.SuppressFinalize(this);
         }
 

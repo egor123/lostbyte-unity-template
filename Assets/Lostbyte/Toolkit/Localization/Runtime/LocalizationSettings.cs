@@ -34,7 +34,7 @@ namespace Lostbyte.Toolkit.Localization
         }
         private Action<Enum> onLocaleChange;
         private static LocalizationSettings _instance;
-        private static LocalizationSettings Instance
+        public static LocalizationSettings Instance
         {
             get
             {

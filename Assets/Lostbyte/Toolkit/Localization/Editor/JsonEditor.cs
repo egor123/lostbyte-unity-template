@@ -10,7 +10,7 @@ using UnityEngine.UIElements;
 
 namespace Lostbyte.Toolkit.Localization.Editor
 {
-    [CustomEditor(typeof(TextAsset))]
+    [UnityEditor.CustomEditor(typeof(TextAsset))]
     public class JsonEditor : UnityEditor.Editor
     {
         public override VisualElement CreateInspectorGUI()

@@ -7,5 +7,6 @@
   "music_volume_field": "Music Volume",
   "sfx_volume_field": "SFX Volume",
   "mouse_sensetivity_field": "Sensetivity",
-  "save_file_field": "Save File"
+  "save_file_field": "Save File",
+  "locale_filed": "Locale"
 }

@@ -7,5 +7,6 @@
   "music_volume_field": "Громкость музыки",
   "sfx_volume_field": "Громкость звуковых эффектов",
   "mouse_sensetivity_field": "Чувствительность",
-  "save_file_field": "Файл Сохранения"
+  "save_file_field": "Файл Сохранения",
+  "locale_filed": "Язык"
 }

@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &-2805038397446878736
+--- !u!114 &-9073538945337304708
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -10,48 +10,33 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8f9697e3bfd72cb47aed6d98f1d36d59, type: 3}
-  m_Name: game_en-US
+  m_Name: locales_ru-RU
   m_EditorClassIdentifier: 
   m_entries:
-  - Key: test_key
-    Value: 'Test: {0:F2}, {1}'
+  - Key: RuRU
+    Value: "\u0420\u0443\u0441\u0441\u0443\u043A\u0438\u0439"
+  - Key: EnUS
+    Value: "\u0410\u043D\u0433\u043B\u0438\u0439\u0441\u043A\u0438\u0439"
+  m_fallback: {fileID: -7377679424457545712}
+--- !u!114 &-7377679424457545712
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8f9697e3bfd72cb47aed6d98f1d36d59, type: 3}
+  m_Name: locales_en-US
+  m_EditorClassIdentifier: 
+  m_entries:
+  - Key: RuRU
+    Value: Russian
+  - Key: EnUS
+    Value: English
   m_fallback: {fileID: 0}
---- !u!114 &-160149641314704940
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8f9697e3bfd72cb47aed6d98f1d36d59, type: 3}
-  m_Name: game_ru-RU
-  m_EditorClassIdentifier: 
-  m_entries:
-  - Key: test_key
-    Value: "\u0422\u0435\u0441\u0442 {0:F2}, {1}"
-  m_fallback: {fileID: -2805038397446878736}
---- !u!114 &11400000
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e6f5ae89348c4124aa5c4568006a4c2e, type: 3}
-  m_Name: LocalizationSettings
-  m_EditorClassIdentifier: 
-  m_localeFact:
-    <Key>k__BackingField: {fileID: 6628457045445381566, guid: 6c08054baf9457644b18f9b93ea7fec1, type: 2}
-    <Fact>k__BackingField: {fileID: -4404997938984261563, guid: 6c08054baf9457644b18f9b93ea7fec1, type: 2}
-  m_locales:
-  - en-US
-  - ru-RU
-  m_database: {fileID: 9061851707203649418}
---- !u!114 &88562288594533540
+--- !u!114 &-3785493571724989978
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -83,8 +68,10 @@ MonoBehaviour:
     Value: "\u0427\u0443\u0432\u0441\u0442\u0432\u0438\u0442\u0435\u043B\u044C\u043D\u043E\u0441\u0442\u044C"
   - Key: save_file_field
     Value: "\u0424\u0430\u0439\u043B \u0421\u043E\u0445\u0440\u0430\u043D\u0435\u043D\u0438\u044F"
-  m_fallback: {fileID: 4943602553266122378}
---- !u!114 &4943602553266122378
+  - Key: locale_filed
+    Value: "\u042F\u0437\u044B\u043A"
+  m_fallback: {fileID: -3316820977539313795}
+--- !u!114 &-3316820977539313795
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -115,6 +102,59 @@ MonoBehaviour:
     Value: Sensetivity
   - Key: save_file_field
     Value: Save File
+  - Key: locale_filed
+    Value: Locale
+  m_fallback: {fileID: 0}
+--- !u!114 &-2578496435232507677
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8f9697e3bfd72cb47aed6d98f1d36d59, type: 3}
+  m_Name: game_ru-RU
+  m_EditorClassIdentifier: 
+  m_entries:
+  - Key: test_key
+    Value: "\u0422\u0435\u0441\u0442 {0:F2}, {1}"
+  m_fallback: {fileID: 3614022963301767266}
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e6f5ae89348c4124aa5c4568006a4c2e, type: 3}
+  m_Name: LocalizationSettings
+  m_EditorClassIdentifier: 
+  m_localeFact:
+    <Key>k__BackingField: {fileID: 6628457045445381566, guid: 6c08054baf9457644b18f9b93ea7fec1, type: 2}
+    <Fact>k__BackingField: {fileID: -4404997938984261563, guid: 6c08054baf9457644b18f9b93ea7fec1, type: 2}
+  m_locales:
+  - en-US
+  - ru-RU
+  m_database: {fileID: 9061851707203649418}
+--- !u!114 &3614022963301767266
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8f9697e3bfd72cb47aed6d98f1d36d59, type: 3}
+  m_Name: game_en-US
+  m_EditorClassIdentifier: 
+  m_entries:
+  - Key: test_key
+    Value: 'Test: {0:F2}, {1}'
   m_fallback: {fileID: 0}
 --- !u!114 &9061851707203649418
 MonoBehaviour:
@@ -134,8 +174,16 @@ MonoBehaviour:
     - id: test_key
       meta: short description
       args:
-      - arg1
+      - arg1:float
       - arg2
+  - Name: locales
+    keys:
+    - id: RuRU
+      meta: 
+      args: []
+    - id: EnUS
+      meta: 
+      args: []
   - Name: ui
     keys:
     - id: start_btn
@@ -165,12 +213,19 @@ MonoBehaviour:
     - id: save_file_field
       meta: 
       args: []
+    - id: locale_filed
+      meta: 
+      args: []
   m_tables:
   - <Item1>k__BackingField: game_en-US
-    <Item2>k__BackingField: {fileID: -2805038397446878736}
+    <Item2>k__BackingField: {fileID: 3614022963301767266}
+  - <Item1>k__BackingField: locales_en-US
+    <Item2>k__BackingField: {fileID: -7377679424457545712}
   - <Item1>k__BackingField: ui_en-US
-    <Item2>k__BackingField: {fileID: 4943602553266122378}
+    <Item2>k__BackingField: {fileID: -3316820977539313795}
   - <Item1>k__BackingField: game_ru-RU
-    <Item2>k__BackingField: {fileID: -160149641314704940}
+    <Item2>k__BackingField: {fileID: -2578496435232507677}
+  - <Item1>k__BackingField: locales_ru-RU
+    <Item2>k__BackingField: {fileID: -9073538945337304708}
   - <Item1>k__BackingField: ui_ru-RU
-    <Item2>k__BackingField: {fileID: 88562288594533540}
+    <Item2>k__BackingField: {fileID: -3785493571724989978}

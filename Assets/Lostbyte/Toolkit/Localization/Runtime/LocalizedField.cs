@@ -13,7 +13,7 @@ namespace Lostbyte.Toolkit.Localization
 
         private TMP_Text _field;
 
-        private void Awake()
+        private void Start()
         {
             _field = GetComponent<TMP_Text>();
             String.Subscribe(OnChange);

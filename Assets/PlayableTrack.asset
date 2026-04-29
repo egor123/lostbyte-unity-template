@@ -1,22 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &-3340757401580320682
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bb10f2b71c95a4c45babd00b6833a031, type: 3}
-  m_Name: Save Node
-  m_EditorClassIdentifier: 
-  Position: {x: 530.6667, y: -153.33333}
-  In: []
-  NextNode: {fileID: 7849705619225355334}
-  Key: {fileID: 1706909347228400817, guid: 6c08054baf9457644b18f9b93ea7fec1, type: 2}
---- !u!114 &-1626945456051430568
+--- !u!114 &-6839002683358027182
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -28,23 +12,158 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1a42321e32f60c34d9ff9b6cfa2f180a, type: 3}
   m_Name: Test Node
   m_EditorClassIdentifier: 
-  Position: {x: 178, y: -122}
-  In: []
+  Position: {x: 174, y: -122}
+  In:
+  - {fileID: 0}
   Out:
-  - {fileID: 7835048348742695727}
-  - {fileID: 7468566292897612950}
+  - {fileID: 3921137242141673824}
+  - {fileID: -2292833032203306473}
   Test: hello world
   Options:
   - Number: 3
     Number2: 0
+    Out:
+    - {fileID: -2292833032203306473}
+  - Number: 5
+    Number2: 645
     Out: []
   - Number: 4
     Number2: 0
-    Out:
-    - {fileID: 7468566292897612950}
-  - Number: 5
-    Number2: 0
     Out: []
+--- !u!114 &-6207428320780365994
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7bfadb478cdf93c4587a9e6729fd50af, type: 3}
+  m_Name: Dialogue Node
+  m_EditorClassIdentifier: 
+  Position: {x: 786, y: 13}
+  In:
+  - {fileID: -2292833032203306473}
+  Out: {fileID: 6392724829791209234}
+  Actor: {fileID: 1706909347228400817, guid: 6c08054baf9457644b18f9b93ea7fec1, type: 2}
+  Paragraphs:
+  - String:
+      m_table: ui
+      m_key: start_btn
+      m_facts: []
+    Gap: 1
+  - String:
+      m_table: game
+      m_key: test_key
+      m_facts:
+      - <Item1>k__BackingField: {fileID: 1706909347228400817, guid: 6c08054baf9457644b18f9b93ea7fec1, type: 2}
+        <Item2>k__BackingField: {fileID: 9117608609046563263, guid: 6c08054baf9457644b18f9b93ea7fec1, type: 2}
+      - <Item1>k__BackingField: {fileID: 1706909347228400817, guid: 6c08054baf9457644b18f9b93ea7fec1, type: 2}
+        <Item2>k__BackingField: {fileID: 6322980757709942554, guid: 6c08054baf9457644b18f9b93ea7fec1, type: 2}
+    Gap: 1
+  - String:
+      m_table: ui
+      m_key: resume_btn
+      m_facts: []
+    Gap: 0
+--- !u!114 &-4288578081238775556
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d966908f741428a408f538f28c5cd341, type: 3}
+  m_Name: Checkpoint Node
+  m_EditorClassIdentifier: 
+  Position: {x: 746, y: -157}
+  In: []
+  NextNode: {fileID: 0}
+  OnContinueNode: {fileID: 0}
+  CheckpointBehaviour: 0
+--- !u!114 &-2292833032203306473
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 49557a02f60e48249973affaf8be2c0c, type: 3}
+  m_Name: Switch Node
+  m_EditorClassIdentifier: 
+  Position: {x: 410, y: 13}
+  In:
+  - {fileID: -6839002683358027182}
+  - {fileID: -6839002683358027182}
+  Nodes:
+  - Condition:
+      m_rootNode:
+        rid: 6512821433719849177
+    Out: {fileID: -6207428320780365994}
+  - Condition:
+      m_rootNode:
+        rid: 6512821433719849178
+    Out: {fileID: 0}
+  - Condition:
+      m_rootNode:
+        rid: 6512821433719849179
+    Out: {fileID: 0}
+  references:
+    version: 2
+    RefIds:
+    - rid: 6512821433719849177
+      type: {class: OPNode, ns: Lostbyte.Toolkit.FactSystem.Nodes, asm: Lostbyte.Toolkit.FactSystem}
+      data:
+        LNode:
+          rid: 6512821433719849180
+        RNode:
+          rid: 6512821433719849181
+        Op: ==
+    - rid: 6512821433719849178
+      type: {class: OPNode, ns: Lostbyte.Toolkit.FactSystem.Nodes, asm: Lostbyte.Toolkit.FactSystem}
+      data:
+        LNode:
+          rid: 6512821433719849182
+        RNode:
+          rid: 6512821433719849183
+        Op: ==
+    - rid: 6512821433719849179
+      type: {class: BoolNode, ns: Lostbyte.Toolkit.FactSystem.Nodes, asm: Lostbyte.Toolkit.FactSystem}
+      data:
+        <Value>k__BackingField: 1
+    - rid: 6512821433719849180
+      type: {class: FactNode, ns: Lostbyte.Toolkit.FactSystem.Nodes, asm: Lostbyte.Toolkit.FactSystem}
+      data:
+        Key: {fileID: 4283477907835028808, guid: 6c08054baf9457644b18f9b93ea7fec1, type: 2}
+        Fact: {fileID: -1139778540106801879, guid: 6c08054baf9457644b18f9b93ea7fec1, type: 2}
+    - rid: 6512821433719849181
+      type: {class: EnumNode, ns: Lostbyte.Toolkit.FactSystem.Nodes, asm: Lostbyte.Toolkit.FactSystem}
+      data:
+        Value:
+          rid: 6512821433719849184
+    - rid: 6512821433719849182
+      type: {class: FactNode, ns: Lostbyte.Toolkit.FactSystem.Nodes, asm: Lostbyte.Toolkit.FactSystem}
+      data:
+        Key: {fileID: 4283477907835028808, guid: 6c08054baf9457644b18f9b93ea7fec1, type: 2}
+        Fact: {fileID: -1139778540106801879, guid: 6c08054baf9457644b18f9b93ea7fec1, type: 2}
+    - rid: 6512821433719849183
+      type: {class: EnumNode, ns: Lostbyte.Toolkit.FactSystem.Nodes, asm: Lostbyte.Toolkit.FactSystem}
+      data:
+        Value:
+          rid: 6512821433719849185
+    - rid: 6512821433719849184
+      type: {class: Enums/GameState, ns: GameFacts, asm: Assembly-CSharp}
+      data:
+        value__: 0
+    - rid: 6512821433719849185
+      type: {class: Enums/GameState, ns: GameFacts, asm: Assembly-CSharp}
+      data:
+        value__: 1
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -59,9 +178,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Priority: 2
   <OnContinueBehaviour>k__BackingField: 0
-  StartNode: {fileID: 0}
-  StartNodePosition: {x: -66, y: -19.333334}
---- !u!114 &710549499997473254
+  StartNode: {fileID: -6839002683358027182}
+  StartNodePosition: {x: -74, y: -122}
+--- !u!114 &2406130950624671219
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -70,111 +189,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7bfadb478cdf93c4587a9e6729fd50af, type: 3}
-  m_Name: Dialogue Node
+  m_Script: {fileID: 11500000, guid: bb10f2b71c95a4c45babd00b6833a031, type: 3}
+  m_Name: Save Node
   m_EditorClassIdentifier: 
-  Position: {x: 818, y: 7.333332}
-  In:
-  - {fileID: 7468566292897612950}
-  Out: {fileID: 0}
-  Actor: {fileID: 0}
-  Paragraphs:
-  - String:
-      m_table: 
-      m_key: 
-      m_facts: []
-    Gap: 1
-  - String:
-      m_table: 
-      m_key: 
-      m_facts: []
-    Gap: 0
-  - String:
-      m_table: 
-      m_key: 
-      m_facts: []
-    Gap: 0
---- !u!114 &7468566292897612950
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 49557a02f60e48249973affaf8be2c0c, type: 3}
-  m_Name: Switch Node
-  m_EditorClassIdentifier: 
-  Position: {x: 404.66666, y: -30.666668}
-  In:
-  - {fileID: -1626945456051430568}
-  - {fileID: -1626945456051430568}
-  Nodes:
-  - Condition:
-      m_rootNode:
-        rid: 6512821408205897758
-    Out: {fileID: 710549499997473254}
-  - Condition:
-      m_rootNode:
-        rid: 6512821408205897759
-    Out: {fileID: 0}
-  - Condition:
-      m_rootNode:
-        rid: 6512821408205897760
-    Out: {fileID: 0}
-  references:
-    version: 2
-    RefIds:
-    - rid: 6512821408205897758
-      type: {class: OPNode, ns: Lostbyte.Toolkit.FactSystem.Nodes, asm: Lostbyte.Toolkit.FactSystem}
-      data:
-        LNode:
-          rid: 6512821408205897761
-        RNode:
-          rid: 6512821408205897762
-        Op: ==
-    - rid: 6512821408205897759
-      type: {class: OPNode, ns: Lostbyte.Toolkit.FactSystem.Nodes, asm: Lostbyte.Toolkit.FactSystem}
-      data:
-        LNode:
-          rid: 6512821408205897763
-        RNode:
-          rid: 6512821408205897764
-        Op: ==
-    - rid: 6512821408205897760
-      type: {class: BoolNode, ns: Lostbyte.Toolkit.FactSystem.Nodes, asm: Lostbyte.Toolkit.FactSystem}
-      data:
-        <Value>k__BackingField: 1
-    - rid: 6512821408205897761
-      type: {class: FactNode, ns: Lostbyte.Toolkit.FactSystem.Nodes, asm: Lostbyte.Toolkit.FactSystem}
-      data:
-        Key: {fileID: 4283477907835028808, guid: 6c08054baf9457644b18f9b93ea7fec1, type: 2}
-        Fact: {fileID: -1139778540106801879, guid: 6c08054baf9457644b18f9b93ea7fec1, type: 2}
-    - rid: 6512821408205897762
-      type: {class: EnumNode, ns: Lostbyte.Toolkit.FactSystem.Nodes, asm: Lostbyte.Toolkit.FactSystem}
-      data:
-        Value:
-          rid: 6512821408205897765
-    - rid: 6512821408205897763
-      type: {class: FactNode, ns: Lostbyte.Toolkit.FactSystem.Nodes, asm: Lostbyte.Toolkit.FactSystem}
-      data:
-        Key: {fileID: 4283477907835028808, guid: 6c08054baf9457644b18f9b93ea7fec1, type: 2}
-        Fact: {fileID: -1139778540106801879, guid: 6c08054baf9457644b18f9b93ea7fec1, type: 2}
-    - rid: 6512821408205897764
-      type: {class: EnumNode, ns: Lostbyte.Toolkit.FactSystem.Nodes, asm: Lostbyte.Toolkit.FactSystem}
-      data:
-        Value:
-          rid: 6512821408205897766
-    - rid: 6512821408205897765
-      type: {class: Enums/GameState, ns: GameFacts, asm: Assembly-CSharp}
-      data:
-        value__: 0
-    - rid: 6512821408205897766
-      type: {class: Enums/GameState, ns: GameFacts, asm: Assembly-CSharp}
-      data:
-        value__: 1
---- !u!114 &7835048348742695727
+  Position: {x: 532, y: -157}
+  In: []
+  NextNode: {fileID: -4288578081238775556}
+  Key: {fileID: 1706909347228400817, guid: 6c08054baf9457644b18f9b93ea7fec1, type: 2}
+--- !u!114 &3921137242141673824
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -186,12 +208,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a466c546469d8ad43bc4a3ec1cd7e340, type: 3}
   m_Name: Wait Node
   m_EditorClassIdentifier: 
-  Position: {x: 404.66666, y: -153.33333}
+  Position: {x: 410, y: -156}
   In:
-  - {fileID: -1626945456051430568}
-  NextNode: {fileID: -3340757401580320682}
+  - {fileID: -6839002683358027182}
+  NextNode: {fileID: 2406130950624671219}
   Time: 2
---- !u!114 &7849705619225355334
+--- !u!114 &6392724829791209234
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -200,11 +222,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d966908f741428a408f538f28c5cd341, type: 3}
-  m_Name: Checkpoint Node
+  m_Script: {fileID: 11500000, guid: 7bfadb478cdf93c4587a9e6729fd50af, type: 3}
+  m_Name: Dialogue Node
   m_EditorClassIdentifier: 
-  Position: {x: 746, y: -153.33333}
-  In: []
-  NextNode: {fileID: 0}
-  OnContinueNode: {fileID: 0}
-  CheckpointBehaviour: 0
+  Position: {x: 1122, y: 13}
+  In:
+  - {fileID: -6207428320780365994}
+  Out: {fileID: 0}
+  Actor: {fileID: 0}
+  Paragraphs: []

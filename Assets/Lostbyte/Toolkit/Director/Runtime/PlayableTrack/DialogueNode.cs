@@ -4,7 +4,6 @@ using Lostbyte.Toolkit.CustomEditor.Graphs;
 using Lostbyte.Toolkit.FactSystem;
 using Lostbyte.Toolkit.Localization;
 using UnityEngine;
-// using UnityEngine.Localization;
 
 namespace Lostbyte.Toolkit.Director
 {

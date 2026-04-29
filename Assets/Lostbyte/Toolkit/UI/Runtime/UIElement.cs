@@ -57,7 +57,6 @@ namespace Lostbyte.Toolkit.UI
                 _subscriptions.Subscribe(input.onDeselect, PlayOnDeselect);
                 _subscriptions.Subscribe(input.onValueChanged, PlayOnChange);
                 _subscriptions.Subscribe(input.onEndEdit, PlayOnSubmit);
-
             }
             if (m_enableHoverAnim)
             {

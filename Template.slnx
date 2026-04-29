@@ -1,5 +1,4 @@
 ﻿<Solution>
-  <Project Path="Lostbyte.Toolkit.UI.csproj" />
   <Project Path="Lostbyte.Toolkit.FactSystem.Editor.csproj" />
   <Project Path="Lostbyte.Toolkit.Tween.TMP.csproj" />
   <Project Path="Lostbyte.Toolkit.Audio.csproj" />
@@ -13,6 +12,7 @@
   <Project Path="Lostbyte.Toolkit.Scenes.Editor.csproj" />
   <Project Path="Lostbyte.Toolkit.Localization.Editor.csproj" />
   <Project Path="Lostbyte.Toolkit.Tween.csproj" />
+  <Project Path="Lostbyte.Toolkit.UI.csproj" />
   <Project Path="Lostbyte.Toolkit.Director.PlayableTrack.Editor.csproj" />
   <Project Path="Lostbyte.Toolkit.Injection.csproj" />
   <Project Path="Lostbyte.Toolkit.UI.Editor.csproj" />

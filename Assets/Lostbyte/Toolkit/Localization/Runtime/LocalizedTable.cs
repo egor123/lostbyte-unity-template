@@ -19,7 +19,11 @@ namespace Lostbyte.Toolkit.Localization
         public string GetString(string key, params object[] args)
         {
             if (!_stringStorage.TryGetValue(key, out var str))
-                return m_fallback.GetString(key, args);
+            {
+                if (m_fallback) return m_fallback.GetString(key, args);
+                Debug.LogError($"Localization for {key} in {name} is missing and fallback is not provided!");
+                return "null";
+            }
             if (args == null || args.Length == 0)
                 return str;
             return Formatter.Format(str, args);

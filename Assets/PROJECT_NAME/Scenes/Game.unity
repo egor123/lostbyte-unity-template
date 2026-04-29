@@ -863,13 +863,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 286042288}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3787b1c5910f01a4baa54c801e40e740, type: 3}
+  m_Script: {fileID: 11500000, guid: 58915800e0ef0c14889bc8a227d53cfc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_field: {fileID: 0}
-  m_table: ui
-  m_key: menu_btn
-  m_args: []
+  <String>k__BackingField:
+    m_table: ui
+    m_key: menu_btn
+    m_facts: []
 --- !u!1 &337196454
 GameObject:
   m_ObjectHideFlags: 0
@@ -1256,13 +1256,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 569845910}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3787b1c5910f01a4baa54c801e40e740, type: 3}
+  m_Script: {fileID: 11500000, guid: 58915800e0ef0c14889bc8a227d53cfc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_field: {fileID: 0}
-  m_table: ui
-  m_key: music_volume_field
-  m_args: []
+  <String>k__BackingField:
+    m_table: ui
+    m_key: music_volume_field
+    m_facts: []
 --- !u!1 &644864284
 GameObject:
   m_ObjectHideFlags: 0
@@ -1443,13 +1443,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 661239569}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3787b1c5910f01a4baa54c801e40e740, type: 3}
+  m_Script: {fileID: 11500000, guid: 58915800e0ef0c14889bc8a227d53cfc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_field: {fileID: 0}
-  m_table: ui
-  m_key: resume_btn
-  m_args: []
+  <String>k__BackingField:
+    m_table: ui
+    m_key: resume_btn
+    m_facts: []
 --- !u!1 &681356204
 GameObject:
   m_ObjectHideFlags: 0
@@ -2559,13 +2559,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 1217757775}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3787b1c5910f01a4baa54c801e40e740, type: 3}
+  m_Script: {fileID: 11500000, guid: 58915800e0ef0c14889bc8a227d53cfc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_field: {fileID: 0}
-  m_table: ui
-  m_key: main_volume_field
-  m_args: []
+  <String>k__BackingField:
+    m_table: ui
+    m_key: main_volume_field
+    m_facts: []
 --- !u!1 &1238666534
 GameObject:
   m_ObjectHideFlags: 0
@@ -3246,13 +3246,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 1488882812}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3787b1c5910f01a4baa54c801e40e740, type: 3}
+  m_Script: {fileID: 11500000, guid: 58915800e0ef0c14889bc8a227d53cfc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_field: {fileID: 0}
-  m_table: ui
-  m_key: sfx_volume_field
-  m_args: []
+  <String>k__BackingField:
+    m_table: ui
+    m_key: sfx_volume_field
+    m_facts: []
 --- !u!1 &1531447537
 GameObject:
   m_ObjectHideFlags: 0
@@ -3727,13 +3727,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 1781288606}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3787b1c5910f01a4baa54c801e40e740, type: 3}
+  m_Script: {fileID: 11500000, guid: 58915800e0ef0c14889bc8a227d53cfc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_field: {fileID: 0}
-  m_table: ui
-  m_key: mouse_sensetivity_field
-  m_args: []
+  <String>k__BackingField:
+    m_table: ui
+    m_key: mouse_sensetivity_field
+    m_facts: []
 --- !u!1 &1786934452
 GameObject:
   m_ObjectHideFlags: 3

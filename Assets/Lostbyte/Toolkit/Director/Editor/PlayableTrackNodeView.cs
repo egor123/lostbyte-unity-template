@@ -7,8 +7,6 @@ namespace Lostbyte.Toolkit.Director.Editor
 {
     public class PlayableTrackNodeView : CustomGraphNode<PlayableTrackGraphView, PlayableTrack, PlayableTrackNodeView, PlayableTrackNode>
     {
-        public new Port InputPort;
-        public Port OutputPort;
         public PlayableTrackNodeView(PlayableTrack asset, PlayableTrackGraphView graph, PlayableTrackNode node) : base(asset, graph, node)
         {
 

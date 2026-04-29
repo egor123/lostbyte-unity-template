@@ -8,6 +8,7 @@
     { "id": "music_volume_field" },
     { "id": "sfx_volume_field" },
     { "id": "mouse_sensetivity_field" },
-    { "id": "save_file_field" }
+    { "id": "save_file_field" },
+    { "id": "locale_filed" }
   ]
 }

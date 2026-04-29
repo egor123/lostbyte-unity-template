@@ -27,7 +27,7 @@ namespace Lostbyte.Toolkit.UI
             }
         }
 #if UNITY_EDITOR
-        private void Update() // TODO run in editmode
+        private void Update()
         {
             if (!Application.isPlaying && m_key && m_fact)
                 m_input.text = $"{m_key.name}[{m_fact.name}]";
