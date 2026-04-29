@@ -241,7 +241,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 3
+    m_Mode: -1
     m_WrapAround: 0
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 0}
@@ -307,11 +307,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 459377fada872d643b55a6e156ede589, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_disableOnPlatforms: 0
+  m_selectOnHover: 1
   m_enableHoverAnim: 1
-  m_hoverAnimType: 3
-  m_hoverAnimDuration: 0.1
-  m_hoverScale: 1.1
+  m_enableSelectedAnim: 1
+  m_animType: 3
+  m_animDuration: 0.1
+  m_animScale: 1.1
   m_onSelectClip: {fileID: 0}
   m_onDeselectClip: {fileID: 0}
   m_onChangeClip: {fileID: 0}
@@ -378,11 +379,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 459377fada872d643b55a6e156ede589, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_disableOnPlatforms: 0
+  m_selectOnHover: 1
   m_enableHoverAnim: 1
-  m_hoverAnimType: 3
-  m_hoverAnimDuration: 0.1
-  m_hoverScale: 1.1
+  m_enableSelectedAnim: 1
+  m_animType: 3
+  m_animDuration: 0.1
+  m_animScale: 1.1
   m_onSelectClip: {fileID: 0}
   m_onDeselectClip: {fileID: 0}
   m_onChangeClip: {fileID: 0}
@@ -675,11 +677,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 459377fada872d643b55a6e156ede589, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_disableOnPlatforms: 0
-  m_enableHoverAnim: 0
-  m_hoverAnimType: 3
-  m_hoverAnimDuration: 0.1
-  m_hoverScale: 1.1
+  m_selectOnHover: 1
+  m_enableHoverAnim: 1
+  m_enableSelectedAnim: 1
+  m_animType: 3
+  m_animDuration: 0.1
+  m_animScale: 1.1
   m_onSelectClip: {fileID: 0}
   m_onDeselectClip: {fileID: 0}
   m_onChangeClip: {fileID: 0}
@@ -1163,7 +1166,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 3
+    m_Mode: 0
     m_WrapAround: 0
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 0}
@@ -1273,11 +1276,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 459377fada872d643b55a6e156ede589, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_disableOnPlatforms: 0
+  m_selectOnHover: 1
   m_enableHoverAnim: 1
-  m_hoverAnimType: 1
-  m_hoverAnimDuration: 0.1
-  m_hoverScale: 1.1
+  m_enableSelectedAnim: 0
+  m_animType: 3
+  m_animDuration: 0.1
+  m_animScale: 1.1
   m_onSelectClip: {fileID: 0}
   m_onDeselectClip: {fileID: 0}
   m_onChangeClip: {fileID: 0}
@@ -2517,11 +2521,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 459377fada872d643b55a6e156ede589, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_disableOnPlatforms: 0
+  m_selectOnHover: 1
   m_enableHoverAnim: 1
-  m_hoverAnimType: 3
-  m_hoverAnimDuration: 0.1
-  m_hoverScale: 1.1
+  m_enableSelectedAnim: 0
+  m_animType: 3
+  m_animDuration: 0.1
+  m_animScale: 1.1
   m_onSelectClip: {fileID: 0}
   m_onDeselectClip: {fileID: 0}
   m_onChangeClip: {fileID: 0}
@@ -3245,6 +3250,7 @@ GameObject:
   - component: {fileID: 1129662296}
   - component: {fileID: 1129662295}
   - component: {fileID: 1129662299}
+  - component: {fileID: 1129662300}
   m_Layer: 5
   m_Name: Exit Button
   m_TagString: Untagged
@@ -3300,7 +3306,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 3
+    m_Mode: 0
     m_WrapAround: 0
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 0}
@@ -3381,15 +3387,29 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 459377fada872d643b55a6e156ede589, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_disableOnPlatforms: 2
+  m_selectOnHover: 1
   m_enableHoverAnim: 1
-  m_hoverAnimType: 3
-  m_hoverAnimDuration: 0.1
-  m_hoverScale: 1.1
+  m_enableSelectedAnim: 0
+  m_animType: 3
+  m_animDuration: 0.1
+  m_animScale: 1.1
   m_onSelectClip: {fileID: 0}
   m_onDeselectClip: {fileID: 0}
   m_onChangeClip: {fileID: 0}
   m_onSubmitClip: {fileID: 11400000, guid: cb5798dbb51bb9b4a988071949515111, type: 2}
+--- !u!114 &1129662300
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1129662293}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0a3e34ca66f9566489ad1597db61815c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_disableOnPlatforms: 2
 --- !u!1 &1209050673
 GameObject:
   m_ObjectHideFlags: 0
@@ -3560,11 +3580,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 459377fada872d643b55a6e156ede589, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_disableOnPlatforms: 0
+  m_selectOnHover: 1
   m_enableHoverAnim: 1
-  m_hoverAnimType: 3
-  m_hoverAnimDuration: 0.1
-  m_hoverScale: 1.1
+  m_enableSelectedAnim: 1
+  m_animType: 3
+  m_animDuration: 0.1
+  m_animScale: 1.1
   m_onSelectClip: {fileID: 0}
   m_onDeselectClip: {fileID: 0}
   m_onChangeClip: {fileID: 0}
@@ -5664,11 +5685,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 459377fada872d643b55a6e156ede589, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_disableOnPlatforms: 0
+  m_selectOnHover: 1
   m_enableHoverAnim: 1
-  m_hoverAnimType: 3
-  m_hoverAnimDuration: 0.1
-  m_hoverScale: 1.1
+  m_enableSelectedAnim: 1
+  m_animType: 3
+  m_animDuration: 0.1
+  m_animScale: 1.1
   m_onSelectClip: {fileID: 0}
   m_onDeselectClip: {fileID: 0}
   m_onChangeClip: {fileID: 0}
@@ -5833,6 +5855,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2113449131}
   - component: {fileID: 2113449134}
+  - component: {fileID: 2113449135}
   m_Layer: 5
   m_Name: Panel
   m_TagString: Untagged
@@ -5894,6 +5917,21 @@ MonoBehaviour:
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
+--- !u!114 &2113449135
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2113449130}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9942a13ba50c9a242bf24c9c42969524, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_selectFirst: {fileID: 327176765}
+  m_overrideNavigation: 1
+  m_loop: 1
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

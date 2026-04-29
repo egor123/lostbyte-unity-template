@@ -8,13 +8,15 @@ namespace Lostbyte.Toolkit.UI.Editor
     [UnityEditor.CustomEditor(typeof(UIElement))]
     public class UIElementEditor : UnityEditor.Editor
     {
-        // Constraints Properties
-        private SerializedProperty m_disableOnPlatforms;
+
         // Hover Properties
+        private SerializedProperty m_selectOnHover;
         private SerializedProperty m_enableHoverAnim;
-        private SerializedProperty m_hoverAnimType;
-        private SerializedProperty m_hoverAnimDuration;
-        private SerializedProperty m_hoverScale;
+        private SerializedProperty m_enableSelectedAnim;
+
+        private SerializedProperty m_animType;
+        private SerializedProperty m_animDuration;
+        private SerializedProperty m_animScale;
         // Audio Properties
         private SerializedProperty m_onSelectClip;
         private SerializedProperty m_onDeselectClip;
@@ -23,12 +25,13 @@ namespace Lostbyte.Toolkit.UI.Editor
 
         private void OnEnable()
         {
-            m_disableOnPlatforms = serializedObject.FindProperty("m_disableOnPlatforms");
-
+            m_selectOnHover = serializedObject.FindProperty("m_selectOnHover");
             m_enableHoverAnim = serializedObject.FindProperty("m_enableHoverAnim");
-            m_hoverAnimType = serializedObject.FindProperty("m_hoverAnimType");
-            m_hoverAnimDuration = serializedObject.FindProperty("m_hoverAnimDuration");
-            m_hoverScale = serializedObject.FindProperty("m_hoverScale");
+            m_enableSelectedAnim = serializedObject.FindProperty("m_enableSelectedAnim");
+
+            m_animType = serializedObject.FindProperty("m_animType");
+            m_animDuration = serializedObject.FindProperty("m_animDuration");
+            m_animScale = serializedObject.FindProperty("m_animScale");
 
             m_onSelectClip = serializedObject.FindProperty("m_onSelectClip");
             m_onDeselectClip = serializedObject.FindProperty("m_onDeselectClip");
@@ -45,18 +48,18 @@ namespace Lostbyte.Toolkit.UI.Editor
             bool hasSlider = uiElement.GetComponent<Slider>() != null;
             bool hasButton = uiElement.GetComponent<Button>() != null;
 
-            EditorGUILayout.LabelField("Constraints Settings", EditorStyles.boldLabel);
-            EditorGUILayout.PropertyField(m_disableOnPlatforms);
+            EditorGUILayout.PropertyField(m_selectOnHover);
 
-            EditorGUILayout.LabelField("Hover Settings", EditorStyles.boldLabel);
+            EditorGUILayout.LabelField("Tween Settings", EditorStyles.boldLabel);
             EditorGUILayout.PropertyField(m_enableHoverAnim);
+            EditorGUILayout.PropertyField(m_enableSelectedAnim);
 
-            if (m_enableHoverAnim.boolValue)
+            if (m_enableHoverAnim.boolValue || m_enableSelectedAnim.boolValue)
             {
                 EditorGUI.indentLevel++;
-                EditorGUILayout.PropertyField(m_hoverAnimType);
-                EditorGUILayout.PropertyField(m_hoverAnimDuration);
-                EditorGUILayout.PropertyField(m_hoverScale);
+                EditorGUILayout.PropertyField(m_animType);
+                EditorGUILayout.PropertyField(m_animDuration);
+                EditorGUILayout.PropertyField(m_animScale);
                 EditorGUI.indentLevel--;
             }
 

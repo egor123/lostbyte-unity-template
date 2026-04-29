@@ -20,6 +20,19 @@ namespace Lostbyte.Toolkit.Scenes
             _loadedNodes[_rootNode.SceneInstance] = _rootNode;
         }
 
+
+#if UNITY_EDITOR
+        private void Start()
+        {
+            for (int i = 0; i < UnityEngine.SceneManagement.SceneManager.sceneCount; i++)
+            {
+                Scene scene = UnityEngine.SceneManagement.SceneManager.GetSceneAt(i);
+                if (!_loadedNodes.ContainsKey(scene))
+                    UnityEngine.SceneManagement.SceneManager.UnloadSceneAsync(scene);
+            }
+        }
+#endif
+
         public Scene? LoadScene(SceneReference scene, Scene? parent = null)
         {
             if (!scene.IsValid)
@@ -91,7 +104,6 @@ namespace Lostbyte.Toolkit.Scenes
             }
             else
                 Debug.LogWarning($"Scene '{scene.name}' is not loaded!");
-
         }
 
         private void UnloadNode(SceneNode node, List<AsyncOperation> ops = null)

@@ -30,26 +30,29 @@ namespace Lostbyte.Toolkit.Scenes
         private bool _isTransitioning = false;
         private Enum _currentScene;
 
-        private void Start()
-        {
 #if UNITY_EDITOR
+        private void Awake()
+        {
             for (int i = 0; i < UnityEngine.SceneManagement.SceneManager.sceneCount; i++)
             {
                 Scene activeScene = UnityEngine.SceneManagement.SceneManager.GetSceneAt(i);
 
                 foreach (var sceneData in m_scenes)
                 {
-                    if (sceneData.Scene.ScenePath == activeScene.path)
+                    if (sceneData.Scene.ScenePath == activeScene.path && activeScene.isLoaded)
                     {
                         SceneManager.Instance.RegisterChildScene(gameObject.scene, activeScene);
                         _loaded_scenes.Add(activeScene);
                         m_fact.Value = sceneData.Condition;
                         _currentScene = sceneData.Condition;
-                        break;
+                        return;
                     }
                 }
             }
+        }
 #endif
+        private void Start()
+        {
             if (m_fact.Fact != null)
             {
                 ManageSceneChange(m_fact.Value);

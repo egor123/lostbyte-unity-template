@@ -166,7 +166,7 @@ namespace Lostbyte.Toolkit.FactSystem.Editor
             else if (type == typeof(Enum) && fact is EnumFactDefinition eFact)
             {
                 if (eFact.EnumType == null) return null;
-                return Enum.GetValues(eFact.EnumType).GetValue(EditorGUI.Popup(position, label, (int)value, Enum.GetNames(eFact.EnumType)));
+                return Enum.GetValues(eFact.EnumType).GetValue(EditorGUI.Popup(position, label, Convert.ToInt32(value), Enum.GetNames(eFact.EnumType)));
             }
             else
                 EditorGUILayout.HelpBox($"Unsupported type: {type.Name}", MessageType.None);

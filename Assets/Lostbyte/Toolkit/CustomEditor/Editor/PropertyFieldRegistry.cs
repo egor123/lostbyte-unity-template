@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -49,7 +50,6 @@ namespace Lostbyte.Toolkit.CustomEditor.Editor
             _initialized = true;
 
             var assemblies = AppDomain.CurrentDomain.GetAssemblies();
-
             var types = assemblies
                 .SelectMany(a =>
                 {

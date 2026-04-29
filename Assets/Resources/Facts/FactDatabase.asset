@@ -16,13 +16,17 @@ MonoBehaviour:
   <IsSerializable>k__BackingField: 1
   <Description>k__BackingField: 
   <DefaultValue>k__BackingField:
-    rid: -2
-  <Values>k__BackingField: []
+    rid: 6512821456983818251
+  <Values>k__BackingField:
+  - en-US
+  - ru-RU
   references:
     version: 2
     RefIds:
-    - rid: -2
-      type: {class: , ns: , asm: }
+    - rid: 6512821456983818251
+      type: {class: Enums/Locale, ns: GameFacts, asm: Assembly-CSharp}
+      data:
+        value__: 0
 --- !u!114 &-3055759980319532786
 MonoBehaviour:
   m_ObjectHideFlags: 0
