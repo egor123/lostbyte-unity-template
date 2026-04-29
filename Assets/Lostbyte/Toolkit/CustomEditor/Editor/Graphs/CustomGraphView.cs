@@ -69,9 +69,7 @@ namespace Lostbyte.Toolkit.CustomEditor.Editor.Graphs
         {
             if (_nodeTypes != null) return _nodeTypes;
 
-
-            var views = UniqeReferenceAttribute
-                .GetSubClasses(typeof(TNodeView))
+            var views = TypeCache.GetTypesDerivedFrom<TNodeView>()
                 .Where(t => t.GetCustomAttribute<NodeTypeAttribute>() != null)
                 .ToDictionary(t => t.GetCustomAttribute<NodeTypeAttribute>().Type, t => new NodeInfo()
                 {
@@ -80,8 +78,7 @@ namespace Lostbyte.Toolkit.CustomEditor.Editor.Graphs
                     ViewType = t
                 });
 
-            var models = UniqeReferenceAttribute
-                .GetSubClasses(typeof(TNodeBase))
+            var models = TypeCache.GetTypesDerivedFrom<TNodeBase>()
                 .Where(t => t.GetCustomAttribute<CustomGraphNodeAttribute>() != null)
                 .Where(t => !views.ContainsKey(t))
                 .ToDictionary(t => t, t => new NodeInfo()

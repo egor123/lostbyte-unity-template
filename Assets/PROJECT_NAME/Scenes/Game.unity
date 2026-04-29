@@ -2192,11 +2192,11 @@ MonoBehaviour:
   m_key: {fileID: 4283477907835028808, guid: 6c08054baf9457644b18f9b93ea7fec1, type: 2}
   m_fact: {fileID: 4525860068350932383, guid: 6c08054baf9457644b18f9b93ea7fec1, type: 2}
   m_value:
-    rid: 6512821297094590478
+    rid: 6512821456983818262
   references:
     version: 2
     RefIds:
-    - rid: 6512821297094590478
+    - rid: 6512821456983818262
       type: {class: BoolValueHolder, ns: Lostbyte.Toolkit.FactSystem, asm: Lostbyte.Toolkit.FactSystem}
       data:
         <Value>k__BackingField: 0

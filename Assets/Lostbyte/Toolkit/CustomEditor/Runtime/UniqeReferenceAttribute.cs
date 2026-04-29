@@ -17,27 +17,9 @@ namespace Lostbyte.Toolkit.CustomEditor
         public UniqeReferenceAttribute() { }
 
 #if UNITY_EDITOR
-        // private int _selectedItem = 0;
         private static int _domainId = -1;
         public static Dictionary<Type, Type[]> _typeDictionary = new();
-        public static Type[] GetSubClasses(Type type)
-        {
-            if (_domainId != AppDomain.CurrentDomain.Id)
-            {
-                _domainId = AppDomain.CurrentDomain.Id;
-                _typeDictionary = new Dictionary<Type, Type[]>();
-            }
-            if (!_typeDictionary.TryGetValue(type, out var types))
-            {
-                types = AppDomain.CurrentDomain.GetAssemblies()
-                    .SelectMany(a => a.GetTypes())
-                    .Where(t => type.IsAssignableFrom(t) && !t.IsAbstract && !t.IsInterface || t.BaseType != null && t.BaseType.IsGenericType && t.BaseType.GetGenericTypeDefinition() == type) //FIXME? IsSubclassOf or IsAssignableFrom
-                    .Where(t => !t.ContainsGenericParameters)
-                    .ToArray();
-                _typeDictionary.Add(type, types);
-            }
-            return types;
-        }
+
 
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
@@ -59,7 +41,7 @@ namespace Lostbyte.Toolkit.CustomEditor
                 SerializationUtility.ClearAllManagedReferencesWithMissingTypes(property.serializedObject.targetObject);
 
             var value = property.managedReferenceValue;
-            var subClasses = GetSubClasses(type);
+            var subClasses = TypeCache.GetTypesDerivedFrom(type);
             var list = subClasses.Where((t) => condition == null || condition.Invoke(t)).Select(GetName).ToList();
             list.Insert(0, "Null");
 

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Lostbyte.Toolkit.Common;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -49,32 +50,15 @@ namespace Lostbyte.Toolkit.CustomEditor.Editor
             if (_initialized) return;
             _initialized = true;
 
-            var assemblies = AppDomain.CurrentDomain.GetAssemblies();
-            var types = assemblies
-                .SelectMany(a =>
+            TypeCache.GetTypesWithAttribute<CustomFieldAttribute>()
+                .Where(t => typeof(VisualElement).IsAssignableFrom(t) && !t.IsAbstract && !t.IsInterface)
+                .ForEach(t =>
                 {
-                    try { return a.GetTypes(); }
-                    catch { return Array.Empty<Type>(); }
-                })
-                .Where(t =>
-                    typeof(VisualElement).IsAssignableFrom(t) &&
-                    !t.IsAbstract &&
-                    !t.IsInterface);
-
-            foreach (var type in types)
-            {
-                var attr = type.GetCustomAttribute<CustomFieldAttribute>();
-                if (attr == null) continue;
-
-                var ctor = type.GetConstructor(new[] { typeof(string) });
-                if (ctor == null)
-                {
-                    Debug.LogWarning($"{type.Name} missing (string label) constructor");
-                    continue;
-                }
-
-                Register(attr.TargetType, (fieldType, label) => (BindableElement)Activator.CreateInstance(type, label));
-            }
+                    var attr = t.GetCustomAttribute<CustomFieldAttribute>();
+                    var ctor = t.GetConstructor(new[] { typeof(string) });
+                    if (ctor == null) Debug.LogWarning($"{t.Name} missing (string label) constructor");
+                    else Register(attr.TargetType, (fieldType, label) => (BindableElement)Activator.CreateInstance(t, label));
+                });
         }
     }
 }

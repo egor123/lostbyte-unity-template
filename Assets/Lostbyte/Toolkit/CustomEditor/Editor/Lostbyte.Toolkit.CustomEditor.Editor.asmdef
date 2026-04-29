@@ -2,7 +2,8 @@
     "name": "Lostbyte.Toolkit.CustomEditor.Editor",
     "rootNamespace": "Lostbyte.Toolkit.CustomEditor.Editor",
     "references": [
-        "GUID:1a65cc50772d20b418ad5c0e90b6b12f"
+        "GUID:1a65cc50772d20b418ad5c0e90b6b12f",
+        "GUID:2d545df2e96ffdd4e98ad0aff1e004fb"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

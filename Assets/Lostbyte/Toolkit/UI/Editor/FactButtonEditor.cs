@@ -50,7 +50,7 @@ namespace Lostbyte.Toolkit.UI.Editor
             }
             var currentObject = m_valueProp.managedReferenceValue;
 
-            Type validType = UniqeReferenceAttribute.GetSubClasses(typeof(IValueHolder))
+            Type validType = TypeCache.GetTypesDerivedFrom<IValueHolder>()
                 .FirstOrDefault(t => MatchesType(t, expectedType));
 
 
