@@ -313,8 +313,8 @@ MonoBehaviour:
   m_animType: 3
   m_animDuration: 0.1
   m_animScale: 1.1
-  m_onSelectClip: {fileID: 0}
-  m_onDeselectClip: {fileID: 0}
+  m_onSelectClip: {fileID: 11400000, guid: cb5798dbb51bb9b4a988071949515111, type: 2}
+  m_onClickClip: {fileID: 11400000, guid: cb5798dbb51bb9b4a988071949515111, type: 2}
   m_onChangeClip: {fileID: 0}
   m_onSubmitClip: {fileID: 0}
 --- !u!222 &45200949
@@ -385,8 +385,8 @@ MonoBehaviour:
   m_animType: 3
   m_animDuration: 0.1
   m_animScale: 1.1
-  m_onSelectClip: {fileID: 0}
-  m_onDeselectClip: {fileID: 0}
+  m_onSelectClip: {fileID: 11400000, guid: cb5798dbb51bb9b4a988071949515111, type: 2}
+  m_onClickClip: {fileID: 11400000, guid: cb5798dbb51bb9b4a988071949515111, type: 2}
   m_onChangeClip: {fileID: 0}
   m_onSubmitClip: {fileID: 0}
 --- !u!222 &64239915
@@ -683,8 +683,8 @@ MonoBehaviour:
   m_animType: 3
   m_animDuration: 0.1
   m_animScale: 1.1
-  m_onSelectClip: {fileID: 0}
-  m_onDeselectClip: {fileID: 0}
+  m_onSelectClip: {fileID: 11400000, guid: cb5798dbb51bb9b4a988071949515111, type: 2}
+  m_onClickClip: {fileID: 11400000, guid: cb5798dbb51bb9b4a988071949515111, type: 2}
   m_onChangeClip: {fileID: 0}
   m_onSubmitClip: {fileID: 0}
 --- !u!114 &136665752
@@ -700,8 +700,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_dropdown: {fileID: 136665748}
-  m_key: {fileID: 6628457045445381566, guid: 6c08054baf9457644b18f9b93ea7fec1, type: 2}
-  m_fact: {fileID: -4404997938984261563, guid: 6c08054baf9457644b18f9b93ea7fec1, type: 2}
+  m_fact:
+    <Key>k__BackingField: {fileID: 6628457045445381566, guid: 6c08054baf9457644b18f9b93ea7fec1, type: 2}
+    <Fact>k__BackingField: {fileID: -4404997938984261563, guid: 6c08054baf9457644b18f9b93ea7fec1, type: 2}
   m_localized: 1
   m_table: locales
 --- !u!1 &150857109
@@ -1278,12 +1279,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_selectOnHover: 1
   m_enableHoverAnim: 1
-  m_enableSelectedAnim: 0
+  m_enableSelectedAnim: 1
   m_animType: 3
   m_animDuration: 0.1
   m_animScale: 1.1
-  m_onSelectClip: {fileID: 0}
-  m_onDeselectClip: {fileID: 0}
+  m_onSelectClip: {fileID: 11400000, guid: cb5798dbb51bb9b4a988071949515111, type: 2}
+  m_onClickClip: {fileID: 11400000, guid: cb5798dbb51bb9b4a988071949515111, type: 2}
   m_onChangeClip: {fileID: 0}
   m_onSubmitClip: {fileID: 11400000, guid: cb5798dbb51bb9b4a988071949515111, type: 2}
 --- !u!1 &336482026
@@ -2527,10 +2528,10 @@ MonoBehaviour:
   m_animType: 3
   m_animDuration: 0.1
   m_animScale: 1.1
-  m_onSelectClip: {fileID: 0}
-  m_onDeselectClip: {fileID: 0}
-  m_onChangeClip: {fileID: 0}
-  m_onSubmitClip: {fileID: 0}
+  m_onSelectClip: {fileID: 11400000, guid: cb5798dbb51bb9b4a988071949515111, type: 2}
+  m_onClickClip: {fileID: 11400000, guid: cb5798dbb51bb9b4a988071949515111, type: 2}
+  m_onChangeClip: {fileID: 11400000, guid: cb5798dbb51bb9b4a988071949515111, type: 2}
+  m_onSubmitClip: {fileID: 11400000, guid: cb5798dbb51bb9b4a988071949515111, type: 2}
 --- !u!114 &945881966
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3389,12 +3390,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_selectOnHover: 1
   m_enableHoverAnim: 1
-  m_enableSelectedAnim: 0
+  m_enableSelectedAnim: 1
   m_animType: 3
   m_animDuration: 0.1
   m_animScale: 1.1
-  m_onSelectClip: {fileID: 0}
-  m_onDeselectClip: {fileID: 0}
+  m_onSelectClip: {fileID: 11400000, guid: cb5798dbb51bb9b4a988071949515111, type: 2}
+  m_onClickClip: {fileID: 11400000, guid: cb5798dbb51bb9b4a988071949515111, type: 2}
   m_onChangeClip: {fileID: 0}
   m_onSubmitClip: {fileID: 11400000, guid: cb5798dbb51bb9b4a988071949515111, type: 2}
 --- !u!114 &1129662300
@@ -3586,8 +3587,8 @@ MonoBehaviour:
   m_animType: 3
   m_animDuration: 0.1
   m_animScale: 1.1
-  m_onSelectClip: {fileID: 0}
-  m_onDeselectClip: {fileID: 0}
+  m_onSelectClip: {fileID: 11400000, guid: cb5798dbb51bb9b4a988071949515111, type: 2}
+  m_onClickClip: {fileID: 11400000, guid: cb5798dbb51bb9b4a988071949515111, type: 2}
   m_onChangeClip: {fileID: 0}
   m_onSubmitClip: {fileID: 0}
 --- !u!222 &1265739077
@@ -5691,8 +5692,8 @@ MonoBehaviour:
   m_animType: 3
   m_animDuration: 0.1
   m_animScale: 1.1
-  m_onSelectClip: {fileID: 0}
-  m_onDeselectClip: {fileID: 0}
+  m_onSelectClip: {fileID: 11400000, guid: cb5798dbb51bb9b4a988071949515111, type: 2}
+  m_onClickClip: {fileID: 11400000, guid: cb5798dbb51bb9b4a988071949515111, type: 2}
   m_onChangeClip: {fileID: 0}
   m_onSubmitClip: {fileID: 0}
 --- !u!222 &2018175656
@@ -5856,6 +5857,8 @@ GameObject:
   - component: {fileID: 2113449131}
   - component: {fileID: 2113449134}
   - component: {fileID: 2113449135}
+  - component: {fileID: 2113449137}
+  - component: {fileID: 2113449136}
   m_Layer: 5
   m_Name: Panel
   m_TagString: Untagged
@@ -5932,6 +5935,44 @@ MonoBehaviour:
   m_selectFirst: {fileID: 327176765}
   m_overrideNavigation: 1
   m_loop: 1
+--- !u!114 &2113449136
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2113449130}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 0.33962262, g: 0.33962262, b: 0.33962262, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 0}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &2113449137
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2113449130}
+  m_CullTransparentMesh: 1
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

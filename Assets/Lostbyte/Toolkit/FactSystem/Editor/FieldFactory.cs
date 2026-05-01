@@ -1,4 +1,5 @@
 using System;
+using Lostbyte.Toolkit.Common;
 using UnityEditor;
 using UnityEditor.UIElements;
 using UnityEngine;
@@ -64,7 +65,7 @@ namespace Lostbyte.Toolkit.FactSystem.Editor
                 if (OnChange != null) field.RegisterValueChangedCallback(evt => OnChange(evt.newValue));
                 return field;
             }
-            Debug.LogWarning($"Unsupported field type: {type}");
+            DebugLogger.LogWarning($"Unsupported field type: {type}");
             return new TextField("Unsupported");
         }
 
@@ -88,7 +89,7 @@ namespace Lostbyte.Toolkit.FactSystem.Editor
                 return typeof(ColorFactDefinition);
             if (argType == typeof(Enum))
                 return typeof(EnumFactDefinition);
-            Debug.LogWarning($"Unsupported arg type: {argType}");
+            DebugLogger.LogWarning($"Unsupported arg type: {argType}");
             return null;
         }
         public static object FactValueField(string label, object value, Type type)

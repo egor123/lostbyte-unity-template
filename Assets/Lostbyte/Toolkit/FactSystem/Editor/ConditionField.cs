@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UIElements;
 using Lostbyte.Toolkit.FactSystem.Nodes;
 using Lostbyte.Toolkit.CustomEditor.Editor;
+using Lostbyte.Toolkit.Common;
 
 namespace Lostbyte.Toolkit.FactSystem.Editor
 {
@@ -114,7 +115,7 @@ namespace Lostbyte.Toolkit.FactSystem.Editor
             var conditionProp = property.FindPropertyRelative("m_rootNode");
             if (conditionProp == null)
             {
-                Debug.LogWarning("Could not bind ConditionField: m_rootNode not found.");
+                DebugLogger.LogWarning("Could not bind ConditionField: m_rootNode not found.");
                 return;
             }
 

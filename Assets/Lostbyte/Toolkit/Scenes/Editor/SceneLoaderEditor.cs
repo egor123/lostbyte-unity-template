@@ -41,13 +41,19 @@ namespace Lostbyte.Toolkit.Editor
                 SerializedProperty conditionProp = element.FindPropertyRelative("Condition");
                 SerializedProperty sceneProp = element.FindPropertyRelative("Scene");
 
-                EditorGUILayout.BeginVertical(GUI.skin.box);
+                EditorGUILayout.BeginHorizontal(GUI.skin.box);
 
+                // Remove button
+                if (GUILayout.Button("X"))
+                {
+                    m_scenesProp.DeleteArrayElementAtIndex(i);
+                    break;
+                }
                 // --- Custom Enum Field ---
                 if (currentEnumType != null && currentEnumType.IsEnum)
                 {
                     Enum currentValue = GetEnumValue(conditionProp, currentEnumType);
-                    Enum newValue = EditorGUILayout.EnumPopup("Condition", currentValue);
+                    Enum newValue = EditorGUILayout.EnumPopup("Scene", currentValue);
 
                     if (!Equals(currentValue, newValue))
                     {
@@ -60,16 +66,11 @@ namespace Lostbyte.Toolkit.Editor
                 }
 
                 // --- Default Scene field ---
-                EditorGUILayout.PropertyField(sceneProp);
+                EditorGUILayout.PropertyField(sceneProp, GUIContent.none);
 
-                // Remove button
-                if (GUILayout.Button("Remove"))
-                {
-                    m_scenesProp.DeleteArrayElementAtIndex(i);
-                    break;
-                }
 
-                EditorGUILayout.EndVertical();
+
+                EditorGUILayout.EndHorizontal();
             }
 
             if (GUILayout.Button("Add Scene"))

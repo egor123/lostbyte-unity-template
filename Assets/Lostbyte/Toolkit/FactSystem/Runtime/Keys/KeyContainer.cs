@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Lostbyte.Toolkit.Common;
 using Lostbyte.Toolkit.CustomEditor;
 using Lostbyte.Toolkit.FactSystem.Persistance;
 using UnityEngine;
@@ -264,7 +265,7 @@ namespace Lostbyte.Toolkit.FactSystem
                 }
                 return wrapper;
             }
-            Debug.LogError("Unknown defenition!");
+            DebugLogger.LogError("Unknown defenition!");
             return null;
         }
         public KeyContainer RequestTempKey(string name, List<FactValueOverride> overrides = null)
@@ -272,7 +273,7 @@ namespace Lostbyte.Toolkit.FactSystem
 #if UNITY_EDITOR
             if (!Application.isPlaying)
             {
-                Debug.LogError("Requesting temp key is only allowed at runtime!");
+                DebugLogger.LogError("Requesting temp key is only allowed at runtime!");
                 return null;
             }
 #endif

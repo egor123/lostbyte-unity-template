@@ -14,25 +14,23 @@ namespace Lostbyte.Toolkit.UI
     public class EnumDropdown : MonoBehaviour
     {
         [SerializeField, Autowired(isForced: true), Hide] private TMP_Dropdown m_dropdown;
-        [SerializeField, EditModeOnly] private KeyContainer m_key;
-        [SerializeField, EditModeOnly] private EnumFactDefinition m_fact;
+        [SerializeField] private FactWrapper<Enum> m_fact;
         [SerializeField, EditModeOnly] private bool m_localized;
         [SerializeField, EditModeOnly, ShowIf(nameof(m_localized))] private string m_table;
 
         private readonly SubscriptionGroup _subscriptions = new();
-        private IFactWrapper<Enum> _wrapper;
 
         private void OnEnable()
         {
             if (Application.isPlaying)
             {
-                _wrapper = m_key.GetWrapper(m_fact);
+                Type enumType = (m_fact.Fact as EnumFactDefinition).EnumType;
                 if (m_localized)
                 {
                     _subscriptions.SubscribeLocalizationChange((_) =>
                     {
                         m_dropdown.options.Clear();
-                        Array enumValues = m_fact.EnumType.GetEnumValues();
+                        Array enumValues = enumType.GetEnumValues();
                         for (int i = 0; i < enumValues.Length; i++)
                         {
                             object enumValue = enumValues.GetValue(i);
@@ -45,23 +43,23 @@ namespace Lostbyte.Toolkit.UI
                 else
                 {
                     m_dropdown.options.Clear();
-                    foreach (var enumValue in m_fact.EnumType.GetEnumValues())
+                    foreach (var enumValue in enumType.GetEnumValues())
                     {
                         m_dropdown.options.Add(new(enumValue.ToString()));
                     }
                 }
-                _subscriptions.Subscribe(_wrapper, OnFactChange, invokeImidiate: true);
+                _subscriptions.Subscribe(m_fact, OnFactChange, invokeImidiate: true);
                 _subscriptions.Subscribe(m_dropdown.onValueChanged, OnInputChange);
             }
         }
 #if UNITY_EDITOR
         private void Update()
         {
-            if (!Application.isPlaying && m_key && m_fact)
+            if (!Application.isPlaying && m_fact.Key && m_fact.Fact)
             {
                 m_dropdown.options.Clear();
-                if (m_localized) m_dropdown.options.Add(new($"{m_table}/{m_key.name}[{m_fact.name}]"));
-                else m_dropdown.options.Add(new($"{m_key.name}[{m_fact.name}]"));
+                if (m_localized) m_dropdown.options.Add(new($"{m_table}/{m_fact.Key.name}[{m_fact.Fact.name}]"));
+                else m_dropdown.options.Add(new($"{m_fact.Key.name}[{m_fact.Fact.name}]"));
                 m_dropdown.RefreshShownValue();
             }
         }
@@ -83,8 +81,9 @@ namespace Lostbyte.Toolkit.UI
         }
         private void OnInputChange(int value)
         {
-            if (_wrapper == null || m_fact.EnumType == null) return;
-            _wrapper.RawValue = Enum.ToObject(m_fact.EnumType, value);
+            if (m_fact.Key == null || m_fact.Fact == null) return;
+            Type enumType = (m_fact.Fact as EnumFactDefinition).EnumType;
+            m_fact.RawValue = Enum.ToObject(enumType, value);
         }
 
     }

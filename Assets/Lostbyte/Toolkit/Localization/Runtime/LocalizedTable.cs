@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Lostbyte.Toolkit.Common;
 using UnityEngine;
 
 namespace Lostbyte.Toolkit.Localization
@@ -21,7 +22,7 @@ namespace Lostbyte.Toolkit.Localization
             if (!_stringStorage.TryGetValue(key, out var str))
             {
                 if (m_fallback) return m_fallback.GetString(key, args);
-                Debug.LogError($"Localization for {key} in {name} is missing and fallback is not provided!");
+                DebugLogger.LogError($"Localization for {key} in {name} is missing and fallback is not provided!");
                 return "null";
             }
             if (args == null || args.Length == 0)

@@ -5,7 +5,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Lostbyte.Toolkit.Common;
 using Lostbyte.Toolkit.FactSystem;
-using Lostbyte.Toolkit.Management;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -70,7 +69,7 @@ namespace Lostbyte.Toolkit.Scenes
         private IEnumerator TransitionRoutine(Enum e)
         {
             _isTransitioning = true;
-            Debug.Log($"Loading: {e}");
+            DebugLogger.ManagerLog($"Loading: {e}");
 
             if (m_loadingScreen != null)
             {
@@ -85,7 +84,7 @@ namespace Lostbyte.Toolkit.Scenes
                 yield return new WaitUntil(() => loadingTask.IsCompleted);
                 if (loadingTask.IsFaulted)
                 {
-                    Debug.LogError($"Scene loading failed: {loadingTask.Exception}");
+                    DebugLogger.ManagerLogError($"Scene loading failed: {loadingTask.Exception}");
                     break;
                 }
                 // TODO await sub scene loading

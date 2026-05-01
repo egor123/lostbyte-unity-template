@@ -12,8 +12,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5b7e347406f6d141b47d5355689c765, type: 3}
   m_Name: ClickClip
   m_EditorClassIdentifier: 
-  <Clips>k__BackingField: []
-  <Volume>k__BackingField: 0.6
-  <VolumeRandomisation>k__BackingField: 0.1
-  <Pitch>k__BackingField: 1
-  <PitchRandomisation>k__BackingField: 0.1
+  <Clips>k__BackingField:
+  - {fileID: 8300000, guid: d267264bba550264ea43044cacfb9c62, type: 3}
+  - {fileID: 8300000, guid: aebae0e89d575dc43ae340319487ef87, type: 3}
+  <MinVolume>k__BackingField: 0.75
+  <MaxVolume>k__BackingField: 0.87
+  <MinPitch>k__BackingField: 0.92
+  <MaxPitch>k__BackingField: 1.28
+  <StereoPan>k__BackingField: 0
+  <SpatialBlend>k__BackingField: 0
+  <ReverbZoneMix>k__BackingField: 0
+  <DopplerLevel>k__BackingField: 1
+  <Spread>k__BackingField: 0
+  <RolloffMode>k__BackingField: 0
+  <MinDistance>k__BackingField: 1
+  <MaxDistance>k__BackingField: 500

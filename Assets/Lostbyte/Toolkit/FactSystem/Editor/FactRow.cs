@@ -1,4 +1,5 @@
 using System;
+using Lostbyte.Toolkit.Common;
 using UnityEditor;
 using UnityEditor.UIElements;
 using UnityEngine;
@@ -232,7 +233,7 @@ namespace Lostbyte.Toolkit.FactSystem.Editor
                                 Key.ValueOverrides.Add(new FactValueOverride() { Fact = Fact, Wrapper = new EnumValueHolder() { RawValue = ((Enum)Fact.DefaultValueRaw) ?? (Fact as EnumFactDefinition).DefaultEnumValue } });
                             else
                             {
-                                Debug.LogWarning("Unknown type!");
+                                DebugLogger.LogWarning("Unknown type!");
                                 EditorUtility.SetDirty(Key);
                                 BindDirectly();
                                 return;

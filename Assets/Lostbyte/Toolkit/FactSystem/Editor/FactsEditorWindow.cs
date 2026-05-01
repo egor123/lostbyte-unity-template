@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Lostbyte.Toolkit.Common;
 using UnityEditor;
 using UnityEditor.UIElements;
 using UnityEngine;
@@ -50,14 +51,14 @@ namespace Lostbyte.Toolkit.FactSystem.Editor
                         FactEditorUtils.ShowAddNewEventPopup(null, "", true, _lastMousePosition);
                         break;
                     default:
-                        Debug.LogWarning("Unkown view");
+                        DebugLogger.LogWarning("Unkown view");
                         break;
                 }
             };
             Button compileBtn = root.Q<Button>("compile-btn");
             compileBtn.clicked += () =>
             {
-                if (Application.isPlaying) Debug.LogWarning("Cannot compile when playing!");
+                if (Application.isPlaying) DebugLogger.LogWarning("Cannot compile when playing!");
                 else FactCodeGenerator.Generate(FactEditorUtils.Database);
             };
             ToolbarSearchField searchBar = root.Q<ToolbarSearchField>("search-bar");
@@ -153,7 +154,7 @@ namespace Lostbyte.Toolkit.FactSystem.Editor
                     FilterEventView(FactEditorUtils.Database, _filter, ref id).ForEach(treeItems.Add);
                     break;
                 default:
-                    Debug.LogWarning("Unknown view");
+                    DebugLogger.LogWarning("Unknown view");
                     break;
             }
 

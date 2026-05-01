@@ -16,7 +16,7 @@ namespace Lostbyte.Toolkit.Common
             }
             catch (Exception e)
             {
-                Debug.LogException(e);
+                DebugLogger.LogException(e);
             }
         }
         public static async void Then(this Task task, Action callback)
@@ -28,7 +28,7 @@ namespace Lostbyte.Toolkit.Common
             }
             catch (Exception e)
             {
-                Debug.LogException(e);
+                DebugLogger.LogException(e);
             }
         }
         public static async void Then<T>(this Task<T> task, Action<T> callback)
@@ -39,7 +39,7 @@ namespace Lostbyte.Toolkit.Common
             }
             catch (Exception e)
             {
-                Debug.LogException(e);
+                DebugLogger.LogException(e);
             }
         }
     }

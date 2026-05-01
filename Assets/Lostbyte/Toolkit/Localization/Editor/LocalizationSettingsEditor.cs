@@ -115,7 +115,7 @@ namespace Lostbyte.Toolkit.Localization.Editor
             if (!Directory.Exists(path))
             {
                 Directory.CreateDirectory(path);
-                Debug.Log($"Created {name} folder at: {path}");
+                DebugLogger.ManagerLog($"Created {name} folder at: {path}");
                 AssetDatabase.Refresh();
             }
             return path;
@@ -149,14 +149,14 @@ namespace Lostbyte.Toolkit.Localization.Editor
 
             if (string.IsNullOrEmpty(assetPath))
             {
-                Debug.LogWarning("Asset path is null or empty.");
+                DebugLogger.ManagerLogWarning("Asset path is null or empty.");
                 return;
             }
 
             var rootFolder = Path.GetDirectoryName(assetPath);
             if (string.IsNullOrEmpty(rootFolder) || !Directory.Exists(rootFolder))
             {
-                Debug.LogWarning("Folder does not exist: " + rootFolder);
+                DebugLogger.ManagerLogWarning("Folder does not exist: " + rootFolder);
                 return;
             }
 
@@ -182,7 +182,7 @@ namespace Lostbyte.Toolkit.Localization.Editor
 
             for (int i = 0; i < locales.Length; i++)
                 localesProp.GetArrayElementAtIndex(i).stringValue = locales[i];
-            Debug.Log("Detected locales: " + string.Join(',', GetLocales(localesFolder)));
+            DebugLogger.ManagerLog("Detected locales: " + string.Join(',', GetLocales(localesFolder)));
             Dictionary<string, LocalizedTable> tables = new();
             foreach (var locale in locales)
             {
@@ -215,7 +215,7 @@ namespace Lostbyte.Toolkit.Localization.Editor
                     if (!File.Exists(targetFilePath))
                     {
                         File.WriteAllText(targetFilePath, "{\n\n}");
-                        Debug.Log("Created: " + targetFilePath);
+                        DebugLogger.ManagerLog("Created: " + targetFilePath);
                     }
 
                     var data = LoadFile<Dictionary<string, string>>(targetFilePath) ?? new();
@@ -260,7 +260,7 @@ namespace Lostbyte.Toolkit.Localization.Editor
                     if (!File.Exists(confPath))
                     {
                         File.WriteAllText(confPath, JsonConvert.SerializeObject(new ConfFile() { }, Formatting.Indented));
-                        Debug.Log("Created: " + confPath);
+                        DebugLogger.ManagerLog("Created: " + confPath);
                     }
                     var conf = LoadFile<ConfFile>(confPath);
                     if (!string.IsNullOrEmpty(conf.fallback))
@@ -272,7 +272,7 @@ namespace Lostbyte.Toolkit.Localization.Editor
                             tableSO.ApplyModifiedPropertiesWithoutUndo();
                             EditorUtility.SetDirty(table);
                         }
-                        else Debug.LogWarning($"Unknown fallback table '{fallbackName}': {confPath}");
+                        else DebugLogger.ManagerLogWarning($"Unknown fallback table '{fallbackName}': {confPath}");
                     }
                 }
             }

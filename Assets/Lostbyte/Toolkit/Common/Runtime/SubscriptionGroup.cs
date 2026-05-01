@@ -151,7 +151,7 @@ namespace Lostbyte.Toolkit.Common
                 }
                 catch (Exception e)
                 {
-                    Debug.LogError(e);
+                    DebugLogger.LogError(e);
                 }
             }
 

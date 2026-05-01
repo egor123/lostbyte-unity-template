@@ -1,0 +1,21 @@
+{
+    "name": "Lostbyte.Toolkit.Audio.Editor",
+    "rootNamespace": "Lostbyte.Toolkit.Audio.Editor",
+    "references": [
+        "Lostbyte.Toolkit.CustomEditor.Editor",
+        "Lostbyte.Toolkit.CustomEditor",
+        "Lostbyte.Toolkit.Common",
+        "Lostbyte.Toolkit.Audio"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [
+        "UNITY_EDITOR"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

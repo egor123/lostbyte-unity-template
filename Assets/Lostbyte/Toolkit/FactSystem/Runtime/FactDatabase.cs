@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Lostbyte.Toolkit.Common;
 using UnityEngine;
 
 namespace Lostbyte.Toolkit.FactSystem
@@ -65,7 +66,7 @@ namespace Lostbyte.Toolkit.FactSystem
             _eventByGuid.Clear();
             foreach (var @event in EventStorage)
                 _eventByGuid[@event.Guid] = @event;
-            Debug.Log("Fact Database initialized");
+            DebugLogger.ManagerLog("Fact Database initialized");
         }
         public KeyContainer GetKey(string id) => _keysByGuid[id];
         public FactDefinition GetFact(string id) => _factByGuid[id];
@@ -82,7 +83,7 @@ namespace Lostbyte.Toolkit.FactSystem
 #if UNITY_EDITOR
             if (!Application.isPlaying)
             {
-                Debug.LogError("Requesting temp key is only allowed at runtime!");
+                DebugLogger.ManagerLogError("Requesting temp key is only allowed at runtime!");
                 return null;
             }
 #endif

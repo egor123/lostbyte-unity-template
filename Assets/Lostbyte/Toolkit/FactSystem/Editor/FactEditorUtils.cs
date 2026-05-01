@@ -5,6 +5,7 @@ using UnityEditor;
 using System;
 using System.Text.RegularExpressions;
 using UnityEditor.IMGUI.Controls;
+using Lostbyte.Toolkit.Common;
 
 namespace Lostbyte.Toolkit.FactSystem.Editor
 {
@@ -31,28 +32,28 @@ namespace Lostbyte.Toolkit.FactSystem.Editor
         {
             if (string.IsNullOrEmpty(name))
             {
-                Debug.LogWarning("Name cannot be empty");
+                DebugLogger.LogWarning("Name cannot be empty");
                 return false;
             }
             var regex = new Regex(@"^[a-zA-Z0-9_-]+$");
             if (!regex.IsMatch(name))
             {
-                Debug.LogWarning("Name must consist only from letters, numbers, dashes or underscores");
+                DebugLogger.LogWarning("Name must consist only from letters, numbers, dashes or underscores");
                 return false;
             }
             if (!char.IsLetter(name[0]))
             {
-                Debug.LogWarning("Name must start with letter");
+                DebugLogger.LogWarning("Name must start with letter");
                 return false;
             }
             if (!char.IsLetterOrDigit(name[^1]))
             {
-                Debug.LogWarning("Name must end with letter or digit");
+                DebugLogger.LogWarning("Name must end with letter or digit");
                 return false;
             }
             if (Database.RootKeys.SelectMany(k => k.Children).SelectMany(k => k.Children.Select(c => c.name).Concat(k.Facts.Select(f => f.name))).Any(s => s == name))
             {
-                Debug.LogWarning("Name already exists");
+                DebugLogger.LogWarning("Name already exists");
                 return false;
             }
             return true;

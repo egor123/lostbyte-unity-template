@@ -17,9 +17,6 @@ namespace Lostbyte.Toolkit.CustomEditor
         public UniqeReferenceAttribute() { }
 
 #if UNITY_EDITOR
-        private static int _domainId = -1;
-        public static Dictionary<Type, Type[]> _typeDictionary = new();
-
 
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {

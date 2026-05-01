@@ -1,6 +1,7 @@
 using UnityEngine;
 using System;
 using UnityEngine.UI;
+using Lostbyte.Toolkit.Common;
 namespace Lostbyte.Toolkit.Tween
 {
     public static class TweenExtensions
@@ -84,7 +85,7 @@ namespace Lostbyte.Toolkit.Tween
 
         public static T Base<T>(T tween, Action act) where T : Tween
         {
-            if (tween.IsRunning) Debug.LogWarning("Cannot change tween while it isrunning!");
+            if (tween.IsRunning) DebugLogger.LogWarning("Cannot change tween while it isrunning!");
             else act.Invoke();
             return tween;
         }

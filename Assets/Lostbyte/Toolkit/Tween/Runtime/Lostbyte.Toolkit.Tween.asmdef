@@ -1,7 +1,9 @@
 {
     "name": "Lostbyte.Toolkit.Tween",
     "rootNamespace": "Lostbyte.Toolkit.Tween",
-    "references": [],
+    "references": [
+        "GUID:2d545df2e96ffdd4e98ad0aff1e004fb"
+    ],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,

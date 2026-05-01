@@ -37,13 +37,13 @@ public class PersitantTransform : MonoBehaviour, IPersistent
     }
     public void OnLoad(Store store)
     {
-        Debug.Log("OnLoad!");
+        DebugLogger.Log("OnLoad!");
         store.GetData(Key, new Data(transform)).Apply(transform);
     }
 
     public void OnSave(Store store)
     {
-        Debug.Log("OnSave!");
+        DebugLogger.Log("OnSave!");
         store.SetData(Key, new Data(transform));
     }
 

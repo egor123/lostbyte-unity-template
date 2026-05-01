@@ -5,48 +5,66 @@ using Lostbyte.Toolkit.CustomEditor;
 
 namespace Lostbyte.Toolkit.Audio
 {
+    [RequireComponent(typeof(AudioSource))]
     public class SFXSource : MonoBehaviour
     {
-        [SerializeField, Autowired] private AudioSource m_source;
+        [SerializeField, Autowired(isForced: true), Hide] private AudioSource m_source;
         private Transform _parent;
         private Vector3 _localPos;
-
+        private float _timer;
+        private Coroutine _corutine;
         internal void Play(Transform parent, Vector3 position, SFXClip sound, float delay = 0f)
         {
             _parent = parent;
             if (_parent != null) _localPos = position;
             else transform.position = position;
-            m_source.Stop();
             gameObject.SetActive(true);
             m_source.Stop();
             if (sound.Clips != null && sound.Clips.Count > 0)
             {
                 m_source.loop = false;
                 m_source.clip = sound.Clips[Random.Range(0, sound.Clips.Count)];
-                m_source.volume = Mathf.Clamp(sound.Volume + Random.Range(-sound.VolumeRandomisation / 2f, sound.VolumeRandomisation / 2f), 0, 1);
-                m_source.pitch = Mathf.Clamp(sound.Pitch + Random.Range(-sound.PitchRandomisation / 2f, sound.PitchRandomisation / 2f), -3f, 3f);
-                m_source.PlayDelayed(delay);
-                StartCoroutine(DelayReturnToPool(delay + m_source.clip.length));
-            }
-            else
-            {
-                StartCoroutine(DelayReturnToPool(0));
-            }
-        }
+                m_source.volume = Mathf.Clamp(Random.Range(sound.MinVolume, sound.MaxVolume), 0, 1);
+                m_source.pitch = Mathf.Clamp(Random.Range(sound.MinPitch, sound.MaxPitch), -3f, 3f);
+                m_source.spatialBlend = sound.SpatialBlend;
+                m_source.reverbZoneMix = sound.ReverbZoneMix;
+                m_source.panStereo = sound.StereoPan;
+                m_source.dopplerLevel = sound.DopplerLevel;
+                m_source.spread = sound.Spread;
+                m_source.rolloffMode = sound.RolloffMode;
+                m_source.minDistance = sound.MinDistance;
+                m_source.maxDistance = sound.MaxDistance;
 
-        private void Update()
-        {
-            if (_parent == null) return;
-            transform.position = _parent.TransformPoint(_localPos);
+
+                m_source.PlayDelayed(delay);
+                if (Application.isPlaying)
+                {
+                    float duration = m_source.clip.length / Mathf.Abs(m_source.pitch);
+                    _corutine = StartCoroutine(DelayReturnToPool(delay + duration));
+                }
+            }
+            else if (Application.isPlaying)
+            {
+                _corutine = StartCoroutine(DelayReturnToPool(0));
+            }
         }
 
         private IEnumerator DelayReturnToPool(float delayTime)
         {
-            yield return new WaitForSeconds(delayTime);
-            SFXManager.Instance.AddToSFXPool(this);
-            gameObject.SetActive(false);
-            _parent = null;
-            _localPos = Vector3.zero;
+            float timer = 0f;
+            while (timer < delayTime)
+            {
+                if (_parent != null) transform.position = _parent.TransformPoint(_localPos);
+                timer += Time.unscaledDeltaTime;
+                yield return null;
+            }
+            SFXManager.AddToSFXPool(this);
+        }
+        internal void ForceReturnToPool()
+        {
+            if (_corutine != null) StopCoroutine(_corutine);
+            m_source.Stop();
+            SFXManager.AddToSFXPool(this);
         }
     }
 }

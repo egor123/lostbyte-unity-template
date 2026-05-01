@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using Core.CustomEditor.Editor;
+using Lostbyte.Toolkit.Common;
 using Lostbyte.Toolkit.CustomEditor.Graphs;
 using UnityEditor;
 using UnityEditor.Experimental.GraphView;
@@ -116,12 +117,12 @@ namespace Lostbyte.Toolkit.CustomEditor.Editor.Graphs
             foreach (var node in loadedNodes)
             {
                 try { nodes.Add(GetNodeView(node)); }
-                catch (Exception exception) { Debug.LogError(exception); }
+                catch (Exception exception) { DebugLogger.LogError(exception); }
             }
             foreach (var node in nodes)
             {
                 try { node.Load(); }
-                catch (Exception exception) { Debug.LogError(exception); }
+                catch (Exception exception) { DebugLogger.LogError(exception); }
             }
         }
         public virtual Vector2 GetDefaultNodeSize() => new(200, 150);
@@ -196,7 +197,7 @@ namespace Lostbyte.Toolkit.CustomEditor.Editor.Graphs
                 }
                 catch (Exception exception)
                 {
-                    Debug.LogError(exception);
+                    DebugLogger.LogError(exception);
                 }
 
             }

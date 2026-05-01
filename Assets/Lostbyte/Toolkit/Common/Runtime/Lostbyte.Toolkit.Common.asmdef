@@ -1,9 +1,7 @@
 {
     "name": "Lostbyte.Toolkit.Common",
     "rootNamespace": "Lostbyte.Toolkit.Common",
-    "references": [
-        "GUID:1a65cc50772d20b418ad5c0e90b6b12f"
-    ],
+    "references": [],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,

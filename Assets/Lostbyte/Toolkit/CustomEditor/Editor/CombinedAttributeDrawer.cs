@@ -23,8 +23,8 @@ namespace Lostbyte.Toolkit.CustomEditor.Editor
             var drawDefault = true;
             foreach (var atr in Attributes)
             {
-                label = atr.BuildLabel(label);
                 atr.OnGUI(position, property, label);
+                label = atr.BuildLabel(label);
                 if (!atr.DrawDefaultPropertyField())
                     drawDefault = false;
             }

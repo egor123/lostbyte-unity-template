@@ -9,8 +9,8 @@ namespace Lostbyte.Toolkit.Audio
     public class MusicManager : MonoBehaviour
     {
         [SerializeField, Autowired(Autowired.Type.Parent, isForced: true), Hide] private KeyReference m_key;
-        [SerializeField] private MusicSettings m_settings;
-        [SerializeField] private AudioSource m_mainSource, m_transitionSource;
+        [SerializeField, Required] private MusicSettings m_settings;
+        [SerializeField, Required] private AudioSource m_mainSource, m_transitionSource;
         [SerializeField, ReadOnly] private State _state;
         [SerializeField, ReadOnly] private float _time, _transitionTime;
         [SerializeField, ReadOnly] private int _currentIdx, _nextIdx;
@@ -138,8 +138,8 @@ namespace Lostbyte.Toolkit.Audio
         private void OnDisable()
         {
             Runners?.ForEach(r => r.Disable());
-            if(m_mainSource) m_mainSource.Stop();
-            if(m_transitionSource) m_transitionSource.Stop();
+            if (m_mainSource) m_mainSource.Stop();
+            if (m_transitionSource) m_transitionSource.Stop();
         }
     }
 }

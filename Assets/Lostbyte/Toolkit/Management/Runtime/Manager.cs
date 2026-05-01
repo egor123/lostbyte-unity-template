@@ -15,8 +15,9 @@ namespace Lostbyte.Toolkit.Management
                 if (Quitting) return null;
                 if (_instance) return _instance;
                 //TODO management scene loading
-                return _instance = new GameObject($"({nameof(Manager)}){typeof(T)}")
-                           .AddComponent<T>();
+                return null;
+                // return _instance = new GameObject($"({nameof(Manager)}){typeof(T)}")
+                //            .AddComponent<T>();
             }
         }
 #if UNITY_EDITOR

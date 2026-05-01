@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using Lostbyte.Toolkit.Common;
 using Lostbyte.Toolkit.FactSystem;
 using UnityEngine;
 
@@ -24,7 +25,7 @@ namespace Lostbyte.Toolkit.Localization
             {
                 if (Array.IndexOf(Instance.m_locales, value) < 0)
                 {
-                    Debug.LogWarning($"Unknown locale: {value}!");
+                    DebugLogger.ManagerLogWarning($"Unknown locale: {value}!");
                 }
                 else
                 {
@@ -43,7 +44,7 @@ namespace Lostbyte.Toolkit.Localization
                     _instance = TryLoad();
                     if (_instance == null)
                     {
-                        Debug.LogError("Localization Settings asset is missing!");
+                        DebugLogger.ManagerLogError("Localization Settings asset is missing!");
                         return null;
                     }
                     _instance.m_localeFact.Subscribe(_instance.OnChangeLocale);

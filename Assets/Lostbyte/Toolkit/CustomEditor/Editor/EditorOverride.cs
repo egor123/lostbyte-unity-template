@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEditor;
 using System.Reflection;
 using System.Linq;
+using Lostbyte.Toolkit.Common;
 
 namespace Lostbyte.Toolkit.CustomEditor.Editor
 {
@@ -148,7 +149,7 @@ namespace Lostbyte.Toolkit.CustomEditor.Editor
                 }
                 catch (System.Exception)
                 {
-                    Debug.LogWarning(prop.propertyPath + ";");
+                    DebugLogger.LogWarning(prop.propertyPath + ";");
                     throw;
                 }
             }

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Lostbyte.Toolkit.Common;
 using UnityEngine;
 
 namespace Lostbyte.Toolkit.FactSystem.Persistance
@@ -75,7 +76,7 @@ namespace Lostbyte.Toolkit.FactSystem.Persistance
                 }
                 break;
             }
-            Debug.LogError($"Cannot set data to \"{path}\"");
+            DebugLogger.LogError($"Cannot set data to \"{path}\"");
         }
     }
 }

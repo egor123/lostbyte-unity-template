@@ -126,7 +126,7 @@ namespace Lostbyte.Toolkit.CustomEditor.Editor.Graphs
         }
         private BindableElement AddField(FieldInfo field)
         {
-            BindableElement propField = CustomEditorUtils.CreatePropertyField(field.FieldType, field.Name);
+            BindableElement propField = EditorUtils.CreatePropertyField(field.FieldType, field.Name);
 
             propField.Query<Label>().ForEach(label =>
             {

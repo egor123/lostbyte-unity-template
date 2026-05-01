@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &-7067757196654149290
+--- !u!114 &-6267925316727085499
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -13,11 +13,44 @@ MonoBehaviour:
   m_Name: Save Node
   m_EditorClassIdentifier: 
   Position: {x: 591, y: -157}
-  In:
-  - {fileID: 1784078972005362130}
-  NextNode: {fileID: -4700281683437458483}
+  In: []
+  NextNode: {fileID: 6389820163496303462}
   Key: {fileID: 1706909347228400817, guid: 6c08054baf9457644b18f9b93ea7fec1, type: 2}
---- !u!114 &-6288723092732993337
+--- !u!114 &-5871050268571684374
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7bfadb478cdf93c4587a9e6729fd50af, type: 3}
+  m_Name: Dialogue Node
+  m_EditorClassIdentifier: 
+  Position: {x: 1122, y: 13}
+  In: []
+  Out: {fileID: 0}
+  Actor: {fileID: 1706909347228400817, guid: 6c08054baf9457644b18f9b93ea7fec1, type: 2}
+  Paragraphs: []
+--- !u!114 &-4301296369630975287
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a466c546469d8ad43bc4a3ec1cd7e340, type: 3}
+  m_Name: Wait Node
+  m_EditorClassIdentifier: 
+  Position: {x: 410, y: -156}
+  In:
+  - {fileID: 3347421687151327412}
+  NextNode: {fileID: -6267925316727085499}
+  Time: 2
+--- !u!114 &-1812046780360416445
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -31,8 +64,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Position: {x: 786, y: 13}
   In:
-  - {fileID: 3905801315456462844}
-  Out: {fileID: -4821059329998704513}
+  - {fileID: 6109031749452203616}
+  Out: {fileID: -5871050268571684374}
   Actor: {fileID: 1706909347228400817, guid: 6c08054baf9457644b18f9b93ea7fec1, type: 2}
   Paragraphs:
   - String:
@@ -54,40 +87,6 @@ MonoBehaviour:
       m_key: resume_btn
       m_facts: []
     Gap: 0
---- !u!114 &-4821059329998704513
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7bfadb478cdf93c4587a9e6729fd50af, type: 3}
-  m_Name: Dialogue Node
-  m_EditorClassIdentifier: 
-  Position: {x: 1122, y: 13}
-  In: []
-  Out: {fileID: 0}
-  Actor: {fileID: 0}
-  Paragraphs: []
---- !u!114 &-4700281683437458483
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d966908f741428a408f538f28c5cd341, type: 3}
-  m_Name: Checkpoint Node
-  m_EditorClassIdentifier: 
-  Position: {x: 868, y: -157}
-  In: []
-  NextNode: {fileID: 0}
-  OnContinueNode: {fileID: -4821059329998704513}
-  CheckpointBehaviour: 0
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -102,106 +101,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Priority: 2
   <OnContinueBehaviour>k__BackingField: 0
-  StartNode: {fileID: 5794788285733659248}
+  StartNode: {fileID: 3347421687151327412}
   StartNodePosition: {x: -74, y: -122}
---- !u!114 &1784078972005362130
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a466c546469d8ad43bc4a3ec1cd7e340, type: 3}
-  m_Name: Wait Node
-  m_EditorClassIdentifier: 
-  Position: {x: 410, y: -156}
-  In:
-  - {fileID: 5794788285733659248}
-  NextNode: {fileID: -7067757196654149290}
-  Time: 2
---- !u!114 &3905801315456462844
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 49557a02f60e48249973affaf8be2c0c, type: 3}
-  m_Name: Switch Node
-  m_EditorClassIdentifier: 
-  Position: {x: 410, y: 13}
-  In:
-  - {fileID: 5794788285733659248}
-  - {fileID: 5794788285733659248}
-  Nodes:
-  - Condition:
-      m_rootNode:
-        rid: 6512821456983818252
-    Out: {fileID: -6288723092732993337}
-  - Condition:
-      m_rootNode:
-        rid: 6512821456983818253
-    Out: {fileID: 0}
-  - Condition:
-      m_rootNode:
-        rid: 6512821456983818254
-    Out: {fileID: 0}
-  references:
-    version: 2
-    RefIds:
-    - rid: 6512821456983818252
-      type: {class: OPNode, ns: Lostbyte.Toolkit.FactSystem.Nodes, asm: Lostbyte.Toolkit.FactSystem}
-      data:
-        LNode:
-          rid: 6512821456983818255
-        RNode:
-          rid: 6512821456983818256
-        Op: ==
-    - rid: 6512821456983818253
-      type: {class: OPNode, ns: Lostbyte.Toolkit.FactSystem.Nodes, asm: Lostbyte.Toolkit.FactSystem}
-      data:
-        LNode:
-          rid: 6512821456983818257
-        RNode:
-          rid: 6512821456983818258
-        Op: ==
-    - rid: 6512821456983818254
-      type: {class: BoolNode, ns: Lostbyte.Toolkit.FactSystem.Nodes, asm: Lostbyte.Toolkit.FactSystem}
-      data:
-        <Value>k__BackingField: 1
-    - rid: 6512821456983818255
-      type: {class: FactNode, ns: Lostbyte.Toolkit.FactSystem.Nodes, asm: Lostbyte.Toolkit.FactSystem}
-      data:
-        Key: {fileID: 4283477907835028808, guid: 6c08054baf9457644b18f9b93ea7fec1, type: 2}
-        Fact: {fileID: -1139778540106801879, guid: 6c08054baf9457644b18f9b93ea7fec1, type: 2}
-    - rid: 6512821456983818256
-      type: {class: EnumNode, ns: Lostbyte.Toolkit.FactSystem.Nodes, asm: Lostbyte.Toolkit.FactSystem}
-      data:
-        Value:
-          rid: 6512821456983818259
-    - rid: 6512821456983818257
-      type: {class: FactNode, ns: Lostbyte.Toolkit.FactSystem.Nodes, asm: Lostbyte.Toolkit.FactSystem}
-      data:
-        Key: {fileID: 4283477907835028808, guid: 6c08054baf9457644b18f9b93ea7fec1, type: 2}
-        Fact: {fileID: -1139778540106801879, guid: 6c08054baf9457644b18f9b93ea7fec1, type: 2}
-    - rid: 6512821456983818258
-      type: {class: EnumNode, ns: Lostbyte.Toolkit.FactSystem.Nodes, asm: Lostbyte.Toolkit.FactSystem}
-      data:
-        Value:
-          rid: 6512821456983818260
-    - rid: 6512821456983818259
-      type: {class: Enums/GameState, ns: GameFacts, asm: Assembly-CSharp}
-      data:
-        value__: 0
-    - rid: 6512821456983818260
-      type: {class: Enums/GameState, ns: GameFacts, asm: Assembly-CSharp}
-      data:
-        value__: 1
---- !u!114 &5794788285733659248
+--- !u!114 &3347421687151327412
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -217,17 +119,114 @@ MonoBehaviour:
   In:
   - {fileID: 0}
   Out:
-  - {fileID: 1784078972005362130}
-  - {fileID: 3905801315456462844}
+  - {fileID: -4301296369630975287}
+  - {fileID: 6109031749452203616}
   Test: hello world
   Options:
   - Number: 3
     Number2: 0
     Out:
-    - {fileID: 3905801315456462844}
+    - {fileID: 6109031749452203616}
   - Number: 5
     Number2: 645
     Out: []
   - Number: 4
     Number2: 0
     Out: []
+--- !u!114 &6109031749452203616
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 49557a02f60e48249973affaf8be2c0c, type: 3}
+  m_Name: Switch Node
+  m_EditorClassIdentifier: 
+  Position: {x: 410, y: 13}
+  In:
+  - {fileID: 3347421687151327412}
+  - {fileID: 3347421687151327412}
+  Nodes:
+  - Condition:
+      m_rootNode:
+        rid: 6512821456983818308
+    Out: {fileID: -1812046780360416445}
+  - Condition:
+      m_rootNode:
+        rid: 6512821456983818309
+    Out: {fileID: 0}
+  - Condition:
+      m_rootNode:
+        rid: 6512821456983818310
+    Out: {fileID: 0}
+  references:
+    version: 2
+    RefIds:
+    - rid: 6512821456983818308
+      type: {class: OPNode, ns: Lostbyte.Toolkit.FactSystem.Nodes, asm: Lostbyte.Toolkit.FactSystem}
+      data:
+        LNode:
+          rid: 6512821456983818311
+        RNode:
+          rid: 6512821456983818312
+        Op: ==
+    - rid: 6512821456983818309
+      type: {class: OPNode, ns: Lostbyte.Toolkit.FactSystem.Nodes, asm: Lostbyte.Toolkit.FactSystem}
+      data:
+        LNode:
+          rid: 6512821456983818313
+        RNode:
+          rid: 6512821456983818314
+        Op: ==
+    - rid: 6512821456983818310
+      type: {class: BoolNode, ns: Lostbyte.Toolkit.FactSystem.Nodes, asm: Lostbyte.Toolkit.FactSystem}
+      data:
+        <Value>k__BackingField: 1
+    - rid: 6512821456983818311
+      type: {class: FactNode, ns: Lostbyte.Toolkit.FactSystem.Nodes, asm: Lostbyte.Toolkit.FactSystem}
+      data:
+        Key: {fileID: 4283477907835028808, guid: 6c08054baf9457644b18f9b93ea7fec1, type: 2}
+        Fact: {fileID: -1139778540106801879, guid: 6c08054baf9457644b18f9b93ea7fec1, type: 2}
+    - rid: 6512821456983818312
+      type: {class: EnumNode, ns: Lostbyte.Toolkit.FactSystem.Nodes, asm: Lostbyte.Toolkit.FactSystem}
+      data:
+        Value:
+          rid: 6512821456983818315
+    - rid: 6512821456983818313
+      type: {class: FactNode, ns: Lostbyte.Toolkit.FactSystem.Nodes, asm: Lostbyte.Toolkit.FactSystem}
+      data:
+        Key: {fileID: 4283477907835028808, guid: 6c08054baf9457644b18f9b93ea7fec1, type: 2}
+        Fact: {fileID: -1139778540106801879, guid: 6c08054baf9457644b18f9b93ea7fec1, type: 2}
+    - rid: 6512821456983818314
+      type: {class: EnumNode, ns: Lostbyte.Toolkit.FactSystem.Nodes, asm: Lostbyte.Toolkit.FactSystem}
+      data:
+        Value:
+          rid: 6512821456983818316
+    - rid: 6512821456983818315
+      type: {class: Enums/GameState, ns: GameFacts, asm: Assembly-CSharp}
+      data:
+        value__: 0
+    - rid: 6512821456983818316
+      type: {class: Enums/GameState, ns: GameFacts, asm: Assembly-CSharp}
+      data:
+        value__: 1
+--- !u!114 &6389820163496303462
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d966908f741428a408f538f28c5cd341, type: 3}
+  m_Name: Checkpoint Node
+  m_EditorClassIdentifier: 
+  Position: {x: 868, y: -157}
+  In: []
+  NextNode: {fileID: 0}
+  OnContinueNode: {fileID: -5871050268571684374}
+  CheckpointBehaviour: 0

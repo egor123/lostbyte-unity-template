@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Lostbyte.Toolkit.Common;
 using UnityEditor;
 using UnityEngine;
 using static Lostbyte.Toolkit.Localization.LocalizationDatabase;
@@ -37,7 +38,7 @@ namespace {NAMESPACE}
         {
             if (db == null)
             {
-                Debug.LogError("No LocalizationDatabase provided for code generation.");
+                DebugLogger.ManagerLogError("No LocalizationDatabase provided for code generation.");
                 return;
             }
             var source = db.GetSourceData();
@@ -49,13 +50,13 @@ namespace {NAMESPACE}
             File.WriteAllText(path, file);
             AssetDatabase.Refresh();
 
-            Debug.Log("Localization code generation complete.");
+            DebugLogger.ManagerLog("Localization code generation complete.");
         }
         private static IEnumerable<(string type, string name)> GetArgs(string[] args)
         {
             return args.Select(a =>
             {
-                Debug.Log(a);
+                DebugLogger.ManagerLog(a);
                 var split = a.Split(':');
                 var name = ToCamelCase(split[0]);
                 var type = split.Length > 1 ? split[1] : "object"; // TODO
