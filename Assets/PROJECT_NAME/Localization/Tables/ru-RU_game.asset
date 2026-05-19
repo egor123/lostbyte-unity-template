@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8f9697e3bfd72cb47aed6d98f1d36d59, type: 3}
+  m_Name: ru-RU_game
+  m_EditorClassIdentifier: 
+  <Locale>k__BackingField: ru-RU
+  <TableId>k__BackingField: game
+  m_stringEntries:
+  - <Key>k__BackingField: test_key
+    <Value>k__BackingField: "\u0422\u0435\u0441\u0442 {0:F2}, {1}"
+  m_stringArrayEntries:
+  - <Key>k__BackingField: test_array_key
+    <Value>k__BackingField:
+    - Line 1 text
+    - Line 2 text
+  m_addressableEnries: []
+  m_addressableArrayEnries: []

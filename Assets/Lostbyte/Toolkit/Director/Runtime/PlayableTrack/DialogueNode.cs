@@ -19,7 +19,7 @@ namespace Lostbyte.Toolkit.Director
         [Serializable]
         public struct Paragraph
         {
-            [GraphField] public LocalizedString String;
+            [GraphField] public LocalizedReference<string> String;
             [GraphField] public float Gap;
         }
 

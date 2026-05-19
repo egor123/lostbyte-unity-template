@@ -9,7 +9,7 @@ namespace Lostbyte.Toolkit.Localization
     [RequireComponent(typeof(TMP_Text))]
     public class LocalizedField : MonoBehaviour
     {
-        [field: SerializeField] public LocalizedString String { get; private set; }
+        [field: SerializeField] public LocalizedReference<string> String { get; private set; }
 
         private TMP_Text _field;
 
@@ -19,13 +19,7 @@ namespace Lostbyte.Toolkit.Localization
             String.Subscribe(OnChange);
         }
 
-        private void OnChange(string value)
-        {
-            _field.text = value;
-        }
-        private void OnDestroy()
-        {
-            String.Dispose();
-        }
+        private void OnChange(string value) => _field.text = value;
+        private void OnDestroy() => String.Dispose();
     }
 }

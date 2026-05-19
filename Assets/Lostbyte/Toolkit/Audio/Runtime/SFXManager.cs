@@ -62,7 +62,7 @@ namespace Lostbyte.Toolkit.Audio
                 {
                     source = Instance._activeSources[0];
                     source.ForceReturnToPool();
-                    DebugLogger.ManagerLogWarning("Max sources reached. Force stop!", source);
+                    Print.MWarn("Max sources reached. Force stop!", source);
                 }
             }
 #if UNITY_EDITOR

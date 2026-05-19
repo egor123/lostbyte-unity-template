@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Lostbyte.Toolkit.Common;
@@ -51,14 +52,14 @@ namespace Lostbyte.Toolkit.FactSystem.Editor
                         FactEditorUtils.ShowAddNewEventPopup(null, "", true, _lastMousePosition);
                         break;
                     default:
-                        DebugLogger.LogWarning("Unkown view");
+                        Print.Warn("Unkown view");
                         break;
                 }
             };
             Button compileBtn = root.Q<Button>("compile-btn");
             compileBtn.clicked += () =>
             {
-                if (Application.isPlaying) DebugLogger.LogWarning("Cannot compile when playing!");
+                if (Application.isPlaying) Print.Warn("Cannot compile when playing!");
                 else FactCodeGenerator.Generate(FactEditorUtils.Database);
             };
             ToolbarSearchField searchBar = root.Q<ToolbarSearchField>("search-bar");
@@ -154,7 +155,7 @@ namespace Lostbyte.Toolkit.FactSystem.Editor
                     FilterEventView(FactEditorUtils.Database, _filter, ref id).ForEach(treeItems.Add);
                     break;
                 default:
-                    DebugLogger.LogWarning("Unknown view");
+                    Print.Warn("Unknown view");
                     break;
             }
 
@@ -237,6 +238,29 @@ namespace Lostbyte.Toolkit.FactSystem.Editor
         }
 
         private bool MatchesFilter(string value, string filter) => string.IsNullOrEmpty(filter) || value.ToLower().Contains(filter);
+        private bool MatchesFilter(string value, Type type, string filter)
+        {
+            if (string.IsNullOrEmpty(filter)) return true;
+            value = value.ToLowerInvariant();
+            foreach (var f in filter.Split('+', StringSplitOptions.RemoveEmptyEntries))
+            {
+                var token = f.Trim().ToLowerInvariant();
+                if (token.Length < 2 || token[1] != ':')
+                {
+                    if (value.ToLower().Contains(filter))
+                        return true;
+                    continue;
+                }
+                var prefix = token[0];
+                var search = token[2..];
+                if (value.Contains(search) &&
+                    ((prefix == 'f' && type == typeof(FactDefinition)) ||
+                     (prefix == 'k' && type == typeof(KeyContainer)) ||
+                     (prefix == 'e' && type == typeof(EventDefinition))))
+                    return true;
+            }
+            return false;
+        }
 
         private ScriptableObject GetItemByIndex(int index) => _treeView.GetItemDataForIndex<object>(index) as ScriptableObject;
 
@@ -244,12 +268,12 @@ namespace Lostbyte.Toolkit.FactSystem.Editor
         {
             var children = new List<TreeViewItemData<object>>();
             bool addAll = string.IsNullOrEmpty(filter);
-            bool matchesSelf = MatchesFilter(key.name, filter);
+            bool matchesSelf = MatchesFilter(key.name, typeof(KeyContainer), filter);
             bool matchesChild = false;
             if (addAll || matchesSelf) filter = null;
             foreach (var fact in key.DefinedFacts)
             {
-                if (MatchesFilter(fact.name, filter))
+                if (MatchesFilter(fact.name, typeof(FactDefinition), filter))
                 {
                     children.Add(new TreeViewItemData<object>(id++, fact));
                     matchesChild = true;
@@ -257,7 +281,7 @@ namespace Lostbyte.Toolkit.FactSystem.Editor
             }
             foreach (var @event in key.DefinedEvents)
             {
-                if (MatchesFilter(@event.name, filter))
+                if (MatchesFilter(@event.name, typeof(EventDefinition), filter))
                 {
                     children.Add(new TreeViewItemData<object>(id++, @event));
                     matchesChild = true;
@@ -265,7 +289,7 @@ namespace Lostbyte.Toolkit.FactSystem.Editor
             }
             foreach (var childKey in key.Children)
             {
-                var childItem = FilterKeyView(childKey, filter, ref id);
+                var childItem = FilterKeyView(childKey, filter, ref id); //TODO
                 if (childItem.HasValue)
                 {
                     children.Add(childItem.Value);
@@ -279,7 +303,7 @@ namespace Lostbyte.Toolkit.FactSystem.Editor
         {
             List<TreeViewItemData<object>> items = new();
             foreach (var fact in db.FactStorage)
-                if (MatchesFilter(fact.name, filter))
+                if (MatchesFilter(fact.name, typeof(FactDefinition), filter))
                     items.Add(new TreeViewItemData<object>(id++, fact));
             return items;
         }
@@ -287,7 +311,7 @@ namespace Lostbyte.Toolkit.FactSystem.Editor
         {
             List<TreeViewItemData<object>> items = new();
             foreach (var @event in db.EventStorage)
-                if (MatchesFilter(@event.name, filter))
+                if (MatchesFilter(@event.name, typeof(EventDefinition), filter))
                     items.Add(new TreeViewItemData<object>(id++, @event));
             return items;
         }

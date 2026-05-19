@@ -20,7 +20,7 @@ namespace Lostbyte.Toolkit.Localization
         private string _value;
         private bool _isSubscribedToLocale;
         private bool _requiresRuntimeInitialization = false;
-        public Enum Locale { get; private set; } = null;
+        public string Locale { get; private set; } = null;
 
         public string Value
         {
@@ -139,7 +139,7 @@ namespace Lostbyte.Toolkit.Localization
             }
         }
 
-        private void OnLocaleChange(Enum locale)
+        private void OnLocaleChange(string locale)
         {
             Locale = locale;
             UpdateValue();
@@ -155,7 +155,7 @@ namespace Lostbyte.Toolkit.Localization
                     if (fact != null) _values[i] = fact.RawValue;
                 }
             }
-            _value = LocalizationSettings.Database.GetTable(m_table).GetString(m_key, _values);
+            _value = LocalizationDatabase.GetValue<string>(m_table, m_key, _values);
             OnChange?.Invoke(_value);
         }
 

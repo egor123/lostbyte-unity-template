@@ -2,14 +2,13 @@
     "name": "Lostbyte.Toolkit.Director.PlayableTrack.Editor",
     "rootNamespace": "Lostbyte.Toolkit.Director.Editor",
     "references": [
-        "GUID:eec0964c48f6f4e40bc3ec2257ccf8c5",
-        "GUID:84651a3751eca9349aac36a66bba901b",
-        "GUID:2e77701fe0ceda44fb763f03ee704c37",
-        "GUID:2d545df2e96ffdd4e98ad0aff1e004fb",
         "GUID:64daf2ef43085484e81e8c1c9af60fbf",
-        "GUID:c77c9b3e7c534ee48933439184c9460f",
+        "GUID:2d545df2e96ffdd4e98ad0aff1e004fb",
         "GUID:819f06a97acecf147923817da11f64ef",
-        "GUID:937a7c93307f8544da928de24743a8ff"
+        "GUID:937a7c93307f8544da928de24743a8ff",
+        "GUID:1a65cc50772d20b418ad5c0e90b6b12f",
+        "GUID:c77c9b3e7c534ee48933439184c9460f",
+        "GUID:84651a3751eca9349aac36a66bba901b"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

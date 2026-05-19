@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Lostbyte.Toolkit.Common;
 using UnityEngine;
 
 namespace Lostbyte.Toolkit.Management
@@ -7,7 +8,7 @@ namespace Lostbyte.Toolkit.Management
     public abstract class Manager<T> : Manager where T : Manager
     {
 
-        private static T _instance;
+        [ClearStatic] private static T _instance;
         public static T Instance
         {
             get
@@ -20,13 +21,6 @@ namespace Lostbyte.Toolkit.Management
                 //            .AddComponent<T>();
             }
         }
-#if UNITY_EDITOR
-        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-        static void OnRuntimeMethodLoad()
-        {
-            _instance = null;
-        }
-#endif
         private void Awake()
         {
             _instance = gameObject.GetComponent<T>();

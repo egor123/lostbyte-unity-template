@@ -12,9 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5b7e347406f6d141b47d5355689c765, type: 3}
   m_Name: ClickClip
   m_EditorClassIdentifier: 
-  <Clips>k__BackingField:
-  - {fileID: 8300000, guid: d267264bba550264ea43044cacfb9c62, type: 3}
-  - {fileID: 8300000, guid: aebae0e89d575dc43ae340319487ef87, type: 3}
+  <Clips>k__BackingField: []
   <MinVolume>k__BackingField: 0.75
   <MaxVolume>k__BackingField: 0.87
   <MinPitch>k__BackingField: 0.92

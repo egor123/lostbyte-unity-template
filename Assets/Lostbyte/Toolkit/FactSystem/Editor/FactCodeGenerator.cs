@@ -18,11 +18,14 @@ namespace Lostbyte.Toolkit.FactSystem.Editor
     private const string EventsClassName = "Events";
     private const string EnumsClassName = "Enums";
 
+    [MenuItem("Tools/Facts/Generate Code")]
+    public static void Geterate() => Generate(FactEditorUtils.Database);
+
     public static void Generate(FactDatabase db)
     {
       if (db == null)
       {
-        DebugLogger.ManagerLogError("No FactDatabase provided for code generation.");
+        Print.MError("No FactDatabase provided for code generation.");
         return;
       }
       Dictionary<string, List<string>> enums = new();
@@ -80,7 +83,7 @@ namespace Lostbyte.Toolkit.FactSystem.Editor
       AssetDatabase.Refresh();
 
       GenerateJsBridge();
-      DebugLogger.ManagerLog("Fact code generation complete.");
+      Print.MLog("Fact code generation complete.");
     }
 
     private static void GenerateKeyRef(StringBuilder sb, KeyContainer key, string indent)
@@ -116,8 +119,8 @@ namespace Lostbyte.Toolkit.FactSystem.Editor
     private static void GenerateEnum(StringBuilder sb, string name, List<string> values, string indent)
     {
       string type = FactUtils.MakeSafeIdentifier(name);
-      if (string.IsNullOrEmpty(type)) DebugLogger.ManagerLogWarning("Enum type must have a name!");
-      else if (values.Count == 0) DebugLogger.ManagerLogWarning("Enum type must at least one value!");
+      if (string.IsNullOrEmpty(type)) Print.MWarn("Enum type must have a name!");
+      else if (values.Count == 0) Print.MWarn("Enum type must at least one value!");
       else sb.AppendLine($"{indent}public enum {type} {{ {string.Join(", ", values.Select(FactUtils.MakeSafeIdentifier))} }}");
     }
 

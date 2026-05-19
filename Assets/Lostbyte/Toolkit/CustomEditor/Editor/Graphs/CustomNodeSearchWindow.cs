@@ -13,7 +13,7 @@ namespace Lostbyte.Toolkit.CustomEditor.Editor.Graphs
         private GraphView _graphView;
 
         private NodeInfo[] _nodeInfos;
-        private Action<Type, string, Vector2> _onSelectCallback;
+        private event Action<Type, string, Vector2> _onSelectCallback;
 
         public void Initialize(EditorWindow window, GraphView graphView, NodeInfo[] nodeInfos, Action<Type, string, Vector2> onSelectCallback) =>
             (_window, _graphView, _nodeInfos, _onSelectCallback) = (window, graphView, nodeInfos, onSelectCallback);

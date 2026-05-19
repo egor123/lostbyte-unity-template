@@ -76,7 +76,7 @@ namespace Lostbyte.Toolkit.FactSystem.Persistance
                 }
                 break;
             }
-            DebugLogger.LogError($"Cannot set data to \"{path}\"");
+            Print.Error($"Cannot set data to \"{path}\"");
         }
     }
 }

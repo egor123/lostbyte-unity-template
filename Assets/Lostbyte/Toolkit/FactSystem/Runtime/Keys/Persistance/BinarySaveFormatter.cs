@@ -1,13 +1,14 @@
 using System.IO;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
+using Lostbyte.Toolkit.Common;
 using UnityEngine;
 
 namespace Lostbyte.Toolkit.FactSystem.Persistance
 {
     public class BinarySaveFormatter : ISaveFormatter
     {
-        private static IFormatter _formatter;
+        [ClearStatic] private static IFormatter _formatter;
         private static IFormatter Formatter
         {
             get
@@ -34,13 +35,6 @@ namespace Lostbyte.Toolkit.FactSystem.Persistance
 
             }
         }
-#if UNITY_EDITOR
-        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-        private static void ResetStatics()
-        {
-            _formatter = null;
-        }
-#endif
 
         public object Deserialize(Stream serializationStream) => Formatter.Deserialize(serializationStream);
         public void Serialize(Stream serializationStream, object graph) => Formatter.Serialize(serializationStream, graph);

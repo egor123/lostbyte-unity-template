@@ -1,0 +1,6 @@
+{
+  "schema_version": "1.0",
+  "table_id": "locales",
+  "meta": "Contains all locales.",
+  "keys": [{ "id": "ru-RU" }, { "id": "en-US" }]
+}

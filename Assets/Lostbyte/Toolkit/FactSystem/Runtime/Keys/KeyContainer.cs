@@ -57,8 +57,8 @@ namespace Lostbyte.Toolkit.FactSystem
         [field: SerializeField] internal List<FactSerializationOverride> SerializationOverrides { get; private set; } = new();
         [field: SerializeField] internal List<FactValueOverride> ValueOverrides { get; private set; } = new();
 
-        private Action<FactDefinition> OnFactAdded;
-        private Action OnChange;
+        private event Action<FactDefinition> OnFactAdded;
+        private event Action OnChange;
         private readonly Dictionary<FactDefinition, IFactWrapper> _factStorage = new();
         private readonly Dictionary<EventDefinition, IEventWrapper> _eventStorage = new();
 
@@ -265,7 +265,7 @@ namespace Lostbyte.Toolkit.FactSystem
                 }
                 return wrapper;
             }
-            DebugLogger.LogError("Unknown defenition!");
+            Print.Error("Unknown defenition!");
             return null;
         }
         public KeyContainer RequestTempKey(string name, List<FactValueOverride> overrides = null)
@@ -273,7 +273,7 @@ namespace Lostbyte.Toolkit.FactSystem
 #if UNITY_EDITOR
             if (!Application.isPlaying)
             {
-                DebugLogger.LogError("Requesting temp key is only allowed at runtime!");
+                Print.Error("Requesting temp key is only allowed at runtime!");
                 return null;
             }
 #endif

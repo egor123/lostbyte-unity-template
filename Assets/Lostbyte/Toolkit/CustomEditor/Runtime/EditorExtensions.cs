@@ -1,8 +1,11 @@
 using System;
 using System.Collections;
 using System.Reflection;
-using UnityEditor;
 using UnityEngine;
+
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 namespace Lostbyte.Toolkit.CustomEditor
 {
@@ -15,7 +18,7 @@ namespace Lostbyte.Toolkit.CustomEditor
 
         public static FieldInfo GetTargetField(this SerializedProperty property) => property.GetTargetDetails().fieldInfo;
         public static Type GetTargetType(this SerializedProperty property) => property.GetTargetDetails().type;
-        public static object GetTargetObject(this SerializedProperty property) => property.GetTargetDetails().obj; 
+        public static object GetTargetObject(this SerializedProperty property) => property.GetTargetDetails().target;
         public static void SetTargetObject(this SerializedProperty property, object value)
         {
             var targetData = property.GetTargetDetails();
@@ -31,7 +34,7 @@ namespace Lostbyte.Toolkit.CustomEditor
                 if (targetData.target is IList list)
                     list[targetData.index] = value;
                 else if (targetData.target is Array array)
-                        array.SetValue(value, targetData.index);
+                    array.SetValue(value, targetData.index);
             }
         }
 

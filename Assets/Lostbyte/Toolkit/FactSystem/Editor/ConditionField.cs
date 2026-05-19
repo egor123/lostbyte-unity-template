@@ -115,7 +115,7 @@ namespace Lostbyte.Toolkit.FactSystem.Editor
             var conditionProp = property.FindPropertyRelative("m_rootNode");
             if (conditionProp == null)
             {
-                DebugLogger.LogWarning("Could not bind ConditionField: m_rootNode not found.");
+                Print.Warn("Could not bind ConditionField: m_rootNode not found.");
                 return;
             }
 

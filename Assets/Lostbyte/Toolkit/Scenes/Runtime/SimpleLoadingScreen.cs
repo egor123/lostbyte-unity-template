@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using Lostbyte.Toolkit.CustomEditor;
 using UnityEngine;
 
@@ -26,6 +25,8 @@ namespace Lostbyte.Toolkit.Scenes
             float startAlpha = m_transitionGroup.alpha;
             float time = 0f;
             float targetAlpha = fadeIn ? 1f : 0f;
+            if (!fadeIn) m_transitionGroup.blocksRaycasts = false;
+
             while (time < m_fadeDuration && !_skip)
             {
                 time += Time.unscaledDeltaTime;

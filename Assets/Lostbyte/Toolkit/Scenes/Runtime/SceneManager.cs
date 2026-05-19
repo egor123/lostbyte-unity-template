@@ -37,7 +37,7 @@ namespace Lostbyte.Toolkit.Scenes
         {
             if (!scene.IsValid)
             {
-                DebugLogger.ManagerLogError($"Scene is not valid!");
+                Print.MError($"Scene is not valid!");
                 return null;
             }
             SceneNode parentNode = parent.HasValue ? _loadedNodes.GetValueOrDefault(parent.Value, null) : null;
@@ -51,7 +51,7 @@ namespace Lostbyte.Toolkit.Scenes
         {
             if (!scene.IsValid)
             {
-                DebugLogger.ManagerLogError($"Scene is not valid!");
+                Print.MError($"Scene is not valid!");
                 return null;
             }
 
@@ -65,7 +65,7 @@ namespace Lostbyte.Toolkit.Scenes
             RegisterNewNode(loadedScene, parentNode);
             if (parent.HasValue && !_loadedNodes.ContainsKey(parent.Value))
             {
-                DebugLogger.ManagerLogWarning($"Parent scene was unloaded while loading '{scene.SceneName}' scene");
+                Print.MWarn($"Parent scene was unloaded while loading '{scene.SceneName}' scene");
                 UnloadSceneAsync(loadedScene).Forget();
                 return null;
             }
@@ -88,7 +88,7 @@ namespace Lostbyte.Toolkit.Scenes
                         await Task.Yield();
             }
             else
-                DebugLogger.ManagerLogWarning($"Scene '{scene.name}' is not loaded!");
+                Print.MWarn($"Scene '{scene.name}' is not loaded!");
         }
 
         public IEnumerator UnloadSceneRoutine(Scene scene)
@@ -101,7 +101,7 @@ namespace Lostbyte.Toolkit.Scenes
                     yield return op;
             }
             else
-                DebugLogger.ManagerLogWarning($"Scene '{scene.name}' is not loaded!");
+                Print.MWarn($"Scene '{scene.name}' is not loaded!");
         }
 
         private void UnloadNode(SceneNode node, List<AsyncOperation> ops = null)

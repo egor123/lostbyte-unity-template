@@ -32,7 +32,7 @@ namespace Lostbyte.Toolkit.CustomEditor.Editor
             {
                 if (kv.Key.IsAssignableFrom(type))
                 {
-                    DebugLogger.Log(type);
+                    Print.Log(type);
 
                     element = kv.Value(type, label);
                     return true;
@@ -56,7 +56,7 @@ namespace Lostbyte.Toolkit.CustomEditor.Editor
                 {
                     var attr = t.GetCustomAttribute<CustomFieldAttribute>();
                     var ctor = t.GetConstructor(new[] { typeof(string) });
-                    if (ctor == null) DebugLogger.LogWarning($"{t.Name} missing (string label) constructor");
+                    if (ctor == null) Print.Warn($"{t.Name} missing (string label) constructor");
                     else Register(attr.TargetType, (fieldType, label) => (BindableElement)Activator.CreateInstance(t, label));
                 });
         }

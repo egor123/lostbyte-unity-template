@@ -34,8 +34,8 @@ namespace Lostbyte.Toolkit.UI
                         for (int i = 0; i < enumValues.Length; i++)
                         {
                             object enumValue = enumValues.GetValue(i);
-                            string value = LocalizationSettings.Database.GetTable(m_table).GetString(enumValue.ToString());
-                            m_dropdown.options.Add(new(value));
+                            // string value = LocalizationSettings.Database.GetTable(m_table).GetString(enumValue.ToString());
+                            // m_dropdown.options.Add(new(value));
                         }
                         m_dropdown.RefreshShownValue();
                     }, invokeImidiate: true);

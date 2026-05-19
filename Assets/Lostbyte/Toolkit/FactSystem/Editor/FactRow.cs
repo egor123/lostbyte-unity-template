@@ -233,7 +233,7 @@ namespace Lostbyte.Toolkit.FactSystem.Editor
                                 Key.ValueOverrides.Add(new FactValueOverride() { Fact = Fact, Wrapper = new EnumValueHolder() { RawValue = ((Enum)Fact.DefaultValueRaw) ?? (Fact as EnumFactDefinition).DefaultEnumValue } });
                             else
                             {
-                                DebugLogger.LogWarning("Unknown type!");
+                                Print.Warn("Unknown type!");
                                 EditorUtility.SetDirty(Key);
                                 BindDirectly();
                                 return;

@@ -1,6 +1,4 @@
 using System;
-using System.Linq;
-using Lostbyte.Toolkit.Common;
 using Lostbyte.Toolkit.FactSystem.Nodes;
 using UnityEngine;
 
@@ -11,8 +9,8 @@ namespace Lostbyte.Toolkit.FactSystem
     {
         [SerializeField, SerializeReference] private IBoolNode m_rootNode;
         private IKeyContainer _defaultKey;
-        private Action OnTrigger;
-        private Action<bool> OnChange;
+        private event Action OnTrigger;
+        private event Action<bool> OnChange;
 
         private bool? _isMet = null;
         public bool IsMet => _isMet ?? m_rootNode?.Evaluate(_defaultKey) ?? false;

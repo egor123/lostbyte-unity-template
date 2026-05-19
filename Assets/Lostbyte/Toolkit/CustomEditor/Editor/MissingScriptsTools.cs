@@ -19,10 +19,10 @@ namespace Lostbyte.Toolkit.CustomEditor.Editor
                 .ForEach(o =>
                 {
                     bool isHidden = o.hideFlags.HasFlag(HideFlags.HideInHierarchy);
-                    DebugLogger.ManagerLogWarning($"GameObject {o.name} has missing script! {(isHidden ? " [HideInHierarchy]" : "")}", o);
+                    Print.MWarn($"GameObject {o.name} has missing script! {(isHidden ? " [HideInHierarchy]" : "")}", o);
                     count++;
                 });
-            DebugLogger.ManagerLog($"Found {count} objects with missing scripts");
+            Print.MLog($"Found {count} objects with missing scripts");
             return count;
         }
         [MenuItem(k_menuFolder + "Delete", priority = 1)]
@@ -35,9 +35,9 @@ namespace Lostbyte.Toolkit.CustomEditor.Editor
                 {
                     Undo.RegisterFullObjectHierarchyUndo(o, "Remove Missing Scripts");
                     count += GameObjectUtility.RemoveMonoBehavioursWithMissingScript(o);
-                    DebugLogger.ManagerLog($"Removed missing scripts from GameObject {o.name}", o);
+                    Print.MLog($"Removed missing scripts from GameObject {o.name}", o);
                 });
-            DebugLogger.ManagerLog($"Removed {count} missing scripts");
+            Print.MLog($"Removed {count} missing scripts");
             return count;
         }
     }

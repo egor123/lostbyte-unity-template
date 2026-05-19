@@ -2,6 +2,8 @@ using System.Linq;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UIElements;
+using Lostbyte.Toolkit.CustomEditor;
+using Lostbyte.Toolkit.Common;
 
 namespace Lostbyte.Toolkit.Director.Editor
 {
@@ -12,6 +14,7 @@ namespace Lostbyte.Toolkit.Director.Editor
         public StartNodeView(PlayableTrack asset, PlayableTrackGraphView graph, PlayableTrackNode node) : base(asset, graph, node)
         {
             capabilities -= Capabilities.Deletable;
+            userData = asset;
             contentContainer.Add(_priorityField = new("Priority", Priority.Default));
             contentContainer.Add(_behaviourField = new("OnContinue", OnContinueBehaviour.Schedule));
         }
@@ -31,10 +34,7 @@ namespace Lostbyte.Toolkit.Director.Editor
         {
             base.UpdateStyles();
             var borderColor = Color.green;
-            contentContainer.style.borderBottomColor = new StyleColor(borderColor);
-            contentContainer.style.borderTopColor = new StyleColor(borderColor);
-            contentContainer.style.borderLeftColor = new StyleColor(borderColor);
-            contentContainer.style.borderRightColor = new StyleColor(borderColor);
+            contentContainer.SetBorderColor(borderColor);
         }
         public override Vector2 LoadPosition() => Asset.StartNodePosition;
         public override void SavePosition(Vector2 position) => Asset.StartNodePosition = position;
@@ -42,10 +42,7 @@ namespace Lostbyte.Toolkit.Director.Editor
         {
             _priorityField.value = Asset.Priority;
             _behaviourField.value = Asset.OnContinueBehaviour;
-            if (Asset != null)
-            {
-                Graph.Connect(OutputPort, Graph.GetNodeView(Asset.StartNode)?.inputContainer.Q<Port>());
-            }
+            if (Asset != null) Graph.Connect(OutputPort, Graph.GetNodeView(Asset.StartNode)?.inputContainer.Q<Port>());
         }
 
         public override void Save()

@@ -149,7 +149,7 @@ namespace Lostbyte.Toolkit.CustomEditor.Editor
                 }
                 catch (System.Exception)
                 {
-                    DebugLogger.LogWarning(prop.propertyPath + ";");
+                    Print.Warn(prop.propertyPath + ";");
                     throw;
                 }
             }

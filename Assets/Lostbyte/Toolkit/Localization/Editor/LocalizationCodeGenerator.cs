@@ -29,78 +29,109 @@ namespace {NAMESPACE}
     }";
 
         public const string MethodTemplate =
-    @"        public static LocalizedString {METHOD_NAME}({ARGS}) => new(""{TABLE_ID}"", ""{KEY}""{ARG_VALUES});";
+    @"        public static LocalizedReference<{TYPES}> {METHOD_NAME}({ARGS}) => new(""{TABLE_ID}"", ""{KEY}""{ARG_VALUES});";
 
         private const string Namespace = "Localization";
         private const string ClassName = "Localization";
 
-        public static void Generate(LocalizationDatabase db)
+        [MenuItem("Tools/Localization/Generate Code")]
+        public static void Generate()
         {
+            LocalizationDatabase db = LocalizationSettings.Database;
             if (db == null)
             {
-                DebugLogger.ManagerLogError("No LocalizationDatabase provided for code generation.");
+                Print.MError("No LocalizationDatabase provided for code generation.");
                 return;
             }
-            var source = db.GetSourceData();
-            var file = GenerateFile(Namespace, source.Select(t => GenerateTable(t.Name, t.keys.Select(k => GenerateMethod(t.Name, k.id, GetArgs(k.args))))));
-            string assetPath = AssetDatabase.GetAssetPath(LocalizationSettings.Instance);
+            var file = GenerateFile(Namespace, db.Schema);
+            string assetPath = AssetDatabase.GetAssetPath(db);
             string folderPath = Path.GetDirectoryName(assetPath);
             string path = $"{folderPath}/{ClassName}.g.cs";
-            Directory.CreateDirectory(Path.GetDirectoryName(path)!);
             File.WriteAllText(path, file);
             AssetDatabase.Refresh();
 
-            DebugLogger.ManagerLog("Localization code generation complete.");
+            Print.MLog("Localization code generation complete.");
         }
         private static IEnumerable<(string type, string name)> GetArgs(string[] args)
         {
             return args.Select(a =>
             {
-                DebugLogger.ManagerLog(a);
+                Print.MLog(a);
                 var split = a.Split(':');
                 var name = ToCamelCase(split[0]);
                 var type = split.Length > 1 ? split[1] : "object"; // TODO
                 return (type, name);
             });
         }
-        private static string GenerateFile(string namespaceName, IEnumerable<string> tables)
+
+        private static string GenerateFile(string namespaceName, LocalizationSchema schema)
         {
             return FileTemplate
                 .Replace("{NAMESPACE}", namespaceName)
-                .Replace("{TABLES}", string.Join("\n\n", tables));
+                .Replace("{TABLES}", string.Join("\n\n", schema.Tables.Select(GenerateTable)));
         }
 
-        private static string GenerateTable(string tableName, IEnumerable<string> methods)
+        private static string GenerateTable(LocalizationTableSchema schema)
         {
-            var name = $"{ToPascalCase(tableName)}Table";
+            var name = $"{ToPascalCase(schema.Id)}Table";
             return TableTemplate
                 .Replace("{TABLE_NAME}", name)
-                .Replace("{METHODS}", string.Join("\n", methods));
+                .Replace("{METHODS}", string.Join("\n", schema.Keys.SelectMany(k => GenerateMethods(schema.Id, k))));
         }
 
-        private static string GenerateMethod(string tableId, string key, IEnumerable<(string type, string name)> args)
+        private static List<string> GenerateMethods(string tableId, LocalizationKey key)
         {
-            var name = $"Get{ToPascalCase(key)}String";
-            var argDecl = string.Join(", ", args.Select(a => $"LocArg<{a.type}> {a.name}"));
-            var argValues = args.Count() > 0 ? ", " + string.Join(", ", args.Select(a => $"{a.name}.Value")) : "";
-            return MethodTemplate
-                .Replace("{METHOD_NAME}", name)
-                .Replace("{TABLE_ID}", tableId)
-                .Replace("{KEY}", key)
-                .Replace("{ARGS}", argDecl)
-                .Replace("{ARG_VALUES}", argValues);
+            List<string> methods = new();
+            foreach (var type in key.Types)
+            {
+                switch (type)
+                {
+                    case "string":
+                        var name = $"Get{ToPascalCase(key.Id)}String";
+                        var argDecl = string.Join(", ", key.Args.Select(a => $"{GetLocArgName(a.Type)} {a.Name}"));
+                        var argValues = key.Args.Count() > 0 ? ", " + string.Join(", ", key.Args.Select(a => a.Name)) : "";
+                        methods.Add(MethodTemplate
+                             .Replace("{TYPES}", string.Join(", ", key.Types.Select(t => GetLocType(t, key.IsArray))))
+                             .Replace("{METHOD_NAME}", name)
+                             .Replace("{TABLE_ID}", tableId)
+                             .Replace("{KEY}", key.Id)
+                             .Replace("{ARGS}", argDecl)
+                             .Replace("{ARG_VALUES}", argValues));
+                        break;
+                    default:
+                        Print.MWarn($"Type '{type}' is not yet supported");
+                        break;
+                }
+            }
+            return methods;
+        }
+        private static string GetLocType(string type, bool isArray)
+        {
+            return LocalizationKey.AllowedTypes[type] + (isArray ? "[]" : "");
+        }
+        private static string GetLocArgName(string type)
+        {
+            return type switch
+            {
+                "string" => nameof(LocStringArg),
+                "float" => nameof(LocFloatArg),
+                "int" => nameof(LocIntArg),
+                "bool" => nameof(LocBoolArg),
+                _ => nameof(LocArg)
+            };
         }
         private static string ToPascalCase(string input)
         {
             if (string.IsNullOrEmpty(input)) return "Unnamed";
             return string.Concat(
-                input.Split('_', StringSplitOptions.RemoveEmptyEntries)
-                     .Select(s => char.ToUpper(s[0]) + s[1..]));
+                input.Replace("-", "")
+                    .Split('_', StringSplitOptions.RemoveEmptyEntries)
+                    .Select(s => char.ToUpper(s[0]) + s[1..]));
         }
         private static string ToCamelCase(string input)
         {
             if (string.IsNullOrWhiteSpace(input)) return "unnamed";
-            var parts = input.Split('_', StringSplitOptions.RemoveEmptyEntries);
+            var parts = input.Replace("-", "").Split('_', StringSplitOptions.RemoveEmptyEntries);
             if (parts.Length == 0) return "unnamed";
             var first = parts[0].ToLowerInvariant();
             var rest = parts

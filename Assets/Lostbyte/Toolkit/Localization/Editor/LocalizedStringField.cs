@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Lostbyte.Toolkit.Common;
@@ -132,7 +133,7 @@ namespace Lostbyte.Toolkit.UI.Editor
                 ? $"{t} / {k}"
                 : "Select Localization Key...";
 
-            string[] requiredArgs = GetRequiredArgs(t, k);
+            IReadOnlyList<ArgumentDefinition> requiredArgs = GetRequiredArgs(t, k);
             DrawArguments(requiredArgs);
         }
 
@@ -141,7 +142,7 @@ namespace Lostbyte.Toolkit.UI.Editor
             var dropdown = new LocalizationSearchDropdown(new AdvancedDropdownState());
             dropdown.OnItemSelected += (tableName, keyId, requiredArgs) =>
             {
-                int argCount = requiredArgs != null ? requiredArgs.Length : 0;
+                int argCount = requiredArgs != null ? requiredArgs.Count : 0;
 
                 if (m_Property != null)
                 {
@@ -171,11 +172,11 @@ namespace Lostbyte.Toolkit.UI.Editor
             dropdown.Show(m_SelectorButton.worldBound);
         }
 
-        private void DrawArguments(string[] requiredArgs)
+        private void DrawArguments(IReadOnlyList<ArgumentDefinition> requiredArgs)
         {
             m_ArgsContainer.Clear();
 
-            int argCount = requiredArgs != null ? requiredArgs.Length : 0;
+            int argCount = requiredArgs != null ? requiredArgs.Count : 0;
 
             if (argCount == 0) return;
 
@@ -219,8 +220,7 @@ namespace Lostbyte.Toolkit.UI.Editor
                         flexGrow = 1,
                     }
                 };
-                var nameTypeSplit = requiredArgs[i].Split(':');
-                var argLabel = new Label(nameTypeSplit[0]);
+                var argLabel = new Label(requiredArgs[i].Name);
                 argLabel.style.flexBasis = new Length(20, LengthUnit.Percent);
                 argLabel.style.flexShrink = 0;
                 argLabel.style.flexGrow = 0;
@@ -236,7 +236,7 @@ namespace Lostbyte.Toolkit.UI.Editor
                 fieldsContainer.style.flexGrow = 0;
 
                 argRow.Add(fieldsContainer);
-                var factType = ResolveType(nameTypeSplit.Length > 1 ? nameTypeSplit[1] : null);
+                var factType = ResolveType(requiredArgs[i].Type);
 
                 if (m_Property != null && m_FactsProp != null && i < m_FactsProp.arraySize)
                 {
@@ -335,44 +335,25 @@ namespace Lostbyte.Toolkit.UI.Editor
             SendEvent(evt);
         }
 
-        private string[] GetRequiredArgs(string table, string key)
+        private IReadOnlyList<ArgumentDefinition> GetRequiredArgs(string tableId, string keyId)
         {
-            if (string.IsNullOrEmpty(table) || string.IsNullOrEmpty(key)) return null;
+            if (string.IsNullOrEmpty(tableId) || string.IsNullOrEmpty(keyId)) return null;
 
             var db = LocalizationSettings.Database;
             if (db == null) return null;
 
-            FieldInfo sourceItemsField = db.GetType().GetField("m_sourceItems", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
-            if (sourceItemsField?.GetValue(db) is IList sourceFiles)
-            {
-                foreach (var fileObj in sourceFiles)
-                {
-                    string name = fileObj.GetType().GetProperty("Name", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)?.GetValue(fileObj) as string
-                               ?? fileObj.GetType().GetField("Name", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)?.GetValue(fileObj) as string;
+            var table = db.Schema.Tables.FirstOrDefault(t => t.Id == tableId);
+            if (table.Id != tableId) return null;
 
-                    if (name != table) continue;
+            var key = table.Keys.FirstOrDefault(k => k.Id == keyId);
+            if (key.Id != keyId) return null;
 
-                    FieldInfo keysField = fileObj.GetType().GetField("keys", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-                    if (keysField?.GetValue(fileObj) is IList keys)
-                    {
-                        foreach (var itemObj in keys)
-                        {
-                            FieldInfo idField = itemObj.GetType().GetField("id", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-                            if (idField?.GetValue(itemObj) as string == key)
-                            {
-                                FieldInfo argsField = itemObj.GetType().GetField("args", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-                                return argsField?.GetValue(itemObj) as string[];
-                            }
-                        }
-                    }
-                }
-            }
-            return null;
+            return key.Args;
         }
 
         private class LocalizationSearchDropdown : AdvancedDropdown
         {
-            public Action<string, string, string[]> OnItemSelected;
+            public event Action<string, string, IReadOnlyList<ArgumentDefinition>> OnItemSelected;
 
             public LocalizationSearchDropdown(AdvancedDropdownState state) : base(state) { minimumSize = new Vector2(250, 300); }
 
@@ -382,30 +363,16 @@ namespace Lostbyte.Toolkit.UI.Editor
                 var db = LocalizationSettings.Database;
                 if (db == null) return root;
 
-                FieldInfo sourceItemsField = db.GetType().GetField("m_sourceItems", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
-                if (sourceItemsField?.GetValue(db) is IList sourceFiles)
+                foreach (var table in db.Schema.Tables)
                 {
-                    foreach (var fileObj in sourceFiles)
+                    var tableGroup = new AdvancedDropdownItem(table.Id);
+                    foreach (var key in table.Keys)
                     {
-                        string tableName =
-                            fileObj.GetType().GetProperty("Name", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)?.GetValue(fileObj) as string
-                            ?? fileObj.GetType().GetField("Name", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)?.GetValue(fileObj) as string;
-                        if (string.IsNullOrEmpty(tableName)) continue;
-                        var tableGroup = new AdvancedDropdownItem(tableName);
-                        FieldInfo keysField = fileObj.GetType().GetField("keys", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-                        if (keysField?.GetValue(fileObj) is IList keys)
-                        {
-                            foreach (var itemObj in keys)
-                            {
-                                FieldInfo idField = itemObj.GetType().GetField("id", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-                                string keyId = idField?.GetValue(itemObj) as string;
-                                if (string.IsNullOrEmpty(keyId)) continue;
-                                FieldInfo argsField = itemObj.GetType().GetField("args", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-                                var args = argsField?.GetValue(itemObj) as string[];
-                                tableGroup.AddChild(new LocalizedKeyItem(tableName, keyId, args));
-                            }
-                        }
-                        if (tableGroup.children.Count() > 0) root.AddChild(tableGroup);
+                        tableGroup.AddChild(new LocalizedKeyItem(table.Id, key.Id, key.Args));
+                    }
+                    if (tableGroup.children.Count() > 0)
+                    {
+                        root.AddChild(tableGroup);
                     }
                 }
                 return root;
@@ -419,9 +386,9 @@ namespace Lostbyte.Toolkit.UI.Editor
             {
                 public string TableName { get; }
                 public string KeyId { get; }
-                public string[] RequiredArgs { get; }
+                public IReadOnlyList<ArgumentDefinition> RequiredArgs { get; }
 
-                public LocalizedKeyItem(string tableName, string keyId, string[] requiredArgs) : base($"{tableName} / {keyId}")
+                public LocalizedKeyItem(string tableName, string keyId, IReadOnlyList<ArgumentDefinition> requiredArgs) : base($"{tableName} / {keyId}")
                 {
                     TableName = tableName; KeyId = keyId; RequiredArgs = requiredArgs;
                 }

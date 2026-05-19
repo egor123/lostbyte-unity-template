@@ -4,6 +4,8 @@ using System;
 
 namespace Lostbyte.Toolkit.FactSystem.Editor
 {
+    [CustomPropertyDrawer(typeof(FactWrapper<object>))]
+    public class ObjectFactWrapperDrawer : FactWrapperDrawer<object> { }
     [CustomPropertyDrawer(typeof(FactWrapper<string>))]
     public class StringFactWrapperDrawer : FactWrapperDrawer<string> { }
     [CustomPropertyDrawer(typeof(FactWrapper<bool>))]
@@ -64,6 +66,8 @@ namespace Lostbyte.Toolkit.FactSystem.Editor
             var fieldPos3 = new Rect(fieldPos2.x + w, labelRect.y, w, position.height);
             EditorGUI.BeginDisabledGroup(Application.isPlaying);
             EditorGUI.ObjectField(fieldPos1, keyProp, new GUIContent());
+            Type targetType = FieldFactory.GetFactDefenitionTypeByArgType(genericType);
+            UnityEngine.Object currentValue = factProp.objectReferenceValue;
             EditorGUI.ObjectField(fieldPos2, factProp, FieldFactory.GetFactDefenitionTypeByArgType(genericType), new GUIContent());
             EditorGUI.EndDisabledGroup();
 

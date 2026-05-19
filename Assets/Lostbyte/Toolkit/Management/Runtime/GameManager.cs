@@ -35,7 +35,7 @@ namespace Lostbyte.Toolkit.Management
             var targetLockState = isLocked ? CursorLockMode.Locked : CursorLockMode.None;
             var targetVisibility = !isLocked;
             if (targetLockState == Cursor.lockState && Cursor.visible == targetVisibility) return;
-            DebugLogger.ManagerLog("Cursor is " + (isLocked ? "locked" : "unlocked"));
+            Print.MLog("Cursor is " + (isLocked ? "locked" : "unlocked"));
             Cursor.lockState = targetLockState;
             Cursor.visible = targetVisibility;
         }
@@ -45,14 +45,14 @@ namespace Lostbyte.Toolkit.Management
             var targetTimeScale = isPaused ? 0f : _previousTimeScale;
             var targetPrevioutTimeScale = isPaused ? Time.timeScale : _previousTimeScale;
             if (targetTimeScale == Time.timeScale && _previousTimeScale == targetPrevioutTimeScale) return;
-            DebugLogger.ManagerLog("Game is " + (isPaused ? "paused" : "resumed"));
+            Print.MLog("Game is " + (isPaused ? "paused" : "resumed"));
             Time.timeScale = targetTimeScale;
             _previousTimeScale = targetPrevioutTimeScale;
         }
 
         private void OnExit()
         {
-            DebugLogger.ManagerLog("Exiting Game...");
+            Print.MLog("Exiting Game...");
 
 #if UNITY_EDITOR
             UnityEditor.EditorApplication.ExitPlaymode();

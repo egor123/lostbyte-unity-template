@@ -59,7 +59,7 @@ namespace Lostbyte.Toolkit.UI
             }
             catch
             {
-                DebugLogger.LogWarning("Cannot convert fact input value!");
+                Print.Warn("Cannot convert fact input value!");
             }
             _wrapper.RawValue = raw;
         }

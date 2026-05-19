@@ -29,7 +29,7 @@ namespace Lostbyte.Toolkit.FactSystem.Persistance
                 }
                 File.Copy(tempPath, savePath, overwrite: true);
                 File.Delete(tempPath);
-                DebugLogger.Log($"Successfully saved: {savePath}");
+                Print.MLog($"Successfully saved: {savePath}");
 
 #if UNITY_WEBGL && !UNITY_EDITOR
                 SyncFiles();
@@ -37,7 +37,7 @@ namespace Lostbyte.Toolkit.FactSystem.Persistance
             }
             catch (Exception e)
             {
-                DebugLogger.LogError($"Failed to save '{savePath}': {e.Message}");
+                Print.MError($"Failed to save '{savePath}': {e.Message}");
             }
         }
 
@@ -84,12 +84,12 @@ namespace Lostbyte.Toolkit.FactSystem.Persistance
                 }
                 else
                 {
-                    DebugLogger.LogWarning($"Unexpected format in file: {path}");
+                    Print.MWarn($"Unexpected format in file: {path}");
                 }
             }
             catch (Exception ex)
             {
-                DebugLogger.LogException(ex);
+                Print.Exception(ex);
             }
             return false;
         }

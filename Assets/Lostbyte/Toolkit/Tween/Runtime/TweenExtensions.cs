@@ -85,7 +85,7 @@ namespace Lostbyte.Toolkit.Tween
 
         public static T Base<T>(T tween, Action act) where T : Tween
         {
-            if (tween.IsRunning) DebugLogger.LogWarning("Cannot change tween while it isrunning!");
+            if (tween.IsRunning) Print.Warn("Cannot change tween while it isrunning!");
             else act.Invoke();
             return tween;
         }

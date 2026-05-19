@@ -1,0 +1,285 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-6394396275358484631
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1a42321e32f60c34d9ff9b6cfa2f180a, type: 3}
+  m_Name: Test Node 2
+  m_EditorClassIdentifier: 
+  Position: {x: 732, y: 198}
+  In:
+  - {fileID: 6231953369714422268}
+  - {fileID: 6626836687833242164}
+  - {fileID: 6626836687833242164}
+  - {fileID: 6626836687833242164}
+  Out:
+  - {fileID: 5251974714245448475}
+  Test: Hello World 2
+  Options:
+  - Number: 175
+    Number2: 0
+    Out: []
+  - Number: 112
+    Number2: 0
+    Out:
+    - {fileID: 5251974714245448475}
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8b396fd5718864e42b780f5f6e28b727, type: 3}
+  m_Name: PlayableTrack
+  m_EditorClassIdentifier: 
+  Priority: 1
+  <OnContinueBehaviour>k__BackingField: 0
+  StartNode: {fileID: 5229469007161320668}
+  StartNodePosition: {x: -348, y: 95}
+--- !u!114 &301225545311402483
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e581a9b9bca2474ab03c30a8a33df51, type: 3}
+  m_Name: Redirect Node
+  m_EditorClassIdentifier: 
+  Position: {x: 807, y: 30}
+  In:
+  - {fileID: 6231953369714422268}
+  Out: {fileID: 5251974714245448475}
+--- !u!114 &5229469007161320668
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 49557a02f60e48249973affaf8be2c0c, type: 3}
+  m_Name: Switch Node
+  m_EditorClassIdentifier: 
+  Position: {x: -126, y: 83}
+  In:
+  - {fileID: 0}
+  Nodes:
+  - Condition:
+      m_rootNode:
+        rid: -2
+    Out: {fileID: 6231953369714422268}
+  - Condition:
+      m_rootNode:
+        rid: -2
+    Out: {fileID: 6626836687833242164}
+  references:
+    version: 2
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
+--- !u!114 &5251974714245448475
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7bfadb478cdf93c4587a9e6729fd50af, type: 3}
+  m_Name: Dialogue Node
+  m_EditorClassIdentifier: 
+  Position: {x: 1127, y: 67}
+  In:
+  - {fileID: 301225545311402483}
+  - {fileID: -6394396275358484631}
+  - {fileID: -6394396275358484631}
+  Out: {fileID: 0}
+  Actor: {fileID: 1706909347228400817, guid: 6c08054baf9457644b18f9b93ea7fec1, type: 2}
+  Paragraphs:
+  - String:
+      <TableId>k__BackingField: game
+      <KeyId>k__BackingField: test_key
+      m_args:
+      - rid: 1312422453416034308
+      - rid: 1312422453416034309
+    Gap: 2.61
+  - String:
+      <TableId>k__BackingField: game
+      <KeyId>k__BackingField: test_key
+      m_args:
+      - rid: 1312422490736689206
+      - rid: 1312422490736689207
+    Gap: 2.5
+  - String:
+      <TableId>k__BackingField: 
+      <KeyId>k__BackingField: 
+      m_args: []
+    Gap: 2.5
+  - String:
+      <TableId>k__BackingField: 
+      <KeyId>k__BackingField: 
+      m_args: []
+    Gap: 2.5
+  - String:
+      <TableId>k__BackingField: 
+      <KeyId>k__BackingField: 
+      m_args: []
+    Gap: 2.5
+  - String:
+      <TableId>k__BackingField: 
+      <KeyId>k__BackingField: 
+      m_args: []
+    Gap: 6.49
+  - String:
+      <TableId>k__BackingField: 
+      <KeyId>k__BackingField: 
+      m_args: []
+    Gap: 2.5
+  references:
+    version: 2
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
+    - rid: 1312422453416034308
+      type: {class: LocFloatArg, ns: Lostbyte.Toolkit.Localization, asm: Lostbyte.Toolkit.Localization}
+      data:
+        m_staticValue: 231
+        m_key: {fileID: 7530528405163607904, guid: 6c08054baf9457644b18f9b93ea7fec1, type: 2}
+        m_fact: {fileID: -3055759980319532786, guid: 6c08054baf9457644b18f9b93ea7fec1, type: 2}
+        m_isDynamic: 0
+    - rid: 1312422453416034309
+      type: {class: LocArg, ns: Lostbyte.Toolkit.Localization, asm: Lostbyte.Toolkit.Localization}
+      data:
+        m_staticValue:
+          rid: -2
+        m_key: {fileID: 6628457045445381566, guid: 6c08054baf9457644b18f9b93ea7fec1, type: 2}
+        m_fact: {fileID: 8265675034329682347, guid: 6c08054baf9457644b18f9b93ea7fec1, type: 2}
+        m_isDynamic: 0
+    - rid: 1312422490736689206
+      type: {class: LocFloatArg, ns: Lostbyte.Toolkit.Localization, asm: Lostbyte.Toolkit.Localization}
+      data:
+        m_staticValue: 0
+        m_key: {fileID: 0}
+        m_fact: {fileID: 0}
+        m_isDynamic: 0
+    - rid: 1312422490736689207
+      type: {class: LocArg, ns: Lostbyte.Toolkit.Localization, asm: Lostbyte.Toolkit.Localization}
+      data:
+        m_staticValue:
+          rid: -2
+        m_key: {fileID: 0}
+        m_fact: {fileID: 0}
+        m_isDynamic: 0
+--- !u!114 &6231953369714422268
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 49557a02f60e48249973affaf8be2c0c, type: 3}
+  m_Name: Switch Node
+  m_EditorClassIdentifier: 
+  Position: {x: 248, y: -21}
+  In:
+  - {fileID: 5229469007161320668}
+  Nodes:
+  - Condition:
+      m_rootNode:
+        rid: 1312422512482058240
+    Out: {fileID: 301225545311402483}
+  - Condition:
+      m_rootNode:
+        rid: 1312422490736689199
+    Out: {fileID: 0}
+  - Condition:
+      m_rootNode:
+        rid: 1312422490736689195
+    Out: {fileID: 0}
+  - Condition:
+      m_rootNode:
+        rid: 1312422490736689203
+    Out: {fileID: -6394396275358484631}
+  references:
+    version: 2
+    RefIds:
+    - rid: 1312422490736689195
+      type: {class: BoolNode, ns: Lostbyte.Toolkit.FactSystem.Nodes, asm: Lostbyte.Toolkit.FactSystem}
+      data:
+        <Value>k__BackingField: 1
+    - rid: 1312422490736689199
+      type: {class: OPNode, ns: Lostbyte.Toolkit.FactSystem.Nodes, asm: Lostbyte.Toolkit.FactSystem}
+      data:
+        LNode:
+          rid: 1312422490736689200
+        RNode:
+          rid: 1312422490736689201
+        Op: ==
+    - rid: 1312422490736689200
+      type: {class: FactNode, ns: Lostbyte.Toolkit.FactSystem.Nodes, asm: Lostbyte.Toolkit.FactSystem}
+      data:
+        Key: {fileID: 4283477907835028808, guid: 6c08054baf9457644b18f9b93ea7fec1, type: 2}
+        Fact: {fileID: -1139778540106801879, guid: 6c08054baf9457644b18f9b93ea7fec1, type: 2}
+    - rid: 1312422490736689201
+      type: {class: EnumNode, ns: Lostbyte.Toolkit.FactSystem.Nodes, asm: Lostbyte.Toolkit.FactSystem}
+      data:
+        Value:
+          rid: 1312422490736689202
+    - rid: 1312422490736689202
+      type: {class: Enums/GameState, ns: GameFacts, asm: Assembly-CSharp}
+      data:
+        value__: 1
+    - rid: 1312422490736689203
+      type: {class: BoolNode, ns: Lostbyte.Toolkit.FactSystem.Nodes, asm: Lostbyte.Toolkit.FactSystem}
+      data:
+        <Value>k__BackingField: 1
+    - rid: 1312422512482058240
+      type: {class: BoolNode, ns: Lostbyte.Toolkit.FactSystem.Nodes, asm: Lostbyte.Toolkit.FactSystem}
+      data:
+        <Value>k__BackingField: 1
+--- !u!114 &6626836687833242164
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1a42321e32f60c34d9ff9b6cfa2f180a, type: 3}
+  m_Name: Test Node
+  m_EditorClassIdentifier: 
+  Position: {x: 311, y: 236}
+  In:
+  - {fileID: 5229469007161320668}
+  Out:
+  - {fileID: -6394396275358484631}
+  Test: Hello World
+  Options:
+  - Number: 1
+    Number2: 2
+    Out:
+    - {fileID: -6394396275358484631}
+  - Number: 3
+    Number2: 4
+    Out: []
+  - Number: 7
+    Number2: 0
+    Out:
+    - {fileID: -6394396275358484631}

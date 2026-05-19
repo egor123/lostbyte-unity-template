@@ -16,6 +16,7 @@ namespace Lostbyte.Toolkit.Common
             if (obj is KeyValuePair<T1, T2> pair) return pair.Key.Equals(Item1) && pair.Value.Equals(Item2);
             if (obj is Tuple<T1, T2> tuple) return tuple.Item1.Equals(Item1) && tuple.Item2.Equals(Item2);
             if (obj is SerializedTuple<T1, T2> sTuple) return sTuple.Item1.Equals(Item1) && sTuple.Item2.Equals(Item2);
+            if (obj is SerializedKeyValuePair<T1, T2> sPair) return sPair.Key.Equals(Item1) && sPair.Value.Equals(Item2);
             return false;
         }
         public override int GetHashCode() => HashCode.Combine(Item1, Item2);
@@ -27,6 +28,32 @@ namespace Lostbyte.Toolkit.Common
             item2 = Item2;
         }
     }
+    [Serializable]
+    public class SerializedKeyValuePair<TKey, TValue>
+    {
+        [field: SerializeField] public TKey Key { get; private set; }
+        [field: SerializeField] public TValue Value { get; private set; }
+        public SerializedKeyValuePair(TKey item1, TValue item2) => (Key, Value) = (item1, item2);
+        public override string ToString() => $"({Key}, {Value})";
+        public override bool Equals(object obj)
+        {
+            if (obj is KeyValuePair<TKey, TValue> pair) return pair.Key.Equals(Key) && pair.Value.Equals(Value);
+            if (obj is Tuple<TKey, TValue> tuple) return tuple.Item1.Equals(Key) && tuple.Item2.Equals(Value);
+            if (obj is SerializedTuple<TKey, TValue> sTuple) return sTuple.Item1.Equals(Key) && sTuple.Item2.Equals(Value);
+            if (obj is SerializedKeyValuePair<TKey, TValue> sPair) return sPair.Key.Equals(Key) && sPair.Value.Equals(Value);
+
+            return false;
+        }
+        public override int GetHashCode() => HashCode.Combine(Key, Value);
+        public static implicit operator KeyValuePair<TKey, TValue>(SerializedKeyValuePair<TKey, TValue> tuple) => new(tuple.Key, tuple.Value);
+        public static implicit operator Tuple<TKey, TValue>(SerializedKeyValuePair<TKey, TValue> tuple) => new(tuple.Key, tuple.Value);
+        public void Deconstruct(out TKey item1, out TValue item2)
+        {
+            item1 = Key;
+            item2 = Value;
+        }
+    }
+
     [Serializable]
     public class SerializedTuple<T1, T2, T3>
     {

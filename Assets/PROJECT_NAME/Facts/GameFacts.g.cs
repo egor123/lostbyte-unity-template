@@ -1,0 +1,51 @@
+// AUTO-GENERATED FILE — DO NOT EDIT
+using System;
+using Lostbyte.Toolkit.FactSystem;
+namespace GameFacts
+{
+    //------------- Key Refs -------------
+    public static class Keys
+    {
+        private static KeyContainer _Settings = null;
+        public static KeyContainer Settings = _Settings != null ? _Settings : _Settings = FactDatabase.Instance.GetKey("settings");
+        private static KeyContainer _Env = null;
+        public static KeyContainer Env = _Env != null ? _Env : _Env = FactDatabase.Instance.GetKey("env");
+        private static KeyContainer _Game = null;
+        public static KeyContainer Game = _Game != null ? _Game : _Game = FactDatabase.Instance.GetKey("game");
+        private static KeyContainer _Player = null;
+        public static KeyContainer Player = _Player != null ? _Player : _Player = FactDatabase.Instance.GetKey("player");
+    }
+    //------------- Fact Refs -------------
+    public static class Facts
+    {
+        private static FactDefinition<System.Enum> _GameState = null;
+        public static FactDefinition<System.Enum> GameState = _GameState != null ? _GameState : _GameState = (FactDefinition<System.Enum>) FactDatabase.Instance.GetFact("game_state");
+        private static FactDefinition<System.Single> _MainVolume = null;
+        public static FactDefinition<System.Single> MainVolume = _MainVolume != null ? _MainVolume : _MainVolume = (FactDefinition<System.Single>) FactDatabase.Instance.GetFact("main_volume");
+        private static FactDefinition<System.Single> _MusicVolume = null;
+        public static FactDefinition<System.Single> MusicVolume = _MusicVolume != null ? _MusicVolume : _MusicVolume = (FactDefinition<System.Single>) FactDatabase.Instance.GetFact("music_voulme");
+        private static FactDefinition<System.Single> _SfxVolume = null;
+        public static FactDefinition<System.Single> SfxVolume = _SfxVolume != null ? _SfxVolume : _SfxVolume = (FactDefinition<System.Single>) FactDatabase.Instance.GetFact("sfx_volume");
+        private static FactDefinition<System.Single> _Sensetivity = null;
+        public static FactDefinition<System.Single> Sensetivity = _Sensetivity != null ? _Sensetivity : _Sensetivity = (FactDefinition<System.Single>) FactDatabase.Instance.GetFact("sensetivity");
+        private static FactDefinition<System.Boolean> _CursorLocked = null;
+        public static FactDefinition<System.Boolean> CursorLocked = _CursorLocked != null ? _CursorLocked : _CursorLocked = (FactDefinition<System.Boolean>) FactDatabase.Instance.GetFact("cursor_locked");
+        private static FactDefinition<System.Boolean> _GamePaused = null;
+        public static FactDefinition<System.Boolean> GamePaused = _GamePaused != null ? _GamePaused : _GamePaused = (FactDefinition<System.Boolean>) FactDatabase.Instance.GetFact("game_paused");
+        private static FactDefinition<System.String> _SaveFile = null;
+        public static FactDefinition<System.String> SaveFile = _SaveFile != null ? _SaveFile : _SaveFile = (FactDefinition<System.String>) FactDatabase.Instance.GetFact("save_file");
+        private static FactDefinition<System.String> _Locale = null;
+        public static FactDefinition<System.String> Locale = _Locale != null ? _Locale : _Locale = (FactDefinition<System.String>) FactDatabase.Instance.GetFact("locale");
+    }
+    //------------- Events -------------
+    public static class Events
+    {
+        private static EventDefinition _OnGameExit = null;
+        public static EventDefinition OnGameExit = _OnGameExit != null ? _OnGameExit : _OnGameExit = (EventDefinition) FactDatabase.Instance.GetEvent("on_game_exit");
+    }
+    //------------- Enums -------------
+    public static class Enums
+    {
+        public enum GameState { Menu, Game }
+    }
+}

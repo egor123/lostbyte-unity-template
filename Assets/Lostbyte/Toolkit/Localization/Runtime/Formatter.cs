@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using UnityEngine;
@@ -62,6 +63,11 @@ namespace Lostbyte.Toolkit.Localization
             return string.Format(_formatProvider, text, args.Select(a => a.Item2).ToArray());
         }
 
+        public static string PreFormat(string text, IReadOnlyList<ArgumentDefinition> args)
+        {
+            for (int i = 0; i < args.Count; i++) text = text.Replace($"{{{args[i].Name}", $"{{{i}");
+            return text;
+        }
         public static string Format(string text, params object[] args)
         {
             return string.Format(_formatProvider, text, args);

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Lostbyte.Toolkit.Common;
 using Lostbyte.Toolkit.FactSystem;
+using Lostbyte.Toolkit.Management;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -69,12 +70,12 @@ namespace Lostbyte.Toolkit.Scenes
         private IEnumerator TransitionRoutine(Enum e)
         {
             _isTransitioning = true;
-            DebugLogger.ManagerLog($"Loading: {e}");
+            Print.MLog($"Loading: {e}");
 
             if (m_loadingScreen != null)
             {
-                m_loadingScreen.FadeIn();
                 if (_currentScene == null) m_loadingScreen.Skip();
+                m_loadingScreen.FadeIn();
                 while (m_loadingScreen.InTransition) yield return null;
             }
 
@@ -84,7 +85,7 @@ namespace Lostbyte.Toolkit.Scenes
                 yield return new WaitUntil(() => loadingTask.IsCompleted);
                 if (loadingTask.IsFaulted)
                 {
-                    DebugLogger.ManagerLogError($"Scene loading failed: {loadingTask.Exception}");
+                    Print.MError($"Scene loading failed: {loadingTask.Exception}");
                     break;
                 }
                 // TODO await sub scene loading
@@ -103,12 +104,14 @@ namespace Lostbyte.Toolkit.Scenes
         private async Task HandleSceneLoading(Enum e)
         {
             var unloadTasks = _loaded_scenes.Select(scene => SceneManager.Instance.UnloadSceneAsync(scene));
+            await Bootstrapper.Finished;
             var loadTasks = m_scenes.Where(s => s.Condition.Equals(e))
                 .Select(sceneData => SceneManager.Instance.LoadSceneAsync(sceneData.Scene, gameObject.scene));
             await Task.WhenAll(unloadTasks);
             _loaded_scenes.Clear();
             foreach (var scene in await Task.WhenAll(loadTasks))
                 if (scene != null) AddLoadedScene(scene.Value);
+            await Bootstrapper.Finished;
             _currentScene = e;
         }
 

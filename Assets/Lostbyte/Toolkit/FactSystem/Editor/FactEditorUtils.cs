@@ -32,28 +32,28 @@ namespace Lostbyte.Toolkit.FactSystem.Editor
         {
             if (string.IsNullOrEmpty(name))
             {
-                DebugLogger.LogWarning("Name cannot be empty");
+                Print.Warn("Name cannot be empty");
                 return false;
             }
             var regex = new Regex(@"^[a-zA-Z0-9_-]+$");
             if (!regex.IsMatch(name))
             {
-                DebugLogger.LogWarning("Name must consist only from letters, numbers, dashes or underscores");
+                Print.Warn("Name must consist only from letters, numbers, dashes or underscores");
                 return false;
             }
             if (!char.IsLetter(name[0]))
             {
-                DebugLogger.LogWarning("Name must start with letter");
+                Print.Warn("Name must start with letter");
                 return false;
             }
             if (!char.IsLetterOrDigit(name[^1]))
             {
-                DebugLogger.LogWarning("Name must end with letter or digit");
+                Print.Warn("Name must end with letter or digit");
                 return false;
             }
             if (Database.RootKeys.SelectMany(k => k.Children).SelectMany(k => k.Children.Select(c => c.name).Concat(k.Facts.Select(f => f.name))).Any(s => s == name))
             {
-                DebugLogger.LogWarning("Name already exists");
+                Print.Warn("Name already exists");
                 return false;
             }
             return true;
