@@ -29,7 +29,7 @@ namespace Lostbyte.Toolkit.Director
                     // text = GetText(iBehaviour.SubtitleText);
                 }
             }
-            manager.SetFrame(Actor, text, time, duration);//FIXME
+            // manager.SetFrame(Actor, text, time, duration);//FIXME
         }
 
         //         private string GetText(LocalizedString text)

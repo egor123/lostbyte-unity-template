@@ -1,0 +1,55 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: LocalizedAssets
+  m_EditorClassIdentifier: 
+  m_GroupName: LocalizedAssets
+  m_Data:
+    m_SerializedData: []
+  m_GUID: ba61920b60be376419558e81378b4324
+  m_SerializeEntries:
+  - m_GUID: 085f6c2886a177e40895e14014f778b4
+    m_Address: Localization/ru-RU/game/file_2
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - LOCALE_ru-RU
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 35286f9bc317daa47a94bb3b614e6764
+    m_Address: Localization/en-US/game/test
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - LOCALE_en-US
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 65f6e380abb009940a1f18188222dea7
+    m_Address: Localization/ru-RU/game/file_1
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - LOCALE_ru-RU
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a1717d4dd302a584d8e0ce472685f1bf
+    m_Address: Localization/en-US/game/file_0
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - LOCALE_en-US
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ecf6eddfc30888f4caeae06a9a491617
+    m_Address: Localization/ru-RU/game/file_0
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - LOCALE_ru-RU
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: f14efb1c521b0b04b832647a27ae8c94, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 12e14eb035e8b5d46b3883a06e7b5d06, type: 2}
+    - {fileID: 11400000, guid: b9b9b8ff9f061f847a8f4c37dea59574, type: 2}

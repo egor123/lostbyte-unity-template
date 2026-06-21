@@ -34,14 +34,14 @@ namespace {NAMESPACE}
         private const string Namespace = "Localization";
         private const string ClassName = "Localization";
 
-        [MenuItem("Tools/Localization/Generate Code")]
-        public static void Generate()
+        // [MenuItem("Tools/Localization/Generate Code")]
+        public static bool Generate()
         {
             LocalizationDatabase db = LocalizationSettings.Database;
             if (db == null)
             {
                 Print.MError("No LocalizationDatabase provided for code generation.");
-                return;
+                return false;
             }
             var file = GenerateFile(Namespace, db.Schema);
             string assetPath = AssetDatabase.GetAssetPath(db);
@@ -51,6 +51,7 @@ namespace {NAMESPACE}
             AssetDatabase.Refresh();
 
             Print.MLog("Localization code generation complete.");
+            return true;
         }
         private static IEnumerable<(string type, string name)> GetArgs(string[] args)
         {

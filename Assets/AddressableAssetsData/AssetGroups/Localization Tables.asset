@@ -18,37 +18,37 @@ MonoBehaviour:
   m_GUID: dd077187131564a4d990d2b24d6ccf75
   m_SerializeEntries:
   - m_GUID: 3d53b6e385229c04f9441d12be1cfe64
-    m_Address: en-US_game
+    m_Address: Tables/en-US/game
     m_ReadOnly: 0
     m_SerializedLabels:
     - LOCALE_en-US
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 3d6050dcc0ca8274ba0202b2970a8c08
-    m_Address: ru-RU_ui
+    m_Address: Tables/ru-RU/ui
     m_ReadOnly: 0
     m_SerializedLabels:
     - LOCALE_ru-RU
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 55754d737d475e94394d43466611318b
-    m_Address: ru-RU_locales
+    m_Address: Tables/ru-RU/locales
     m_ReadOnly: 0
     m_SerializedLabels:
     - LOCALE_ru-RU
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 83b041315d8473a40a0124cb050f2b87
-    m_Address: en-US_ui
+    m_Address: Tables/en-US/ui
     m_ReadOnly: 0
     m_SerializedLabels:
     - LOCALE_en-US
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 986409dd824985341a58867f552feffb
-    m_Address: en-US_locales
+    m_Address: Tables/en-US/locales
     m_ReadOnly: 0
     m_SerializedLabels:
     - LOCALE_en-US
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 9b5da89b1fe5f004698a9a83c5be9fd6
-    m_Address: ru-RU_game
+    m_Address: Tables/ru-RU/game
     m_ReadOnly: 0
     m_SerializedLabels:
     - LOCALE_ru-RU

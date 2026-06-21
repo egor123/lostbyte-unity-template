@@ -37,6 +37,7 @@ namespace Lostbyte.Toolkit.Localization
         [field: SerializeField] public string Id { get; private set; }
         [field: SerializeField, Hide] public string SchemaVersion { get; private set; }
         [field: SerializeField, TextArea, ShowIf(nameof(Meta))] public string Meta { get; private set; }
+
         [SerializeField] private List<LocalizationKey> m_keys;
         public readonly IReadOnlyList<LocalizationKey> Keys => m_keys.AsReadOnly();
 
@@ -58,7 +59,7 @@ namespace Lostbyte.Toolkit.Localization
         {
             { "string", typeof(string) },
             { "audio", typeof(AudioClip) },
-            { "file", typeof(string) }, // FIXME???
+            { "file", typeof(TextAsset) },
             { "texture", typeof(Texture2D) },
         };
         [field: SerializeField] public string Id { get; private set; }
@@ -72,9 +73,11 @@ namespace Lostbyte.Toolkit.Localization
 
         public LocalizationKey(string id, string meta, List<string> types, List<ArgumentDefinition> args, bool isArray)
         {
-            if (types == null || types.Count == 0) throw new LocalizationException("Key must have at least one type!");
+            if (types == null || types.Count == 0)
+                throw new LocalizationException("Key must have at least one type!");
             foreach (var type in types)
-                if (!AllowedTypes.ContainsKey(type)) throw new LocalizationException($"Key type {type} is not supported, it must be: {string.Join(", ", AllowedTypes.Keys)}!");
+                if (!AllowedTypes.ContainsKey(type))
+                    throw new LocalizationException($"Key type {type} is not supported, it must be: {string.Join(", ", AllowedTypes.Keys)}!");
 
             Id = id;
             Meta = meta;

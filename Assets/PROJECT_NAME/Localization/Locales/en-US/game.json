@@ -1,13 +1,4 @@
 {
   "test_key": "Test: {arg1:F2}, {arg2}",
-  "test_array_key": [
-    {
-      "string": "Line 1 text",
-      "audio": "audio/line_1"
-    },
-    {
-      "string": "Line 2 text",
-      "audio": "audio/line_2"
-    }
-  ]
+  "test_array_key": ["Line 1 text", "Line 2 text"]
 }

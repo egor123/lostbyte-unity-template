@@ -4,12 +4,14 @@
   <Project Path="Lostbyte.Toolkit.Audio.csproj" />
   <Project Path="Lostbyte.Toolkit.CustomEditor.csproj" />
   <Project Path="Lostbyte.Toolkit.FactSystem.csproj" />
+  <Project Path="Lostbyte.Toolkit.TimelineExtensions.Editor.csproj" />
   <Project Path="Assembly-CSharp.csproj" />
   <Project Path="Lostbyte.Toolkit.Graphs.csproj" />
+  <Project Path="Lostbyte.Toolkit.Director.csproj" />
+  <Project Path="Lostbyte.Toolkit.TimelineExtensions.csproj" />
   <Project Path="Lostbyte.Toolkit.CustomEditor.Editor.csproj" />
   <Project Path="Lostbyte.Toolkit.Common.csproj" />
   <Project Path="Lostbyte.Toolkit.Animation.csproj" />
-  <Project Path="Lostbyte.Toolkit.Director.csproj" />
   <Project Path="Lostbyte.Toolkit.Localization.Editor.csproj" />
   <Project Path="Lostbyte.Toolkit.Scenes.Editor.csproj" />
   <Project Path="Lostbyte.Toolkit.Management.csproj" />

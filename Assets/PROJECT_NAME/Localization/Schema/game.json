@@ -2,19 +2,27 @@
   "schema_version": "1.0",
   "table_id": "game",
   "meta": "Contains all dialogue and related media for the game.",
+  "default_types": ["string"],
   "keys": [
     {
       "id": "test_key",
       "meta": "short description",
-      "types": ["string"],
-      "args": ["arg1:float", "arg2:object"],
-      "is_array": false
+      "args": ["arg1:float", "arg2:object"]
     },
     {
       "id": "test_array_key",
-      "meta": "test array",
-      "types": ["string", "audio"],
       "is_array": true
+    },
+    {
+      "id": "file",
+      "meta": "test array",
+      "types": ["file"],
+      "is_array": true
+    },
+    {
+      "id": "test",
+      "meta": "test file",
+      "types": ["file"]
     }
   ]
 }

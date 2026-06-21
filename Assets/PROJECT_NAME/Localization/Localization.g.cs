@@ -7,7 +7,7 @@ namespace Localization
     public static class GameTable
     {
         public static LocalizedReference<System.String> GetTestKeyString(LocFloatArg arg1, LocArg arg2) => new("game", "test_key", arg1, arg2);
-        public static LocalizedReference<System.String[], UnityEngine.AudioClip[]> GetTestArrayKeyString() => new("game", "test_array_key");
+        public static LocalizedReference<System.String[]> GetTestArrayKeyString() => new("game", "test_array_key");
     }
 
     public static class LocalesTable

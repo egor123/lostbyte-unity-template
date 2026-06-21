@@ -16,13 +16,13 @@ namespace Lostbyte.Toolkit.Localization.Editor
 {
     public class LocalizedTableParser : MonoBehaviour
     {
-        [MenuItem("Tools/Localization/Update Tables", priority = 20)]
-        public static void UpdateTables()
+        // [MenuItem("Tools/Localization/Update Tables", priority = 20)]
+        public static bool UpdateTables()
         {
             if (LocalizationSettings.Database == null)
             {
                 Print.MError("Failed to update localization tables: Database is null!");
-                return;
+                return false;
             }
 
             var db = LocalizationSettings.Database;
@@ -32,7 +32,7 @@ namespace Lostbyte.Toolkit.Localization.Editor
             if (string.IsNullOrEmpty(assetPath))
             {
                 Print.MError("Localization Database is not an asset on disk.");
-                return;
+                return false;
             }
 
             string rootFolder = Path.GetDirectoryName(assetPath);
@@ -44,41 +44,83 @@ namespace Lostbyte.Toolkit.Localization.Editor
             Directory.CreateDirectory(tablesFolder);
             var configs = LoadAndValidateConfigs(localesFolder);
 
-            // 2. Process each Table Schema
             foreach (var tableSchema in schemaList)
             {
-                var allLocalesData = PreloadTableData(localesFolder, tableSchema.Id, configs.Keys);
+                var filePaths = new Dictionary<string, string>();
+                var allLocalesData = PreloadTableStringData(localesFolder, tableSchema.Id, configs.Keys, filePaths);
+
+                var modifiedLocales = new HashSet<string>();
+
                 foreach (var localeName in configs.Keys)
                 {
-                    LocalizedTable tableAsset = BuildTableAsset(localesFolder, localeName, tableSchema, configs, allLocalesData);
+                    LocalizedTable tableAsset = BuildTableAsset(localesFolder, localeName, tableSchema, configs, allLocalesData, modifiedLocales);
 
                     if (tableAsset != null)
                     {
                         string savePath = Path.Combine(tablesFolder, $"{localeName}_{tableSchema.Id}.asset");
                         AssetDatabase.CreateAsset(tableAsset, savePath);
-                        MakeAssetAddressable(savePath, tableAsset, localeName, tableSchema.Id);
+                        MakeTableAddressable(savePath, tableAsset, localeName, tableSchema.Id);
+                    }
+                }
+
+                foreach (var localeName in modifiedLocales)
+                {
+                    if (filePaths.TryGetValue(localeName, out string path) && allLocalesData.TryGetValue(localeName, out JObject jobj))
+                    {
+                        try
+                        {
+                            string updatedJson = jobj.ToString(Formatting.Indented);
+                            File.WriteAllText(path, updatedJson);
+                            Print.MLog($"[Locale: {localeName}] Updated {tableSchema.Id}.json with missing keys.");
+                        }
+                        catch (Exception e)
+                        {
+                            Print.MError($"[Locale: {localeName}] Failed to save missing keys back to disk: {e.Message}");
+                        }
                     }
                 }
             }
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
             Print.MLog("Localization Tables updated successfully.");
+            return true;
         }
-        private static void MakeAssetAddressable(string path, UnityEngine.Object asset, string locale, string table)
+
+
+        private static void MakeLocalizedAssetAddressable(string path, UnityEngine.Object asset, string locale, string tableId)
+        {
+            AddressableAssetSettings settings = AddressableAssetSettingsDefaultObject.Settings;
+            string assetGUID = AssetDatabase.AssetPathToGUID(path);
+            string groupName = "LocalizedAssets";
+            AddressableAssetGroup targetGroup = settings.FindGroup(groupName) ?? settings.CreateGroup(groupName, false, false, true, settings.DefaultGroup.Schemas);
+            AddressableAssetEntry entry = settings.CreateOrMoveEntry(assetGUID, targetGroup);
+            if (entry != null)
+            {
+                entry.address = $"Localization/{locale}/{tableId}/{asset.name}";
+                string labelName = $"LOCALE_{locale}";
+                settings.AddLabel(labelName);
+                entry.SetLabel(labelName, true);
+                settings.SetDirty(AddressableAssetSettings.ModificationEvent.EntryMoved, entry, true);
+            }
+        }
+
+        private static void MakeTableAddressable(string path, UnityEngine.Object asset, string locale, string tableId)
         {
             AddressableAssetSettings settings = AddressableAssetSettingsDefaultObject.Settings;
             string assetGUID = AssetDatabase.AssetPathToGUID(path);
             string groupName = LocalizationSettings.k_addressableTableGroupName;
+
             AddressableAssetGroup targetGroup = settings.FindGroup(groupName);
             if (targetGroup == null)
             {
                 Type[] types = { typeof(LocalizedTable) };
                 targetGroup = settings.CreateGroup(groupName, false, false, true, settings.DefaultGroup.Schemas, types);
             }
+
             AddressableAssetEntry entry = settings.CreateOrMoveEntry(assetGUID, targetGroup);
             if (entry != null)
             {
-                entry.address = asset.name;
+                entry.address = $"Tables/{locale}/{tableId}";
                 string labelName = $"LOCALE_{locale}";
                 settings.AddLabel(labelName);
                 entry.SetLabel(labelName, true);
@@ -115,7 +157,6 @@ namespace Lostbyte.Toolkit.Localization.Editor
                 }
             }
 
-            // Detect Circular Dependencies
             foreach (var locale in configs.Keys.ToList())
             {
                 HashSet<string> visited = new();
@@ -136,7 +177,7 @@ namespace Lostbyte.Toolkit.Localization.Editor
             return configs;
         }
 
-        private static Dictionary<string, JObject> PreloadTableData(string localesFolder, string tableId, IEnumerable<string> validLocales)
+        private static Dictionary<string, JObject> PreloadTableStringData(string localesFolder, string tableId, IEnumerable<string> validLocales, Dictionary<string, string> outPaths)
         {
             var data = new Dictionary<string, JObject>();
             string targetFileName = $"{tableId}.json";
@@ -150,6 +191,7 @@ namespace Lostbyte.Toolkit.Localization.Editor
                 {
                     try
                     {
+                        outPaths[locale] = dataPath;
                         string jsonContent = File.ReadAllText(dataPath);
                         data[locale] = JObject.Parse(jsonContent);
                     }
@@ -157,6 +199,14 @@ namespace Lostbyte.Toolkit.Localization.Editor
                     {
                         Print.MError($"[Locale: {locale}] Malformed JSON in {targetFileName}: {e.Message}");
                     }
+                }
+                else
+                {
+                    string defaultDir = Path.Combine(localeDir, tableId);
+                    if (!Directory.Exists(defaultDir)) Directory.CreateDirectory(defaultDir);
+
+                    outPaths[locale] = Path.Combine(defaultDir, targetFileName);
+                    data[locale] = new JObject();
                 }
             }
 
@@ -168,14 +218,15 @@ namespace Lostbyte.Toolkit.Localization.Editor
             string localeName,
             LocalizationTableSchema schema,
             Dictionary<string, LocaleConfig> configs,
-            Dictionary<string, JObject> allData)
+            Dictionary<string, JObject> stringData,
+            HashSet<string> modifiedLocales)
         {
             LocalizedTable table = ScriptableObject.CreateInstance<LocalizedTable>();
 
             var stringEntries = new List<SerializedKeyValuePair<string, string>>();
             var stringArrayEntries = new List<SerializedKeyValuePair<string, string[]>>();
-            var addrEntries = new List<SerializedKeyValuePair<string, AssetReference>>();
-            var addrArrayEntries = new List<SerializedKeyValuePair<string, AssetReference[]>>();
+            var addrEntries = new List<LocalizedTable.LocalizedAssetEntry>();
+            var addrArrayEntries = new List<LocalizedTable.LocalizedAssetEntries>();
 
             foreach (var keySchema in schema.Keys)
             {
@@ -185,7 +236,7 @@ namespace Lostbyte.Toolkit.Localization.Editor
                 {
                     if (keySchema.IsArray)
                     {
-                        string[] resolvedArr = ResolveArrayValue(localesFolder, localeName, keySchema.Id, requiredType, isSimpleString, configs, allData);
+                        string[] resolvedArr = ResolveArrayValue(localesFolder, localeName, schema.Id, keySchema.Id, requiredType, isSimpleString, configs, stringData, modifiedLocales);
 
                         if (resolvedArr != null)
                         {
@@ -200,13 +251,13 @@ namespace Lostbyte.Toolkit.Localization.Editor
                                 for (int i = 0; i < resolvedArr.Length; i++)
                                     arr[i] = string.IsNullOrEmpty(resolvedArr[i]) ? new AssetReference() : new AssetReference(resolvedArr[i]);
 
-                                addrArrayEntries.Add(new SerializedKeyValuePair<string, AssetReference[]>(keySchema.Id, arr));
+                                addrArrayEntries.Add(new LocalizedTable.LocalizedAssetEntries() { Key = keySchema.Id, AssetType = requiredType, References = arr });
                             }
                         }
                     }
                     else
                     {
-                        string resolvedStr = ResolveSingleValue(localesFolder, localeName, keySchema.Id, requiredType, isSimpleString, configs, allData);
+                        string resolvedStr = ResolveSingleValue(localesFolder, localeName, schema.Id, keySchema.Id, requiredType, isSimpleString, configs, stringData, modifiedLocales);
 
                         if (resolvedStr != null)
                         {
@@ -216,7 +267,7 @@ namespace Lostbyte.Toolkit.Localization.Editor
                             }
                             else
                             {
-                                addrEntries.Add(new SerializedKeyValuePair<string, AssetReference>(keySchema.Id, new AssetReference(resolvedStr)));
+                                addrEntries.Add(new LocalizedTable.LocalizedAssetEntry() { Key = keySchema.Id, AssetType = requiredType, Reference = new AssetReference(resolvedStr) });
                             }
                         }
                     }
@@ -226,29 +277,31 @@ namespace Lostbyte.Toolkit.Localization.Editor
             return table;
         }
 
-        private static string ResolveSingleValue(string localesFolder, string startLocale, string keyId, string reqType, bool isSingleType, Dictionary<string, LocaleConfig> configs, Dictionary<string, JObject> data)
+        private static string ResolveSingleValue(string localesFolder, string startLocale, string tableId, string keyId, string reqType, bool isSingleType, Dictionary<string, LocaleConfig> configs, Dictionary<string, JObject> stringData, HashSet<string> modifiedLocales)
         {
             string currentLocale = startLocale;
-
             while (!string.IsNullOrEmpty(currentLocale))
             {
-                if (data.TryGetValue(currentLocale, out JObject root))
+                if (reqType == "string")
                 {
-                    if (root.TryGetValue(keyId, out JToken keyToken))
+                    if (stringData.TryGetValue(currentLocale, out JObject root))
                     {
-                        string val = ExtractValue(keyToken, reqType, isSingleType);
-                        if (!string.IsNullOrEmpty(val))
+                        if (root.TryGetValue(keyId, out JToken keyToken))
                         {
-                            if (reqType == "string") return val;
-                            string fullPath = Path.Combine(localesFolder, currentLocale, val);
-                            string guid = AssetDatabase.AssetPathToGUID(fullPath);
-                            if (string.IsNullOrEmpty(guid))
-                            {
-                                Print.MWarn($"[Locale: {currentLocale}] Asset not found for key '{keyId}' at relative path: {fullPath}");
-                            }
+                            string val = ExtractValue(keyToken, reqType, isSingleType);
+                            if (!string.IsNullOrEmpty(val)) return val;
                         }
-                        else Print.MWarn($"[Locale: {currentLocale}] Key '{keyId}' exists but is missing valid type '{reqType}'.");
+                        else if (currentLocale == startLocale)
+                        {
+                            root[keyId] = null;
+                            modifiedLocales.Add(startLocale);
+                        }
                     }
+                }
+                else
+                {
+                    string guid = FindAssetGuid(localesFolder, currentLocale, tableId, keyId, reqType);
+                    if (!string.IsNullOrEmpty(guid)) return guid;
                 }
                 if (configs.TryGetValue(currentLocale, out var conf) && !string.IsNullOrEmpty(conf.Fallback))
                 {
@@ -262,70 +315,108 @@ namespace Lostbyte.Toolkit.Localization.Editor
             return null;
         }
 
-        private static string[] ResolveArrayValue(string localesFolder, string startLocale, string keyId, string reqType, bool isSingleType, Dictionary<string, LocaleConfig> configs, Dictionary<string, JObject> data)
+        private static string[] ResolveArrayValue(string localesFolder, string startLocale, string tableId, string keyId, string reqType, bool isSingleType, Dictionary<string, LocaleConfig> configs, Dictionary<string, JObject> data, HashSet<string> modifiedLocales)
         {
             string currentLocale = startLocale;
 
             while (!string.IsNullOrEmpty(currentLocale))
             {
-                if (data.TryGetValue(currentLocale, out JObject root))
+                if (reqType == "string")
                 {
-                    if (root.TryGetValue(keyId, out JToken keyToken))
+                    if (data.TryGetValue(currentLocale, out JObject root))
                     {
-                        if (keyToken is JArray arr)
+                        if (root.TryGetValue(keyId, out JToken keyToken))
                         {
-                            string[] result = new string[arr.Count];
-                            bool hasAnyValidData = false;
-
-                            for (int i = 0; i < arr.Count; i++)
+                            if (keyToken is JArray arr)
                             {
-                                string val = ExtractValue(arr[i], reqType, isSingleType);
-                                if (!string.IsNullOrEmpty(val))
+                                string[] result = new string[arr.Count];
+                                bool hasAnyValidData = false;
+
+                                for (int i = 0; i < arr.Count; i++)
                                 {
-                                    if (reqType == "string")
+                                    string val = ExtractValue(arr[i], reqType, isSingleType);
+                                    if (!string.IsNullOrEmpty(val))
                                     {
                                         result[i] = val;
                                         hasAnyValidData = true;
                                     }
-                                    else
-                                    {
-                                        string fullPath = Path.Combine(localesFolder, currentLocale, val);
-                                        string guid = AssetDatabase.AssetPathToGUID(fullPath);
-                                        if (string.IsNullOrEmpty(guid))
-                                        {
-                                            Print.MWarn($"[Locale: {currentLocale}] Asset not found for key '{keyId}' at relative path: {fullPath}");
-                                        }
-                                        else
-                                        {
-                                            result[i] = guid;
-                                            hasAnyValidData = true;
-
-                                        }
-                                    }
                                 }
-                                else
-                                {
-                                    Print.MWarn($"[Locale: {currentLocale}] Array key '{keyId}' is missing type '{reqType}' at index {i}.");
-                                }
+                                if (hasAnyValidData) return result;
                             }
-                            if (hasAnyValidData) return result;
+                            else
+                            {
+                                Print.MWarn($"[Locale: {currentLocale}] Key '{keyId}' should be an array but isn't.");
+                            }
                         }
-                        else
+                        else if (currentLocale == startLocale)
                         {
-                            Print.MWarn($"[Locale: {currentLocale}] Key '{keyId}' should be an array but isn't.");
+                            root[keyId] = null;
+                            modifiedLocales.Add(startLocale);
                         }
                     }
+                }
+                else
+                {
+                    List<string> assetGuids = new();
+                    int index = 0;
+                    while (true)
+                    {
+                        string targetFileName = $"{keyId}_{index}";
+                        string guid = FindAssetGuid(localesFolder, currentLocale, tableId, targetFileName, reqType);
+                        if (!string.IsNullOrEmpty(guid))
+                        {
+                            assetGuids.Add(guid);
+                            index++;
+                        }
+                        else break;
+                    }
+                    if (assetGuids.Count > 0) return assetGuids.ToArray();
                 }
 
                 if (configs.TryGetValue(currentLocale, out var conf) && !string.IsNullOrEmpty(conf.Fallback))
                 {
-                    Print.MWarn($"[Locale: {currentLocale}] Missing array key '{keyId}:{reqType}'. Falling back to {conf.Fallback}.");
+                    Print.MWarn($"[Locale: {currentLocale}] Missing array key/files '{keyId}:{reqType}'. Falling back to {conf.Fallback}.");
                     currentLocale = conf.Fallback;
                 }
                 else break;
             }
+            Print.MError($"[Locale: {startLocale}] Completely missing array key/files '{keyId}:{reqType}'. It will be omitted from the table.");
+            return null;
+        }
 
-            Print.MError($"[Locale: {startLocale}] Completely missing array key '{keyId}:{reqType}'. It will be omitted from the table.");
+        private static string FindAssetGuid(string localesFolder, string locale, string tableId, string fileNameWithoutExtension, string type)
+        {
+            string localeDir = Path.Combine(localesFolder, locale);
+            if (!Directory.Exists(localeDir)) return null;
+
+            var tableDirs = Directory.GetDirectories(localeDir, tableId, SearchOption.AllDirectories);
+            foreach (var tableDir in tableDirs)
+            {
+                var files = Directory.GetFiles(tableDir, "*.*", SearchOption.AllDirectories);
+                foreach (var file in files)
+                {
+                    if (Path.GetFileNameWithoutExtension(file).Equals(fileNameWithoutExtension, StringComparison.OrdinalIgnoreCase))
+                    {
+                        string projectRoot = Directory.GetCurrentDirectory().Replace('\\', '/');
+                        string cleanFile = file.Replace('\\', '/');
+
+                        string relativePath = cleanFile.StartsWith(projectRoot)
+                            ? cleanFile[projectRoot.Length..].TrimStart('/')
+                            : cleanFile;
+
+                        if (!relativePath.StartsWith("Assets/"))
+                            relativePath = "Assets/" + relativePath;
+
+                        string guid = AssetDatabase.AssetPathToGUID(relativePath);
+                        UnityEngine.Object asset = AssetDatabase.LoadAssetAtPath(relativePath, LocalizationKey.AllowedTypes[type]);
+                        if (asset != null && !string.IsNullOrEmpty(guid))
+                        {
+                            MakeLocalizedAssetAddressable(relativePath, asset, locale, tableId);
+                            return guid;
+                        }
+                    }
+                }
+            }
             return null;
         }
 
@@ -353,8 +444,8 @@ namespace Lostbyte.Toolkit.Localization.Editor
             string tableId,
             List<SerializedKeyValuePair<string, string>> strEntries,
             List<SerializedKeyValuePair<string, string[]>> strArrEntries,
-            List<SerializedKeyValuePair<string, AssetReference>> addrEntries,
-            List<SerializedKeyValuePair<string, AssetReference[]>> addrArrEntries)
+            List<LocalizedTable.LocalizedAssetEntry> addrEntries,
+            List<LocalizedTable.LocalizedAssetEntries> addrArrEntries)
         {
             Type t = typeof(LocalizedTable);
 

@@ -15,7 +15,7 @@ namespace Lostbyte.Toolkit.Director
         {
             var mixer = ScriptPlayable<SubtitleTrackMixer>.Create(graph, inputCount);
             mixer.GetBehaviour().Actor = Actor;
-            return mixer    ;
+            return mixer;
         }
     }
 }

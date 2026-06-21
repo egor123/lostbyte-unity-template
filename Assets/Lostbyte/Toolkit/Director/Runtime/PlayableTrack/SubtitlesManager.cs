@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Lostbyte.Toolkit.Localization;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
@@ -21,7 +22,7 @@ namespace Lostbyte.Toolkit.Director
         // public UnityEvent OnTypeEvent;
 
         public ScriptableObject CurentActor { get; protected set; }
-        public string CurrentText { get; protected set; }
+        public LocalizedReference<string> CurrentText { get; protected set; }
         public float CurrentDuration { get; protected set; }
         public float Time { get; private set; }
         protected virtual void Awake()
@@ -36,8 +37,8 @@ namespace Lostbyte.Toolkit.Director
             CurrentDuration = 0;
             Time = 0;
         }
-        public abstract void Set(ScriptableObject actor, string table, string entry, float duration);
-        public abstract void SetFrame(ScriptableObject actor, string value, float time, float duration);
+        public abstract void Set(ScriptableObject actor, LocalizedReference<string> text, float duration);
+        public abstract void SetFrame(ScriptableObject actor, LocalizedReference<string> text, float time, float duration);
         protected virtual void Update()
         {
             if (CurrentText != null)

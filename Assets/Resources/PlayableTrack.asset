@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1a42321e32f60c34d9ff9b6cfa2f180a, type: 3}
   m_Name: Test Node 2
   m_EditorClassIdentifier: 
-  Position: {x: 732, y: 198}
+  Position: {x: 1308.6666, y: 4.666666}
   In:
   - {fileID: 6231953369714422268}
   - {fileID: 6626836687833242164}
@@ -44,7 +44,7 @@ MonoBehaviour:
   Priority: 1
   <OnContinueBehaviour>k__BackingField: 0
   StartNode: {fileID: 5229469007161320668}
-  StartNodePosition: {x: -348, y: 95}
+  StartNodePosition: {x: 0, y: 0}
 --- !u!114 &301225545311402483
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -57,10 +57,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1e581a9b9bca2474ab03c30a8a33df51, type: 3}
   m_Name: Redirect Node
   m_EditorClassIdentifier: 
-  Position: {x: 807, y: 30}
-  In:
-  - {fileID: 6231953369714422268}
-  Out: {fileID: 5251974714245448475}
+  Position: {x: 0, y: 0}
+  In: []
+  Out: {fileID: 0}
 --- !u!114 &5229469007161320668
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -73,23 +72,29 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 49557a02f60e48249973affaf8be2c0c, type: 3}
   m_Name: Switch Node
   m_EditorClassIdentifier: 
-  Position: {x: -126, y: 83}
+  Position: {x: 376.66666, y: -31.333334}
   In:
   - {fileID: 0}
   Nodes:
   - Condition:
       m_rootNode:
-        rid: -2
+        rid: 358180309429911552
     Out: {fileID: 6231953369714422268}
   - Condition:
       m_rootNode:
-        rid: -2
+        rid: 358180693752938497
     Out: {fileID: 6626836687833242164}
   references:
     version: 2
     RefIds:
-    - rid: -2
-      type: {class: , ns: , asm: }
+    - rid: 358180309429911552
+      type: {class: BoolNode, ns: Lostbyte.Toolkit.FactSystem.Nodes, asm: Lostbyte.Toolkit.FactSystem}
+      data:
+        <Value>k__BackingField: 1
+    - rid: 358180693752938497
+      type: {class: BoolNode, ns: Lostbyte.Toolkit.FactSystem.Nodes, asm: Lostbyte.Toolkit.FactSystem}
+      data:
+        <Value>k__BackingField: 1
 --- !u!114 &5251974714245448475
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -102,9 +107,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7bfadb478cdf93c4587a9e6729fd50af, type: 3}
   m_Name: Dialogue Node
   m_EditorClassIdentifier: 
-  Position: {x: 1127, y: 67}
+  Position: {x: 1664, y: 44}
   In:
-  - {fileID: 301225545311402483}
   - {fileID: -6394396275358484631}
   - {fileID: -6394396275358484631}
   Out: {fileID: 0}
@@ -196,14 +200,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 49557a02f60e48249973affaf8be2c0c, type: 3}
   m_Name: Switch Node
   m_EditorClassIdentifier: 
-  Position: {x: 248, y: -21}
+  Position: {x: 770, y: -136}
   In:
   - {fileID: 5229469007161320668}
   Nodes:
   - Condition:
       m_rootNode:
         rid: 1312422512482058240
-    Out: {fileID: 301225545311402483}
+    Out: {fileID: 0}
   - Condition:
       m_rootNode:
         rid: 1312422490736689199
@@ -265,7 +269,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1a42321e32f60c34d9ff9b6cfa2f180a, type: 3}
   m_Name: Test Node
   m_EditorClassIdentifier: 
-  Position: {x: 311, y: 236}
+  Position: {x: 752.6667, y: 122.666664}
   In:
   - {fileID: 5229469007161320668}
   Out:
@@ -273,7 +277,7 @@ MonoBehaviour:
   Test: Hello World
   Options:
   - Number: 1
-    Number2: 2
+    Number2: 6
     Out:
     - {fileID: -6394396275358484631}
   - Number: 3

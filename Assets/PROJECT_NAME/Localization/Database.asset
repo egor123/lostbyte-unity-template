@@ -29,12 +29,23 @@ MonoBehaviour:
           <Type>k__BackingField: object
         <IsArray>k__BackingField: 0
       - <Id>k__BackingField: test_array_key
-        <Meta>k__BackingField: test array
+        <Meta>k__BackingField: 
         m_types:
         - string
-        - audio
         m_args: []
         <IsArray>k__BackingField: 1
+      - <Id>k__BackingField: file
+        <Meta>k__BackingField: test array
+        m_types:
+        - file
+        m_args: []
+        <IsArray>k__BackingField: 1
+      - <Id>k__BackingField: test
+        <Meta>k__BackingField: test file
+        m_types:
+        - file
+        m_args: []
+        <IsArray>k__BackingField: 0
     - <Id>k__BackingField: locales
       <SchemaVersion>k__BackingField: 1.0
       <Meta>k__BackingField: Contains all locales.

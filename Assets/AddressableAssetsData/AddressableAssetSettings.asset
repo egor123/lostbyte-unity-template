@@ -41,10 +41,11 @@ MonoBehaviour:
   m_ContentStateBuildPathProfileVariableName: <default settings path>
   m_CustomContentStateBuildPath: 
   m_ContentStateBuildPath: 
-  m_BuildAddressablesWithPlayerBuild: 0
+  m_BuildAddressablesWithPlayerBuild: 2
   m_overridePlayerVersion: '[UnityEditor.PlayerSettings.bundleVersion]'
   m_GroupAssets:
   - {fileID: 11400000, guid: 9b73e0d75c8cb974ea409fe8acb6f2d5, type: 2}
+  - {fileID: 11400000, guid: 3d4721fd819b06f43a7c20be87c82bba, type: 2}
   - {fileID: 11400000, guid: 0e91560d91032d34398e2bbde8f9d1c1, type: 2}
   - {fileID: 11400000, guid: 256d04e3e84ce6f489a0527593aa2d81, type: 2}
   m_BuildSettings:
@@ -87,8 +88,6 @@ MonoBehaviour:
     m_ProfileVersion: 1
   m_LabelTable:
     m_LabelNames:
-    - en-US
-    - ru-RU
     - LOCALE_en-US
     - LOCALE_ru-RU
   m_SchemaTemplates: []
@@ -109,5 +108,6 @@ MonoBehaviour:
     m_HostingServiceInfos: []
     m_Settings: {fileID: 11400000}
     m_NextInstanceId: 0
-    m_RegisteredServiceTypeRefs: []
+    m_RegisteredServiceTypeRefs:
+    - UnityEditor.AddressableAssets.HostingServices.HttpHostingService, Unity.Addressables.Editor
     m_PingTimeoutInMilliseconds: 5000

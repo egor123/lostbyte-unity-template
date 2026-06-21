@@ -26,8 +26,11 @@ namespace Lostbyte.Toolkit.CustomEditor.Editor.Graphs
 
         protected virtual void OnDisable()
         {
+            rootVisualElement.Unbind();
+
             if (_graphView != null)
             {
+                _graphView.Dispose();
                 _graphView.OnGraphModified -= MarkAsDirty;
                 _graphView.ClearGraph();
                 rootVisualElement.Remove(_graphView);

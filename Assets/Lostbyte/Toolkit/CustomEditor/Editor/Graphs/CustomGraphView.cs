@@ -9,6 +9,7 @@ using UnityEngine.UIElements;
 using Lostbyte.Toolkit.Common;
 using Lostbyte.Toolkit.CustomEditor.Graphs;
 using Core.CustomEditor.Editor;
+using UnityEditor.UIElements;
 
 namespace Lostbyte.Toolkit.CustomEditor.Editor.Graphs
 {
@@ -20,6 +21,9 @@ namespace Lostbyte.Toolkit.CustomEditor.Editor.Graphs
     {
         public TAsset Asset { get; private set; }
         public Action OnGraphModified;
+
+        public bool IsDirty { get; private set; }
+
         private bool _isClearing;
         private bool _isLoading;
 
@@ -41,11 +45,47 @@ namespace Lostbyte.Toolkit.CustomEditor.Editor.Graphs
             RegisterSearchWindow();
 
             graphViewChanged += OnGraphViewChanged;
-
             RegisterNodeChangeEvents();
 
-            RegisterCallback<AttachToPanelEvent>(e => Undo.undoRedoPerformed += OnUndoRedo);
-            RegisterCallback<DetachFromPanelEvent>(e => Undo.undoRedoPerformed -= OnUndoRedo);
+            Undo.undoRedoPerformed += OnUndoRedo;
+            EditorApplication.playModeStateChanged += OnPlayModeStateChanged;
+        }
+        public void Dispose()
+        {
+            Undo.undoRedoPerformed -= OnUndoRedo;
+            EditorApplication.playModeStateChanged -= OnPlayModeStateChanged;
+        }
+
+        private void OnPlayModeStateChanged(PlayModeStateChange state)
+        {
+            switch (state)
+            {
+                case PlayModeStateChange.ExitingEditMode:
+                    if (IsDirty && Asset != null)
+                    {
+                        bool doSave = EditorUtility.DisplayDialog(
+                            "Unsaved Graph Changes",
+                            $"You have unsaved changes in '{Asset.name}'.\n\nUnsaved nodes will be lost when entering Play Mode due to domain reload. Do you want to save them now?",
+                            "Save", "Don't Save"
+                        );
+
+                        if (doSave) Save(Asset);
+                    }
+                    break;
+
+                case PlayModeStateChange.EnteredEditMode:
+                case PlayModeStateChange.EnteredPlayMode:
+                    if (Asset != null) Load(Asset);
+                    break;
+            }
+        }
+
+        private void MarkDirty()
+        {
+            if (_isLoading || _isClearing || EditorApplication.isUpdating || EditorApplication.isCompiling)
+                return;
+            IsDirty = true;
+            OnGraphModified?.Invoke();
         }
 
         protected virtual void InitMinimap()
@@ -90,21 +130,22 @@ namespace Lostbyte.Toolkit.CustomEditor.Editor.Graphs
             RegisterCallback<ChangeEvent<Bounds>>(OnNodeFieldChanged);
             RegisterCallback<ChangeEvent<Gradient>>(OnNodeFieldChanged);
         }
+
         private void OnNodeFieldChanged<T>(ChangeEvent<T> evt)
         {
             if (_isLoading || _isClearing) return;
+            if (evt.target is not INotifyValueChanged<T>) return;
             if (evt.target is VisualElement targetElement)
             {
                 if (targetElement is GraphElement) return;
                 var parentNode = targetElement.GetFirstAncestorOfType<TNodeView>();
-                if (parentNode != null) OnGraphModified?.Invoke();
+                if (parentNode != null) MarkDirty();
             }
         }
 
         private void OnUndoRedo()
         {
-            if (_isLoading || _isClearing) return;
-            OnGraphModified?.Invoke();
+            MarkDirty();
         }
 
         private GraphViewChange OnGraphViewChanged(GraphViewChange changes)
@@ -125,15 +166,19 @@ namespace Lostbyte.Toolkit.CustomEditor.Editor.Graphs
             if (changes.movedElements != null || changes.edgesToCreate != null)
                 modified = true;
 
-            if (modified) OnGraphModified?.Invoke();
+            if (modified) MarkDirty();
             return changes;
         }
+
         public virtual void ClearGraph()
         {
             _isClearing = true;
             foreach (var nodeView in nodes.ToList().OfType<TNodeView>())
+            {
+                nodeView.Unbind();
                 if (nodeView.WorkingNode)
                     UnityEngine.Object.DestroyImmediate(nodeView.WorkingNode);
+            }
             DeleteElements(graphElements.ToList());
             _isClearing = false;
         }
@@ -194,13 +239,19 @@ namespace Lostbyte.Toolkit.CustomEditor.Editor.Graphs
             ClearGraph();
             Asset = asset;
             if (asset == null) return;
+
             var loadedNodes = AssetDatabase.LoadAllAssetsAtPath(AssetDatabase.GetAssetPath(asset)).OfType<TNodeBase>();
             foreach (var node in loadedNodes)
             {
                 var view = GetNodeView(node);
                 view?.Load();
             }
-            schedule.Execute(() => schedule.Execute(() => { _isLoading = false; }));
+
+            schedule.Execute(() => schedule.Execute(() => schedule.Execute(() =>
+            {
+                _isLoading = false;
+                IsDirty = false;
+            })));
         }
 
         public virtual Vector2 GetDefaultNodeSize() => new(200, 150);
@@ -227,7 +278,7 @@ namespace Lostbyte.Toolkit.CustomEditor.Editor.Graphs
             newNode.name = name;
             Undo.RegisterCreatedObjectUndo(newNode, "Create Graph Node");
             GetNodeView(newNode, position);
-            OnGraphModified?.Invoke();
+            MarkDirty();
         }
 
         public void Save(TAsset asset)
@@ -259,6 +310,8 @@ namespace Lostbyte.Toolkit.CustomEditor.Editor.Graphs
                 }
                 EditorUtility.SetDirty(asset);
                 AssetDatabase.SaveAssets();
+
+                IsDirty = false;
             }
             catch (Exception ex)
             {

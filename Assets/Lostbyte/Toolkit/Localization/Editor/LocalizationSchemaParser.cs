@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -6,27 +5,27 @@ using Lostbyte.Toolkit.Common;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using UnityEditor;
-using UnityEngine;
 
 namespace Lostbyte.Toolkit.Localization.Editor
 {
     public static class LocalizationSchemaParser
     {
-        private static readonly HashSet<string> AllowedRootFields = new() { "schema_version", "table_id", "meta", "keys" };
+        private static readonly HashSet<string> AllowedRootFields = new() { "schema_version", "table_id", "meta", "default_types", "keys" };
         private static readonly HashSet<string> AllowedKeyFields = new() { "id", "meta", "types", "args", "is_array" };
 
-        [MenuItem("Tools/Localization/Update Schema", priority = 10)]
-        public static void UpdateScema()
+        // [MenuItem("Tools/Localization/Update Schema", priority = 10)]
+        public static bool UpdateScema()
         {
             if (LocalizationSettings.Instance == null || TryParse(LocalizationSettings.Database, out var schema) == false)
             {
                 Print.MError("Failed to update localization schema!");
-                return;
+                return false;
             }
             var dbSO = new SerializedObject(LocalizationSettings.Database);
             var schemaProp = dbSO.FindProperty($"<{nameof(LocalizationDatabase.Schema)}>k__BackingField");
             schemaProp.boxedValue = schema;
             dbSO.ApplyModifiedPropertiesWithoutUndo();
+            return true;
         }
 
         public static bool TryParse(LocalizationDatabase db, out LocalizationSchema result)
@@ -83,32 +82,41 @@ namespace Lostbyte.Toolkit.Localization.Editor
         {
             result = default;
             bool hasErrors = false;
-
             try
             {
                 JObject root = JObject.Parse(jsonText);
                 hasErrors |= ValidateAllowedFields(root, AllowedRootFields, "Root");
+
                 string schemaVersion = root.Value<string>("schema_version");
                 string tableId = root.Value<string>("table_id");
+
+                JArray defaultTypesArray = root.Value<JArray>("default_types");
+                List<string> defaultTypes = defaultTypesArray != null
+                    ? defaultTypesArray.ToObject<List<string>>()
+                    : new List<string>() { "string" };
+
                 if (string.IsNullOrWhiteSpace(tableId))
                 {
                     Print.MError("Missing required field: 'table_id' at root.");
                     hasErrors = true;
                 }
+
                 string rootMeta = root.Value<string>("meta");
                 var parsedKeys = new List<LocalizationKey>();
                 JArray keysArray = root.Value<JArray>("keys");
+
                 if (keysArray != null)
                 {
                     for (int i = 0; i < keysArray.Count; i++)
                     {
                         if (keysArray[i] is JObject keyObj)
                         {
-                            hasErrors |= ParseKey(keyObj, i, out LocalizationKey parsedKey);
+                            hasErrors |= ParseKey(keyObj, i, defaultTypes, out LocalizationKey parsedKey);
                             parsedKeys.Add(parsedKey);
                         }
                     }
                 }
+
                 if (!hasErrors)
                 {
                     result = new(schemaVersion, tableId, rootMeta, parsedKeys);
@@ -122,8 +130,7 @@ namespace Lostbyte.Toolkit.Localization.Editor
                 return false;
             }
         }
-
-        private static bool ParseKey(JObject keyObj, int index, out LocalizationKey result)
+        private static bool ParseKey(JObject keyObj, int index, List<string> defaultTypes, out LocalizationKey result)
         {
             bool hasErrors = false;
             result = default;
@@ -160,7 +167,7 @@ namespace Lostbyte.Toolkit.Localization.Editor
             }
             else
             {
-                typesList.Add("string");
+                typesList = defaultTypes;
             }
             var argsList = new List<ArgumentDefinition>();
             if (keyObj.TryGetValue("args", out JToken argsToken) && argsToken.Type == JTokenType.Array)

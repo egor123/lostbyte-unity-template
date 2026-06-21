@@ -9,6 +9,9 @@ using Lostbyte.Toolkit.Common;
 using System.Text;
 using Lostbyte.Toolkit.CustomEditor.Editor;
 
+using UnityEditor.AddressableAssets;
+using UnityEditor.AddressableAssets.Settings;
+
 namespace Lostbyte.Toolkit.Build.Editor
 {
     public class AdvancedBuildWindow : EditorWindow
@@ -111,12 +114,12 @@ namespace Lostbyte.Toolkit.Build.Editor
 
             // Check if ANY builds exist to determine if we should draw the header
             bool hasWin = File.Exists(winPath);
-            bool hasMac = Directory.Exists(macPath); // Mac .app is a folder, not a file!
+            bool hasMac = Directory.Exists(macPath);
             bool hasLinux = File.Exists(linuxPath);
             bool hasWebGl = File.Exists(webglPath);
 
             if (!hasWin && !hasMac && !hasLinux && !hasWebGl)
-                return; // Hide section entirely if no builds are found
+                return;
 
             GUILayout.Label("Launch Local Builds", EditorStyles.boldLabel);
 
@@ -225,6 +228,9 @@ with socketserver.TCPServer(('', PORT), UnityHandler) as httpd:
             }
             Print.MLog("Starting Build Pipeline...");
 
+            UnityEditor.SceneManagement.EditorSceneManager.SaveOpenScenes();
+            AssetDatabase.SaveAssets();
+
             Dictionary<string, string> builds = new();
             int attempted = 0;
             SceneBuildValidation.ValidateBuild = true;
@@ -232,36 +238,32 @@ with socketserver.TCPServer(('', PORT), UnityHandler) as httpd:
             if (buildWindows)
             {
                 attempted++;
-                EditorUserBuildSettings.SwitchActiveBuildTarget(BuildTargetGroup.Standalone, BuildTarget.StandaloneWindows64);
                 PlayerSettings.SetScriptingBackend(BuildTargetGroup.Standalone, ScriptingImplementation.Mono2x);
-                if (!BuildTargetPlatform(BuildTarget.StandaloneWindows64, "Windows", ".exe", out var winPath)) { AbortPipeline("Windows"); return; }
+                if (!BuildTargetPlatform(BuildTargetGroup.Standalone, BuildTarget.StandaloneWindows64, "Windows", ".exe", out var winPath)) { AbortPipeline("Windows"); return; }
                 SceneBuildValidation.ValidateBuild = false;
                 builds["windows"] = winPath;
             }
             if (buildMac)
             {
                 attempted++;
-                EditorUserBuildSettings.SwitchActiveBuildTarget(BuildTargetGroup.Standalone, BuildTarget.StandaloneOSX);
                 PlayerSettings.SetScriptingBackend(BuildTargetGroup.Standalone, ScriptingImplementation.Mono2x);
-                if (!BuildTargetPlatform(BuildTarget.StandaloneOSX, "Mac", ".app", out var macPath)) { AbortPipeline("Mac"); return; }
+                if (!BuildTargetPlatform(BuildTargetGroup.Standalone, BuildTarget.StandaloneOSX, "Mac", ".app", out var macPath)) { AbortPipeline("Mac"); return; }
                 SceneBuildValidation.ValidateBuild = false;
                 builds["mac"] = macPath;
             }
             if (buildLinux)
             {
                 attempted++;
-                EditorUserBuildSettings.SwitchActiveBuildTarget(BuildTargetGroup.Standalone, BuildTarget.StandaloneLinux64);
                 PlayerSettings.SetScriptingBackend(BuildTargetGroup.Standalone, ScriptingImplementation.IL2CPP);
-                if (!BuildTargetPlatform(BuildTarget.StandaloneLinux64, "Linux", ".x86_64", out var linuxPath)) { AbortPipeline("Linux"); return; }
+                if (!BuildTargetPlatform(BuildTargetGroup.Standalone, BuildTarget.StandaloneLinux64, "Linux", ".x86_64", out var linuxPath)) { AbortPipeline("Linux"); return; }
                 SceneBuildValidation.ValidateBuild = false;
                 builds["linux"] = linuxPath;
             }
             if (buildWebGL)
             {
                 attempted++;
-                EditorUserBuildSettings.SwitchActiveBuildTarget(BuildTargetGroup.Standalone, BuildTarget.WebGL);
                 PlayerSettings.SetScriptingBackend(BuildTargetGroup.WebGL, ScriptingImplementation.IL2CPP);
-                if (!BuildTargetPlatform(BuildTarget.WebGL, "WebGL", "", out var webGLPath)) { AbortPipeline("WebGL"); return; }
+                if (!BuildTargetPlatform(BuildTargetGroup.WebGL, BuildTarget.WebGL, "WebGL", "", out var webGLPath)) { AbortPipeline("WebGL"); return; }
                 SceneBuildValidation.ValidateBuild = false;
                 builds["webgl"] = webGLPath;
             }
@@ -288,8 +290,29 @@ with socketserver.TCPServer(('', PORT), UnityHandler) as httpd:
             Print.MError($"ABORTED! {failedPlatform} build failed. Halting remaining jobs.");
         }
 
-        private bool BuildTargetPlatform(BuildTarget target, string folderName, string ext, out string buildPath)
+        private bool BuildTargetPlatform(BuildTargetGroup targetGroup, BuildTarget target, string folderName, string ext, out string buildPath)
         {
+            buildPath = string.Empty;
+
+            if (EditorUserBuildSettings.activeBuildTarget != target)
+            {
+                Print.MLog($"Switching Active Editor Target to {target}...");
+                if (!EditorUserBuildSettings.SwitchActiveBuildTarget(targetGroup, target))
+                {
+                    Print.MError($"Failed to switch target to {target}. Is the module installed in Unity Hub?");
+                    return false;
+                }
+            }
+
+            EditorUserBuildSettings.selectedBuildTargetGroup = targetGroup;
+            AssetDatabase.Refresh();
+
+            ForceCloseAddressablesReport();
+            if (!BuildAddressablesContent())
+            {
+                return false;
+            }
+
             Print.MLog($"Building {folderName}...");
 
             buildPath = Path.Combine("Builds", folderName);
@@ -305,6 +328,7 @@ with socketserver.TCPServer(('', PORT), UnityHandler) as httpd:
             {
                 scenes = GetScenes(),
                 locationPathName = outputPath,
+                targetGroup = targetGroup,
                 target = target,
                 options = BuildOptions.None
             };
@@ -316,7 +340,69 @@ with socketserver.TCPServer(('', PORT), UnityHandler) as httpd:
                 if (autoZip) buildPath = ZipBuild(buildPath, folderName);
                 return true;
             }
+
             return false;
+        }
+
+        private bool BuildAddressablesContent()
+        {
+            var settings = AddressableAssetSettingsDefaultObject.Settings;
+            if (settings == null)
+            {
+                Print.MLog("No Addressable settings found. Skipping Addressables pipeline phase.");
+                return true;
+            }
+
+            settings.BuildAddressablesWithPlayerBuild = AddressableAssetSettings.PlayerBuildOption.DoNotBuildWithPlayer;
+            EditorUtility.SetDirty(settings);
+            AssetDatabase.SaveAssets();
+
+            // string globalBuildCache = "Library/BuildCache";
+            // if (Directory.Exists(globalBuildCache))
+            // {
+            //     Directory.Delete(globalBuildCache, true);
+            // }
+
+            Print.MLog("Cleaning and building Addressables Content...");
+            try
+            {
+                // UnityEditor.Build.Pipeline.Utilities.BuildCache.PurgeCache(false);
+
+                AddressableAssetSettings.CleanPlayerContent(settings.ActivePlayerDataBuilder);
+                AddressableAssetSettings.BuildPlayerContent(out var result);
+
+                if (!string.IsNullOrEmpty(result.Error))
+                {
+                    Print.MError($"Addressables Build Failed: {result.Error}");
+                    return false;
+                }
+
+                Print.MLog("Addressables content built successfully.");
+                return true;
+            }
+            catch (System.Exception ex)
+            {
+                Print.MError($"Addressables threw a critical exception during SBP processing: {ex.Message}");
+                return false;
+            }
+        }
+        private void ForceCloseAddressablesReport()
+        {
+            var openWindows = Resources.FindObjectsOfTypeAll<EditorWindow>();
+            foreach (var window in openWindows)
+            {
+                if (window != null)
+                {
+                    string windowName = window.GetType().Name;
+                    string windowTitle = window.titleContent.text;
+
+                    if (windowName.Contains("AddressablesReport") || windowTitle.Contains("Addressables Report"))
+                    {
+                        window.Close();
+                        Print.MLog("Force-closed the auto-opened Addressables Report window to prevent file locks.");
+                    }
+                }
+            }
         }
 
         private string ZipBuild(string source, string platform)

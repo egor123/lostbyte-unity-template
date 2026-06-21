@@ -22,5 +22,27 @@ MonoBehaviour:
     <Value>k__BackingField:
     - Line 1 text
     - Line 2 text
-  m_addressableEnries: []
-  m_addressableArrayEnries: []
+  m_addressableEnries:
+  - Key: test
+    AssetType: file
+    Reference:
+      m_AssetGUID: 35286f9bc317daa47a94bb3b614e6764
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_EditorAssetChanged: 0
+  m_addressableArrayEnries:
+  - Key: file
+    AssetType: file
+    References:
+    - m_AssetGUID: ecf6eddfc30888f4caeae06a9a491617
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_EditorAssetChanged: 0
+    - m_AssetGUID: 65f6e380abb009940a1f18188222dea7
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_EditorAssetChanged: 0
+    - m_AssetGUID: 085f6c2886a177e40895e14014f778b4
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_EditorAssetChanged: 0

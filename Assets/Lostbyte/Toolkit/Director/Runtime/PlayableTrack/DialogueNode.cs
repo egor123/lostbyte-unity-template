@@ -16,13 +16,6 @@ namespace Lostbyte.Toolkit.Director
         [GraphField] public List<Paragraph> Paragraphs = new();
 
         public override IPlayableClipNodeBehaviour GetClip(PlayableTrackBehaviour track) => new DialogueNodeBehaviour(this, Actor, track);
-        [Serializable]
-        public struct Paragraph
-        {
-            [GraphField] public LocalizedReference<string> String;
-            [GraphField] public float Gap;
-        }
-
     }
     public class DialogueNodeBehaviour : PlayableClipNodeBehaviour<DialogueNode>
     {
