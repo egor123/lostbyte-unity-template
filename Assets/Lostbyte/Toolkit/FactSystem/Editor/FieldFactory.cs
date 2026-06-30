@@ -9,7 +9,7 @@ namespace Lostbyte.Toolkit.FactSystem.Editor
 {
     public static class FieldFactory
     {
-        public static VisualElement CreateFactValueField(Type type, string label = null, object value = null, Action<object> OnChange = null)
+        public static BindableElement CreateFactValueField(Type type, string label = null, object value = null, Action<object> OnChange = null)
         {
             if (type == typeof(int))
             {
@@ -173,6 +173,38 @@ namespace Lostbyte.Toolkit.FactSystem.Editor
             }
             else
                 EditorGUILayout.HelpBox($"Unsupported type: {type.Name}", MessageType.None);
+            return null;
+        }
+
+        public static Type GetExpectedWrapperType(Type type)
+        {
+            if (type == typeof(int)) return typeof(IntValueHolder);
+            if (type == typeof(float)) return typeof(FloatValueHolder);
+            if (type == typeof(bool)) return typeof(BoolValueHolder);
+            if (type == typeof(string)) return typeof(StringValueHolder);
+            if (type == typeof(Vector2)) return typeof(Vector2ValueHolder);
+            if (type == typeof(Vector3)) return typeof(Vector3ValueHolder);
+            if (type == typeof(Vector4)) return typeof(Vector4ValueHolder);
+            if (type == typeof(Color)) return typeof(ColorValueHolder);
+            if (type == typeof(Enum)) return typeof(EnumValueHolder);
+            Print.Warn($"Unknown type: {type.Name}!");
+            return typeof(StringValueHolder); // fallback
+        }
+
+        public static IValueHolder CreateValueHolderForFact(FactDefinition fact)
+        {
+            Type t = fact.GenericType;
+            if (t == typeof(float)) return new FloatValueHolder { RawValue = fact.DefaultValueRaw };
+            if (t == typeof(int)) return new IntValueHolder { RawValue = fact.DefaultValueRaw };
+            if (t == typeof(bool)) return new BoolValueHolder { RawValue = fact.DefaultValueRaw };
+            if (t == typeof(string)) return new StringValueHolder { RawValue = fact.DefaultValueRaw };
+            if (t == typeof(Vector2)) return new Vector2ValueHolder { RawValue = fact.DefaultValueRaw };
+            if (t == typeof(Vector3)) return new Vector3ValueHolder { RawValue = fact.DefaultValueRaw };
+            if (t == typeof(Vector4)) return new Vector4ValueHolder { RawValue = fact.DefaultValueRaw };
+            if (t == typeof(Color)) return new ColorValueHolder { RawValue = fact.DefaultValueRaw };
+            if (t == typeof(Enum)) return new EnumValueHolder { RawValue = ((Enum)fact.DefaultValueRaw) ?? (fact as EnumFactDefinition).DefaultEnumValue };
+
+            Print.Warn($"Unknown type: {t.Name}!");
             return null;
         }
     }

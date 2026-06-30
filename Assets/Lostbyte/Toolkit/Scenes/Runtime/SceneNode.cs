@@ -12,12 +12,19 @@ namespace Lostbyte.Toolkit.Scenes
         public List<SceneNode> Children { get; private set; }
         public string ScenePath => SceneInstance.path;
 
+        internal void SetParent(SceneNode parent)
+        {
+            Parent?.Children.Remove(this);
+            Parent = parent;
+            parent?.Children.Add(this);
+        }
+
         public SceneNode(Scene scene, SceneNode parent)
         {
             Parent = parent;
             Children = new List<SceneNode>();
             SceneInstance = scene;
-            
+
             parent?.Children.Add(this);
         }
     }

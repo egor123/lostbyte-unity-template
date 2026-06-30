@@ -1,5 +1,32 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-7316681771992995001
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 09dee09cf1011e34686bb2d8b459687e, type: 3}
+  m_Name: level
+  m_EditorClassIdentifier: 
+  <Guid>k__BackingField: level
+  <IsSerializable>k__BackingField: 1
+  <Description>k__BackingField: 
+  <DefaultValue>k__BackingField:
+    rid: 358180898366292158
+  <Values>k__BackingField:
+  - level_1
+  - level_2
+  references:
+    version: 2
+    RefIds:
+    - rid: 358180898366292158
+      type: {class: Enums/Level, ns: GameFacts, asm: Assembly-CSharp}
+      data:
+        value__: 0
 --- !u!114 &-3055759980319532786
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -32,14 +59,14 @@ MonoBehaviour:
   <IsSerializable>k__BackingField: 1
   <Description>k__BackingField: 
   <DefaultValue>k__BackingField:
-    rid: 1312422309756665857
+    rid: 358180898366292157
   <Values>k__BackingField:
   - menu
   - game
   references:
     version: 2
     RefIds:
-    - rid: 1312422309756665857
+    - rid: 358180898366292157
       type: {class: Enums/GameState, ns: GameFacts, asm: Assembly-CSharp}
       data:
         value__: 0
@@ -85,8 +112,8 @@ MonoBehaviour:
   - {fileID: 4525860068350932383}
   - {fileID: 4818604433467273284}
   - {fileID: 8265675034329682347}
-  <EventStorage>k__BackingField:
-  - {fileID: 6175346580498249907}
+  - {fileID: -7316681771992995001}
+  <EventStorage>k__BackingField: []
 --- !u!114 &12290745125359689
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -128,10 +155,8 @@ MonoBehaviour:
     <SaveOnChange>k__BackingField: 0
   m_children:
   - {fileID: 7530528405163607904}
-  <Facts>k__BackingField: []
+  <FactRegistrations>k__BackingField: []
   <Events>k__BackingField: []
-  <SerializationOverrides>k__BackingField: []
-  <ValueOverrides>k__BackingField: []
   references:
     version: 2
     RefIds:
@@ -167,20 +192,88 @@ MonoBehaviour:
     <AutoLoad>k__BackingField: 0
     <SaveOnChange>k__BackingField: 0
   m_children: []
-  <Facts>k__BackingField:
-  - {fileID: -1139778540106801879}
-  - {fileID: 9117608609046563263}
-  - {fileID: 4525860068350932383}
-  - {fileID: 4818604433467273284}
-  <Events>k__BackingField:
-  - {fileID: 6175346580498249907}
-  <SerializationOverrides>k__BackingField: []
-  <ValueOverrides>k__BackingField: []
+  <FactRegistrations>k__BackingField:
+  - Fact: {fileID: 4818604433467273284}
+    ValueOverride:
+      rid: -2
+    IsSerializable:
+      m_hasValue: 0
+      m_value: 0
+    Reactions: []
+  - Fact: {fileID: -1139778540106801879}
+    ValueOverride:
+      rid: -2
+    IsSerializable:
+      m_hasValue: 0
+      m_value: 0
+    Reactions:
+    - rid: 358180874591666217
+  - Fact: {fileID: -7316681771992995001}
+    ValueOverride:
+      rid: -2
+    IsSerializable:
+      m_hasValue: 0
+      m_value: 0
+    Reactions:
+    - rid: 358180897263714305
+  <Events>k__BackingField: []
   references:
     version: 2
     RefIds:
     - rid: -2
       type: {class: , ns: , asm: }
+    - rid: 358180874591666217
+      type: {class: SceneLoadReaction, ns: Lostbyte.Toolkit.Scenes, asm: Lostbyte.Toolkit.Scenes}
+      data:
+        ParentScene:
+          m_sceneAsset: {fileID: 102900000, guid: aec339fccadfb0948a3e98ce71205a7e, type: 3}
+          m_scenePath: Assets/PROJECT_NAME/Scenes/GameManagement.unity
+        UseLoadingScreen: 1
+        Scenes:
+        - Condition:
+            rid: 358180874591666218
+          Scene:
+            m_sceneAsset: {fileID: 102900000, guid: cb0ef805b8ed2ac479e28d2493ca043a, type: 3}
+            m_scenePath: Assets/PROJECT_NAME/Scenes/Menu.unity
+        - Condition:
+            rid: 358180874591666219
+          Scene:
+            m_sceneAsset: {fileID: 102900000, guid: ba744fbcbab29764d96811202c37722e, type: 3}
+            m_scenePath: Assets/PROJECT_NAME/Scenes/Game.unity
+    - rid: 358180874591666218
+      type: {class: Enums/GameState, ns: GameFacts, asm: Assembly-CSharp}
+      data:
+        value__: 0
+    - rid: 358180874591666219
+      type: {class: Enums/GameState, ns: GameFacts, asm: Assembly-CSharp}
+      data:
+        value__: 1
+    - rid: 358180897263714305
+      type: {class: SceneLoadReaction, ns: Lostbyte.Toolkit.Scenes, asm: Lostbyte.Toolkit.Scenes}
+      data:
+        ParentScene:
+          m_sceneAsset: {fileID: 102900000, guid: ba744fbcbab29764d96811202c37722e, type: 3}
+          m_scenePath: Assets/PROJECT_NAME/Scenes/Game.unity
+        UseLoadingScreen: 1
+        Scenes:
+        - Condition:
+            rid: 358180897263714306
+          Scene:
+            m_sceneAsset: {fileID: 102900000, guid: 71b06dd3362f4fc469a5a27eba14f2f6, type: 3}
+            m_scenePath: Assets/PROJECT_NAME/Scenes/Test.unity
+        - Condition:
+            rid: 358180897263714307
+          Scene:
+            m_sceneAsset: {fileID: 0}
+            m_scenePath: 
+    - rid: 358180897263714306
+      type: {class: Enums/Level, ns: GameFacts, asm: Assembly-CSharp}
+      data:
+        value__: 0
+    - rid: 358180897263714307
+      type: {class: Enums/Level, ns: GameFacts, asm: Assembly-CSharp}
+      data:
+        value__: 1
 --- !u!114 &4525860068350932383
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -213,19 +306,6 @@ MonoBehaviour:
   <IsSerializable>k__BackingField: 1
   <Description>k__BackingField: 
   <DefaultValue>k__BackingField: save
---- !u!114 &6175346580498249907
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8da7de9db6a834b408ee34fa4ca64fe9, type: 3}
-  m_Name: on_game_exit
-  m_EditorClassIdentifier: 
-  <Guid>k__BackingField: on_game_exit
 --- !u!114 &6322980757709942554
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -266,18 +346,55 @@ MonoBehaviour:
     <AutoLoad>k__BackingField: 1
     <SaveOnChange>k__BackingField: 1
   m_children: []
-  <Facts>k__BackingField:
-  - {fileID: 8265675034329682347}
-  - {fileID: -3055759980319532786}
-  - {fileID: -140893777799597766}
-  - {fileID: 12290745125359689}
-  - {fileID: 6322980757709942554}
+  <FactRegistrations>k__BackingField:
+  - Fact: {fileID: -140893777799597766}
+    ValueOverride:
+      rid: -2
+    IsSerializable:
+      m_hasValue: 0
+      m_value: 0
+    Reactions:
+    - rid: 358180874591666195
+  - Fact: {fileID: 12290745125359689}
+    ValueOverride:
+      rid: -2
+    IsSerializable:
+      m_hasValue: 0
+      m_value: 0
+    Reactions:
+    - rid: 358180874591666196
+  - Fact: {fileID: -3055759980319532786}
+    ValueOverride:
+      rid: -2
+    IsSerializable:
+      m_hasValue: 0
+      m_value: 0
+    Reactions:
+    - rid: 358180874591666197
   <Events>k__BackingField: []
-  <SerializationOverrides>k__BackingField: []
-  <ValueOverrides>k__BackingField: []
   references:
     version: 2
     RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
+    - rid: 358180874591666195
+      type: {class: AudioMixerReaction, ns: Lostbyte.Toolkit.Audio, asm: Lostbyte.Toolkit.Audio}
+      data:
+        Mixer: {fileID: 24100000, guid: 39a2a5d347698d54b8b2983049361511, type: 2}
+        Group: music
+        MappingMode: 0
+    - rid: 358180874591666196
+      type: {class: AudioMixerReaction, ns: Lostbyte.Toolkit.Audio, asm: Lostbyte.Toolkit.Audio}
+      data:
+        Mixer: {fileID: 24100000, guid: 39a2a5d347698d54b8b2983049361511, type: 2}
+        Group: sfx
+        MappingMode: 0
+    - rid: 358180874591666197
+      type: {class: AudioMixerReaction, ns: Lostbyte.Toolkit.Audio, asm: Lostbyte.Toolkit.Audio}
+      data:
+        Mixer: {fileID: 24100000, guid: 39a2a5d347698d54b8b2983049361511, type: 2}
+        Group: main
+        MappingMode: 0
     - rid: 6512821319454162953
       type: {class: StaticPathStorage, ns: Lostbyte.Toolkit.FactSystem.Persistance, asm: Lostbyte.Toolkit.FactSystem}
       data:
@@ -309,10 +426,8 @@ MonoBehaviour:
     <AutoLoad>k__BackingField: 0
     <SaveOnChange>k__BackingField: 0
   m_children: []
-  <Facts>k__BackingField: []
+  <FactRegistrations>k__BackingField: []
   <Events>k__BackingField: []
-  <SerializationOverrides>k__BackingField: []
-  <ValueOverrides>k__BackingField: []
   references:
     version: 2
     RefIds:

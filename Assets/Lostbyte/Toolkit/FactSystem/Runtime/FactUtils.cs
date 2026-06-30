@@ -50,7 +50,7 @@ namespace Lostbyte.Toolkit.FactSystem
                 name = name[..64];
             var usedNames = FactDatabase.Instance.RootKeys
                 .SelectMany(k => k.Children)
-                .SelectMany(k => k.Children.Select(c => c.name).Concat(k.Facts.Select(f => f.name)))
+                .SelectMany(k => k.Children.Select(c => c.name).Concat(k.FactRegistrations.Select(reg => reg.Fact.name)))
                 .ToHashSet();
             string result = name;
             int suffix = 1;

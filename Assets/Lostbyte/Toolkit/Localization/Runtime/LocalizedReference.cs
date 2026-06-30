@@ -1,6 +1,8 @@
 using System;
+using System.Collections.Generic;
 using Lostbyte.Toolkit.Common;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
 
 namespace Lostbyte.Toolkit.Localization
 {
@@ -109,6 +111,16 @@ namespace Lostbyte.Toolkit.Localization
             eventField = (TDelegate)Delegate.Remove(eventField, callback);
             HandleUnsubscribe();
         }
+        protected void ReleaseCachedAsset<TAsset>(ref TAsset asset)
+        {
+            if (asset == null) return;
+            if (asset is UnityEngine.Object uObj && uObj != null)
+                Addressables.Release(uObj);
+            else if (asset is IEnumerable<UnityEngine.Object> uObjArray)
+                foreach (var obj in uObjArray)
+                    if (obj != null) Addressables.Release(obj);
+            asset = default;
+        }
     }
 
     internal struct LocDataWrap<T>
@@ -136,6 +148,7 @@ namespace Lostbyte.Toolkit.Localization
         }
         public override void Dispose()
         {
+            ReleaseCachedAsset(ref _cached1);
             _onChanged1 = null;
             base.Dispose();
         }
@@ -162,6 +175,8 @@ namespace Lostbyte.Toolkit.Localization
         }
         public override void Dispose()
         {
+            ReleaseCachedAsset(ref _cached1);
+            ReleaseCachedAsset(ref _cached2);
             _onChanged1 = null;
             _onChanged2 = null;
             base.Dispose();

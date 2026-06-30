@@ -36,16 +36,17 @@ namespace GameFacts
         public static FactDefinition<System.String> SaveFile = _SaveFile != null ? _SaveFile : _SaveFile = (FactDefinition<System.String>) FactDatabase.Instance.GetFact("save_file");
         private static FactDefinition<System.String> _Locale = null;
         public static FactDefinition<System.String> Locale = _Locale != null ? _Locale : _Locale = (FactDefinition<System.String>) FactDatabase.Instance.GetFact("locale");
+        private static FactDefinition<System.Enum> _Level = null;
+        public static FactDefinition<System.Enum> Level = _Level != null ? _Level : _Level = (FactDefinition<System.Enum>) FactDatabase.Instance.GetFact("level");
     }
     //------------- Events -------------
     public static class Events
     {
-        private static EventDefinition _OnGameExit = null;
-        public static EventDefinition OnGameExit = _OnGameExit != null ? _OnGameExit : _OnGameExit = (EventDefinition) FactDatabase.Instance.GetEvent("on_game_exit");
     }
     //------------- Enums -------------
     public static class Enums
     {
         public enum GameState { Menu, Game }
+        public enum Level { Level1, Level2 }
     }
 }

@@ -361,7 +361,7 @@ MonoBehaviour:
   m_key: {fileID: 0}
   m_onGameExit:
     <Key>k__BackingField: {fileID: 4283477907835028808, guid: 6c08054baf9457644b18f9b93ea7fec1, type: 2}
-    <Event>k__BackingField: {fileID: 6175346580498249907, guid: 6c08054baf9457644b18f9b93ea7fec1, type: 2}
+    <Event>k__BackingField: {fileID: 0}
   m_gamePausedFact:
     <Key>k__BackingField: {fileID: 4283477907835028808, guid: 6c08054baf9457644b18f9b93ea7fec1, type: 2}
     <Fact>k__BackingField: {fileID: 4525860068350932383, guid: 6c08054baf9457644b18f9b93ea7fec1, type: 2}
@@ -771,7 +771,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1361408061}
-  - component: {fileID: 1361408064}
   - component: {fileID: 1361408063}
   - component: {fileID: 1361408062}
   m_Layer: 0
@@ -834,32 +833,6 @@ MonoBehaviour:
   _transitionTime: 0
   _currentIdx: 0
   _nextIdx: 0
---- !u!114 &1361408064
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1361408060}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e1298e156e77b20478a0a91846387a80, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_mixer: {fileID: 24100000, guid: 39a2a5d347698d54b8b2983049361511, type: 2}
-  m_groups:
-  - Name: main
-    Fact:
-      <Key>k__BackingField: {fileID: 6628457045445381566, guid: 6c08054baf9457644b18f9b93ea7fec1, type: 2}
-      <Fact>k__BackingField: {fileID: -3055759980319532786, guid: 6c08054baf9457644b18f9b93ea7fec1, type: 2}
-  - Name: music
-    Fact:
-      <Key>k__BackingField: {fileID: 6628457045445381566, guid: 6c08054baf9457644b18f9b93ea7fec1, type: 2}
-      <Fact>k__BackingField: {fileID: -140893777799597766, guid: 6c08054baf9457644b18f9b93ea7fec1, type: 2}
-  - Name: sfx
-    Fact:
-      <Key>k__BackingField: {fileID: 6628457045445381566, guid: 6c08054baf9457644b18f9b93ea7fec1, type: 2}
-      <Fact>k__BackingField: {fileID: 12290745125359689, guid: 6c08054baf9457644b18f9b93ea7fec1, type: 2}
 --- !u!1 &1604192235
 GameObject:
   m_ObjectHideFlags: 0
@@ -1042,7 +1015,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1689782621}
   - component: {fileID: 1689782620}
-  - component: {fileID: 1689782619}
   m_Layer: 0
   m_Name: SceneManager
   m_TagString: Untagged
@@ -1050,44 +1022,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1689782619
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1689782618}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f18b11f18be16894a97db2b74cfa7611, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_fact:
-    <Key>k__BackingField: {fileID: 4283477907835028808, guid: 6c08054baf9457644b18f9b93ea7fec1, type: 2}
-    <Fact>k__BackingField: {fileID: -1139778540106801879, guid: 6c08054baf9457644b18f9b93ea7fec1, type: 2}
-  m_loadingScreen: {fileID: 622582065}
-  m_scenes:
-  - Condition:
-      rid: 6512821297094590477
-    Scene:
-      m_sceneAsset: {fileID: 102900000, guid: ba744fbcbab29764d96811202c37722e, type: 3}
-      m_scenePath: Assets/PROJECT_NAME/Scenes/Game.unity
-  - Condition:
-      rid: 6512821297094590476
-    Scene:
-      m_sceneAsset: {fileID: 102900000, guid: cb0ef805b8ed2ac479e28d2493ca043a, type: 3}
-      m_scenePath: Assets/PROJECT_NAME/Scenes/Menu.unity
-  references:
-    version: 2
-    RefIds:
-    - rid: 6512821297094590476
-      type: {class: Enums/GameState, ns: GameFacts, asm: Assembly-CSharp}
-      data:
-        value__: 0
-    - rid: 6512821297094590477
-      type: {class: Enums/GameState, ns: GameFacts, asm: Assembly-CSharp}
-      data:
-        value__: 1
 --- !u!114 &1689782620
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1100,6 +1034,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5b924527e08708c45a0a065b07fae64d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  LoadingScreen: {fileID: 622582065}
 --- !u!4 &1689782621
 Transform:
   m_ObjectHideFlags: 0

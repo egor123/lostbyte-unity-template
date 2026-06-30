@@ -51,7 +51,7 @@ namespace Lostbyte.Toolkit.FactSystem.Editor
                 Print.Warn("Name must end with letter or digit");
                 return false;
             }
-            if (Database.RootKeys.SelectMany(k => k.Children).SelectMany(k => k.Children.Select(c => c.name).Concat(k.Facts.Select(f => f.name))).Any(s => s == name))
+            if (Database.RootKeys.SelectMany(k => k.Children).SelectMany(k => k.Children.Select(c => c.name).Concat(k.FactRegistrations.Select(reg => reg.Fact.name))).Any(s => s == name))
             {
                 Print.Warn("Name already exists");
                 return false;
@@ -141,15 +141,17 @@ namespace Lostbyte.Toolkit.FactSystem.Editor
                         key.IsSerializable = true;
                         if (overrides != null)
                         {
-                            foreach (var o in overrides)
+                            overrides?.ForEach(o =>
                             {
-                                if (o.Fact != null && o.Wrapper != null)
+                                if (o.Fact != null)
                                 {
-                                    key.ValueOverrides.Add(o.Copy());
-                                    if (!key.Facts.Contains(o.Fact))
-                                        key.Facts.Add(o.Fact);
+                                    key.FactRegistrations.Add(new()
+                                    {
+                                        Fact = o.Fact,
+                                        ValueOverride = o.Wrapper,
+                                    });
                                 }
-                            }
+                            });
                         }
 
                         AssetDatabase.AddObjectToAsset(key, Database);
@@ -187,12 +189,9 @@ namespace Lostbyte.Toolkit.FactSystem.Editor
                         key.name = name;
                         key.IsSerializable = originalKey.IsSerializable;
                         key.Description = originalKey.Description;
-                        if (originalKey.ValueOverrides != null)
-                            foreach (var o in originalKey.ValueOverrides)
-                                if (o.Fact != null && o.Wrapper != null)
-                                    key.ValueOverrides.Add(o.Copy());
-                        foreach (var fact in originalKey.Facts)
-                            key.Facts.Add(fact);
+
+                        foreach (var reg in originalKey.FactRegistrations)
+                            key.FactRegistrations.Add(reg.Copy());
                         AssetDatabase.AddObjectToAsset(key, Database);
                         AssetDatabase.SaveAssets();
 
@@ -296,7 +295,7 @@ namespace Lostbyte.Toolkit.FactSystem.Editor
                             AssetDatabase.SaveAssets();
 
                             if (parentKey != null)
-                                parentKey.Facts.Add(fact);
+                                parentKey.FactRegistrations.Add(new() { Fact = fact });
                             Database.FactStorage.Add(fact);
 
                             EditorUtility.SetDirty(Database);
@@ -323,7 +322,7 @@ namespace Lostbyte.Toolkit.FactSystem.Editor
                 fact => fact.GenericType.Name,
                 fact =>
                 {
-                    parentKey.Facts.Add(fact);
+                    parentKey.FactRegistrations.Add(new() { Fact = fact });
                     EditorUtility.SetDirty(Database);
                     EditorUtility.SetDirty(parentKey);
                     AssetDatabase.SaveAssets();
@@ -435,9 +434,7 @@ namespace Lostbyte.Toolkit.FactSystem.Editor
         {
             foreach (var key in GetAllKeys())
             {
-                bool v = key.Facts.Remove(fact);
-                v = key.SerializationOverrides.RemoveAll(o => o.Fact == fact) > 0 || v;
-                v = key.ValueOverrides.RemoveAll(o => o.Fact == fact) > 0 || v;
+                bool v = key.FactRegistrations.Remove(new() { Fact = fact });
                 if (v) EditorUtility.SetDirty(key);
             }
             Database.FactStorage.Remove(fact);
@@ -449,9 +446,7 @@ namespace Lostbyte.Toolkit.FactSystem.Editor
         public static void RemoveFact(KeyContainer key, FactDefinition fact)
         {
             if (key == null) return;
-            key.Facts.Remove(fact);
-            key.SerializationOverrides.RemoveAll(o => o.Fact == fact);
-            key.ValueOverrides.RemoveAll(o => o.Fact == fact);
+            key.FactRegistrations.Remove(new() { Fact = fact });
             EditorUtility.SetDirty(Database);
             EditorUtility.SetDirty(key);
             AssetDatabase.SaveAssets();
@@ -516,9 +511,9 @@ namespace Lostbyte.Toolkit.FactSystem.Editor
             {
                 if (parent != null)
                 {
-                    int i = parent.Facts.IndexOf(fact);
+                    int i = parent.FactRegistrations.IndexOf(new() { Fact = fact });
                     if (i < 1) return;
-                    (parent.Facts[i - 1], parent.Facts[i]) = (fact, parent.Facts[i - 1]);
+                    (parent.FactRegistrations[i - 1], parent.FactRegistrations[i]) = (parent.FactRegistrations[i], parent.FactRegistrations[i - 1]);
                     EditorUtility.SetDirty(parent);
                 }
                 else
@@ -577,9 +572,9 @@ namespace Lostbyte.Toolkit.FactSystem.Editor
             {
                 if (parent != null)
                 {
-                    int i = parent.Facts.IndexOf(fact);
-                    if (i < 0 || i >= parent.Facts.Count - 1) return;
-                    (parent.Facts[i], parent.Facts[i + 1]) = (parent.Facts[i + 1], fact);
+                    int i = parent.FactRegistrations.IndexOf(new() { Fact = fact });
+                    if (i < 0 || i >= parent.FactRegistrations.Count - 1) return;
+                    (parent.FactRegistrations[i], parent.FactRegistrations[i + 1]) = (parent.FactRegistrations[i + 1], parent.FactRegistrations[i]);
                     EditorUtility.SetDirty(parent);
                 }
                 else

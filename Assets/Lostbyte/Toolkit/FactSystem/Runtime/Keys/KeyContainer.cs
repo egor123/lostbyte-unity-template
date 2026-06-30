@@ -30,13 +30,13 @@ namespace Lostbyte.Toolkit.FactSystem
 #endif
             }
         }
-        [field: SerializeField] internal List<FactDefinition> Facts { get; private set; } = new();
+        [field: SerializeField] internal List<FactRegistration> FactRegistrations { get; private set; } = new();
         public IReadOnlyCollection<FactDefinition> DefinedFacts
         {
             get
             {
 #if UNITY_EDITOR
-                return Application.isPlaying ? _factStorage.Keys : Facts;
+                return Application.isPlaying ? _factStorage.Keys : FactRegistrations.Select(r => r.Fact).ToList();
 #else
                 return _factStorage.Keys;
 #endif
@@ -54,8 +54,6 @@ namespace Lostbyte.Toolkit.FactSystem
 #endif
             }
         }
-        [field: SerializeField] internal List<FactSerializationOverride> SerializationOverrides { get; private set; } = new();
-        [field: SerializeField] internal List<FactValueOverride> ValueOverrides { get; private set; } = new();
 
         private event Action<FactDefinition> OnFactAdded;
         private event Action OnChange;
@@ -64,17 +62,13 @@ namespace Lostbyte.Toolkit.FactSystem
 
         internal void ClearStorages()
         {
+            foreach (var reg in FactRegistrations)
+                foreach (var reaction in reg.Reactions)
+                    reaction.Dispose();
+
             _factStorage.Clear();
             _eventStorage.Clear();
             m_children.ForEach(k => k.ClearStorages());
-        }
-
-        private object ApplyValueOverride(FactDefinition fact, object defaultValue)
-        {
-            foreach (var v in ValueOverrides)
-                if (v.Fact == fact)
-                    return v.Wrapper.RawValue;
-            return defaultValue;
         }
         private bool UseSaveSystem => IsSerializable && m_save.Enabled;
         public void Clear()
@@ -92,28 +86,40 @@ namespace Lostbyte.Toolkit.FactSystem
             else _store.SetStore(file as Dictionary<string, object> ?? new());
 
             _children = null;
-            foreach (var key in Children)
+
+            foreach (var reg in FactRegistrations)
             {
-                key.Load(_store.GetData<Dictionary<string, object>>(key.Guid, null));
-            }
-            // _factStorage.Clear();
-            foreach (var fact in Facts)
-            {
-                if (_factStorage.TryGetValue(fact, out var wrapper) == false)
+                if (reg.Fact == null) continue;
+                foreach (var reaction in reg.Reactions)
+                    reaction?.Dispose();
+
+                if (_factStorage.TryGetValue(reg.Fact, out var wrapper) == false)
                 {
-                    wrapper = fact.GetValueWrapper();
+                    wrapper = reg.Fact.GetValueWrapper();
                     wrapper.Subscribe(RaiseChange);
-                    _factStorage[fact] = wrapper;
+                    _factStorage[reg.Fact] = wrapper;
                 }
-                wrapper.RawValue = _store.GetData(fact.Guid, ApplyValueOverride(fact, fact.DefaultValueRaw));
+
+                object defaultValue = reg.ValueOverride?.RawValue ?? reg.Fact.DefaultValueRaw;
+                wrapper.RawValue = _store.GetData(reg.Fact.Guid, defaultValue);
+
             }
-            // _eventStorage.Clear();
             foreach (var @event in Events)
             {
                 var wrapper = _eventStorage.TryGetValue(@event, out var w) ? w : new EventValueWrapper();
                 _eventStorage[@event] = wrapper;
             }
+            foreach (var key in Children)
+            {
+                key.Load(_store.GetData<Dictionary<string, object>>(key.Guid, null));
+            }
             if (UseSaveSystem && (forceReadFile || m_save.AutoLoad)) _store.OnLoad();
+            foreach (var reg in FactRegistrations)
+            {
+                foreach (var reaction in reg.Reactions)
+                    reaction?.Initialize(this, reg.Fact);
+            }
+
         }
         public object Save()
         {
@@ -129,21 +135,17 @@ namespace Lostbyte.Toolkit.FactSystem
                     }
                 }
             }
-            foreach ((var fact, var wrapper) in _factStorage)
+
+            foreach (var reg in FactRegistrations)
             {
-                if (TryGetSerializationOverride(fact, out var so) ? so.IsSerializable : fact.IsSerializable)
+                if (reg.Fact == null) continue;
+                if (!_factStorage.TryGetValue(reg.Fact, out var wrapper)) continue;
+                bool isSerializable = reg.IsSerializable.GetValueOrDefault(reg.Fact.IsSerializable);
+                if (isSerializable)
                 {
-                    if (TryGetValueOverride(fact, out var v))
-                    {
-                        if (!v.Wrapper?.RawValue?.Equals(wrapper.RawValue) ?? true)
-                        {
-                            _store.SetData(fact.Guid, wrapper.RawValue);
-                        }
-                    }
-                    else if (!fact.DefaultValueRaw.Equals(wrapper.RawValue))
-                    {
-                        _store.SetData(fact.Guid, wrapper.RawValue);
-                    }
+                    object defaultValue = reg.ValueOverride?.RawValue ?? reg.Fact.DefaultValueRaw;
+                    if (!defaultValue.Equals(wrapper.RawValue))
+                        _store.SetData(reg.Fact.Guid, wrapper.RawValue);
                 }
             }
 
@@ -155,32 +157,6 @@ namespace Lostbyte.Toolkit.FactSystem
 
             return _store.IsEmpty ? null : _store.GetStore();
         }
-        private bool TryGetSerializationOverride(FactDefinition fact, out FactSerializationOverride serializationOverride)
-        {
-            foreach (var v in SerializationOverrides)
-            {
-                if (v.Fact == fact)
-                {
-                    serializationOverride = v;
-                    return true;
-                }
-            }
-            serializationOverride = default;
-            return false;
-        }
-        private bool TryGetValueOverride(FactDefinition fact, out FactValueOverride valueOverride)
-        {
-            foreach (var v in ValueOverrides)
-            {
-                if (v.Fact == fact)
-                {
-                    valueOverride = v;
-                    return true;
-                }
-            }
-            valueOverride = default;
-            return false;
-        }
         public void SetValue<T>(FactDefinition<T> fact, T value)
         {
             var wrapper = GetWrapper(fact);
@@ -190,7 +166,7 @@ namespace Lostbyte.Toolkit.FactSystem
         public T GetValue<T>(FactDefinition<T> fact) => GetWrapper(fact).Value;
         public void Raise(EventDefinition @event) => GetWrapper(@event).Raise();
         public void AddOnFactAddedListener(Action<FactDefinition> callback) => OnFactAdded += callback;
-        public void RemoveOnFactAddedListener(Action<FactDefinition> callback) => OnFactAdded += callback;
+        public void RemoveOnFactAddedListener(Action<FactDefinition> callback) => OnFactAdded -= callback;
         public void AddOnChangeListener(Action callback) => OnChange += callback;
         public void RemoveOnChangeListener(Action callback) => OnChange -= callback;
         public void Subscribe(IPersistent persistent) => _store.Subscribe(persistent);
@@ -283,11 +259,13 @@ namespace Lostbyte.Toolkit.FactSystem
             Children.Add(key);
             overrides?.ForEach(o =>
             {
-                if (o.Fact != null && o.Wrapper != null)
+                if (o.Fact != null)
                 {
-                    key.ValueOverrides.Add(o.Copy());
-                    if (!key.Facts.Contains(o.Fact))
-                        key.Facts.Add(o.Fact);
+                    key.FactRegistrations.Add(new()
+                    {
+                        Fact = o.Fact,
+                        ValueOverride = o.Wrapper,
+                    });
                 }
             });
             key.Load();

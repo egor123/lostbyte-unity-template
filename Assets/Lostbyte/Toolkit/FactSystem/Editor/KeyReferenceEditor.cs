@@ -128,22 +128,22 @@ namespace Lostbyte.Toolkit.FactSystem.Editor
                 if (keyRef.Key != null)
                 {
                     SerializedObject so = new(keyRef.Key);
-                    var valueOverridesProp = so.FindProperty($"<{nameof(KeyContainer.ValueOverrides)}>k__BackingField");
+                    var registrationsProp = so.FindProperty($"<{nameof(KeyContainer.FactRegistrations)}>k__BackingField");
                     EditorGUI.BeginChangeCheck();
-                    EditorGUILayout.PropertyField(valueOverridesProp);
-                    if (valueOverridesProp.isArray)
+                    EditorGUILayout.PropertyField(registrationsProp);
+                    if (registrationsProp.isArray)
                     {
-                        var keyFacts = keyRef.Key.Facts.Select(f => f).ToList();
+                        var keyFacts = keyRef.Key.FactRegistrations.Select(reg => reg.Fact).ToList();
 
-                        for (int i = 0; i < valueOverridesProp.arraySize; i++)
+                        for (int i = 0; i < registrationsProp.arraySize; i++)
                         {
-                            var element = valueOverridesProp.GetArrayElementAtIndex(i);
-                            var factProp = element.FindPropertyRelative($"<{nameof(FactValueOverride.Fact)}>k__BackingField");
+                            var element = registrationsProp.GetArrayElementAtIndex(i);
+                            var factProp = element.FindPropertyRelative("Fact");
                             var fact = factProp.objectReferenceValue as FactDefinition;
 
                             if (fact != null && !keyFacts.Contains(fact))
                             {
-                                keyRef.Key.Facts.Add(fact);
+                                keyRef.Key.FactRegistrations.Add(new() { Fact = fact });
                                 EditorUtility.SetDirty(keyRef.Key);
                             }
                         }

@@ -1,5 +1,7 @@
 using System;
+using System.Linq;
 using Lostbyte.Toolkit.Common;
+using Lostbyte.Toolkit.CustomEditor;
 using UnityEditor;
 using UnityEditor.UIElements;
 using UnityEngine;
@@ -12,9 +14,14 @@ namespace Lostbyte.Toolkit.FactSystem.Editor
         public FactDefinition Fact { get; private set; }
         public KeyContainer Key { get; private set; }
 
-        // private readonly VisualElement _contentRow;
         private readonly SerializedObject _factSO;
         private readonly SerializedObject _keySO;
+
+        private Toggle _serializationField;
+        private Image _serializationIcon;
+        private VisualElement _valueField;
+        private Button _reactionIndicator;
+        private Label _reactionCountLabel;
 
         public FactRow(FactDefinition fact, KeyContainer key)
         {
@@ -22,9 +29,8 @@ namespace Lostbyte.Toolkit.FactSystem.Editor
             Key = key;
             _factSO = new SerializedObject(fact);
             if (Key != null) _keySO = new SerializedObject(Key);
-            style.flexDirection = FlexDirection.Row;
-            style.flexGrow = 1;
-            style.alignItems = Align.Center;
+
+            this.MakeRow().SetAlignItems(Align.Center).SetFlex(1, 0);
 
             if (Fact is EnumFactDefinition eFact && eFact.DefaultValue == null)
                 eFact.DefaultValue = eFact.DefaultEnumValue;
@@ -32,36 +38,228 @@ namespace Lostbyte.Toolkit.FactSystem.Editor
             AddNameField();
             AddSerializationField();
             AddTypeField();
-            if (Application.isPlaying && Key != null) AddCurentValueField();
-            else AddDefaultValueField();
+            AddValueField();
+            AddReactionIndicator();
+
+            UpdateBindings();
+
+            if (_keySO != null)
+            {
+                var tracker = new VisualElement { name = "KeyTracker" }.Hide();
+                Add(tracker);
+                tracker.TrackSerializedObjectValue(_keySO, so => UpdateBindings());
+            }
+
+            if (_factSO != null)
+            {
+                var tracker = new VisualElement { name = "FactTracker" }.Hide();
+                Add(tracker);
+                tracker.TrackSerializedObjectValue(_factSO, so => UpdateBindings());
+            }
+
+            RegisterCallback<DetachFromPanelEvent>(evt =>
+            {
+                if (Application.isPlaying && Key != null && Fact != null)
+                    Key.GetWrapper(Fact)?.Unsubscribe(UpdateCurentValueField);
+            });
+        }
+
+        private int GetRegistrationIndex() => Key?.FactRegistrations?.FindIndex(r => r.Fact == Fact) ?? -1;
+        private bool TryGetSerializationOverride(out int index) => (index = GetRegistrationIndex()) >= 0 && Key.FactRegistrations[index].IsSerializable.HasValue;
+        private bool TryGetValueOverride(out int index) => (index = GetRegistrationIndex()) >= 0 && Key.FactRegistrations[index].ValueOverride != null;
+
+        private void UpdateBindings()
+        {
+            if (_factSO == null) return;
+            _factSO.Update();
+            _keySO?.Update();
+
+            UpdateSerializationField();
+            UpdateValueFieldUI();
+
+            if (_reactionIndicator != null && Key != null)
+            {
+                int index = GetRegistrationIndex();
+                UpdateIndicatorUI(index < 0 || Key.FactRegistrations[index].Reactions == null ? 0 : Key.FactRegistrations[index].Reactions.Count);
+            }
+        }
+
+        private void UpdateSerializationField()
+        {
+            if (_serializationField == null) return;
+            _serializationField.Unbind();
+
+            if (Key != null && TryGetSerializationOverride(out int sIndex))
+            {
+                var prop = _keySO.FindProperty($"<{nameof(KeyContainer.FactRegistrations)}>k__BackingField")
+                    .GetArrayElementAtIndex(sIndex).FindPropertyRelative(nameof(FactRegistration.IsSerializable));
+                var boolProp = prop.FindPropertyRelative("m_value") ?? prop;
+
+                _serializationField.BindProperty(boolProp);
+                SetOverrideBorder(_serializationField, true);
+                _serializationIcon.image = EditorGUIUtility.IconContent(boolProp.boolValue ? "SaveAs" : "CrossIcon").image;
+            }
+            else
+            {
+                var prop = _factSO.FindProperty($"<{nameof(FactDefinition<object>.IsSerializable)}>k__BackingField");
+                if (prop != null)
+                {
+                    _serializationField.BindProperty(prop);
+                    _serializationIcon.image = EditorGUIUtility.IconContent(prop.boolValue ? "SaveAs" : "CrossIcon").image;
+                }
+                SetOverrideBorder(_serializationField, false);
+            }
+        }
+
+        private void UpdateValueFieldUI()
+        {
+            if (_valueField == null) return;
+            if (_valueField is IBindable bindable) bindable.binding = null;
+
+            SerializedProperty targetProp = null;
+
+            if (Key != null && TryGetValueOverride(out int vIndex))
+            {
+                var listProp = _keySO.FindProperty($"<{nameof(KeyContainer.FactRegistrations)}>k__BackingField");
+                var overrideProp = listProp.GetArrayElementAtIndex(vIndex).FindPropertyRelative(nameof(FactRegistration.ValueOverride));
+                targetProp = overrideProp.FindPropertyRelative("<Value>k__BackingField") ?? overrideProp.FindPropertyRelative("Value") ?? overrideProp.FindPropertyRelative("value") ?? overrideProp;
+
+                _valueField.SetEnabledState(true);
+                SetOverrideBorder(_valueField, true);
+            }
+            else
+            {
+                targetProp = _factSO.FindProperty($"<{nameof(FactDefinition<int>.DefaultValue)}>k__BackingField");
+                _valueField.SetEnabledState(Key == null);
+                SetOverrideBorder(_valueField, false);
+            }
+            if (targetProp != null && !Application.isPlaying)
+            {
+                object val = targetProp.propertyType == SerializedPropertyType.ManagedReference
+                    ? targetProp.managedReferenceValue
+                    : GetBoxedValueSafely(targetProp);
+
+                var setValueWithoutNotify = _valueField.GetType().GetMethod("SetValueWithoutNotify");
+                setValueWithoutNotify?.Invoke(_valueField, new object[] { val });
+            }
+            if (Application.isPlaying)
+            {
+                _valueField.SetEnabledState(true);
+                SetOverrideBorder(_valueField, false);
+            }
+        }
+
+        private void OnValueFieldValueChanged(object newValue)
+        {
+            if (Application.isPlaying && Key != null)
+            {
+                var wrapper = Key.GetWrapper(Fact);
+                var valueProp = wrapper?.GetType().GetProperty("Value");
+                if (valueProp != null && valueProp.CanWrite) valueProp.SetValue(wrapper, newValue);
+                return;
+            }
+
+            _factSO.Update();
+            _keySO?.Update();
+
+            SerializedProperty targetProp = null;
+            SerializedObject targetSO = null;
+
+            if (Key != null && TryGetValueOverride(out int vIndex))
+            {
+                var listProp = _keySO.FindProperty($"<{nameof(KeyContainer.FactRegistrations)}>k__BackingField");
+                var overrideProp = listProp.GetArrayElementAtIndex(vIndex).FindPropertyRelative(nameof(FactRegistration.ValueOverride));
+                targetProp = overrideProp.FindPropertyRelative("<Value>k__BackingField") ?? overrideProp.FindPropertyRelative("Value") ?? overrideProp.FindPropertyRelative("value") ?? overrideProp;
+                targetSO = _keySO;
+            }
+            else
+            {
+                targetProp = _factSO.FindProperty($"<{nameof(FactDefinition<int>.DefaultValue)}>k__BackingField");
+                targetSO = _factSO;
+            }
+
+            if (targetProp != null)
+            {
+                if (targetProp.propertyType == SerializedPropertyType.ManagedReference)
+                    targetProp.managedReferenceValue = newValue;
+                else
+                    SetBoxedValueSafely(targetProp, newValue);
+
+                targetSO.ApplyModifiedProperties();
+            }
+        }
+
+        private void AddValueField()
+        {
+            object initialValue = Fact.DefaultValueRaw;
+            VisualElement wrapperField = new() { name = "ValueWrapper" };
+            if (Application.isPlaying && Key != null)
+            {
+                var wrapper = Key.GetWrapper(Fact);
+                var valueProp = wrapper?.GetType().GetProperty("Value");
+                if (valueProp != null && valueProp.CanRead)
+                {
+                    initialValue = valueProp.GetValue(wrapper);
+                    wrapper.Subscribe(UpdateCurentValueField);
+                }
+            }
+            _valueField = FieldFactory.CreateFactValueField(Fact.DefaultValueRaw.GetType(), "", initialValue, OnValueFieldValueChanged);
+            wrapperField.Add(_valueField.ClearPaddingAndMargin());
+
+            if (!Application.isPlaying && Key != null)
+            {
+                wrapperField.AddContextualMenu(evt =>
+                {
+                    if (TryGetValueOverride(out int i))
+                    {
+                        evt.menu.AppendAction("Remove Override", (e) =>
+                        {
+                            var reg = Key.FactRegistrations[i];
+                            reg.ValueOverride = null;
+                            Key.FactRegistrations[i] = reg;
+                            ApplyChanges();
+                        });
+                    }
+                    else
+                    {
+                        evt.menu.AppendAction("Add Override", (e) =>
+                        {
+                            IValueHolder newHolder = FieldFactory.CreateValueHolderForFact(Fact);
+                            if (newHolder == null) return;
+
+                            int targetIndex = GetRegistrationIndex();
+                            if (targetIndex < 0)
+                                Key.FactRegistrations.Add(new FactRegistration { Fact = Fact, ValueOverride = newHolder });
+                            else
+                            {
+                                var reg = Key.FactRegistrations[targetIndex];
+                                reg.ValueOverride = newHolder;
+                                Key.FactRegistrations[targetIndex] = reg;
+                            }
+                            ApplyChanges();
+                        });
+                    }
+                });
+            }
+            AddColumnField(wrapperField);
         }
 
         private void AddColumnField(VisualElement field, float grow = 1f)
         {
-            // var column = new VisualElement();
-            // column.style.flexGrow = grow;
-            // column.style.flexShrink = 0;
-            // column.style.flexBasis = 0;
-            // column.style.paddingRight = 4;
-            // field.style.flexGrow = 1;
-            // column.Add(field);
-            // Add(column);
-
-            field.style.flexGrow = grow;
-            field.style.flexShrink = 0;
-            field.style.flexBasis = 0;
-            field.style.paddingRight = 4;
+            field.SetFlex(grow, 0).SetFlexBasis(0).SetPadding(0).SetMargin(0, 4, 0, 0);
             Add(field);
+        }
+
+        private void SetOverrideBorder(VisualElement element, bool value)
+        {
+            element.SetBorderWidth(0, 0, 0, value ? 2f : 0f)
+                   .SetBorderColor(new Color(0.011f, 0.6f, 0.89f, 1f))
+                   .SetBorderRadius(0);
         }
 
         private void AddNameField()
         {
-            var nameField = new TextField
-            {
-                label = "Fact",
-                value = Fact.name,
-
-            };
+            var nameField = new TextField { label = "Fact", value = Fact.name };
             nameField.RegisterCallback<FocusOutEvent>((evt) =>
             {
                 if (nameField.value == Fact.name) return;
@@ -78,241 +276,147 @@ namespace Lostbyte.Toolkit.FactSystem.Editor
 
         private void AddSerializationField()
         {
-            // var field = new PropertyField() { label = "Savable" };
+            _serializationField = new Toggle().SetMaxSize(23, 16).SetEnabledState(!Application.isPlaying);
+            _serializationIcon = new Image().SetTooltip("Toggles save serialization").SetSize(16, 16).SetFlex(0, 1);
 
-            var field = new Toggle();
-            field.SetEnabled(!Application.isPlaying);
-            var icon = new Image
+            _serializationField.RegisterValueChangedCallback(evt =>
             {
-                image = EditorGUIUtility.IconContent(field.value ? "SaveAs" : "CrossIcon").image,
-                tooltip = "Toggles save serialization"
-            };
-            icon.style.width = 16;
-            icon.style.height = 16;
-            icon.style.marginLeft = 0;
-            field.RegisterValueChangedCallback(evt =>
-            {
-                icon.image = EditorGUIUtility.IconContent(evt.newValue ? "SaveAs" : "CrossIcon").image;
+                _serializationIcon.image = EditorGUIUtility.IconContent(evt.newValue ? "SaveAs" : "CrossIcon").image;
             });
-            field.RemoveAt(0);
-            field.Add(icon);
 
-
-            bool TryGetOverride(out FactSerializationOverride serializationOverride, out int i)
-            {
-                for (i = 0; i < Key.SerializationOverrides.Count; i++)
-                {
-                    if (Key.SerializationOverrides[i].Fact == Fact)
-                    {
-                        serializationOverride = Key.SerializationOverrides[i];
-                        return true;
-                    }
-                }
-                serializationOverride = default;
-                return false;
-            }
-            void BindDirectly()
-            {
-                _factSO.ApplyModifiedProperties();
-                _factSO.Update();
-                var prop = _factSO.FindProperty($"<{nameof(FactDefinition<object>.IsSerializable)}>k__BackingField");
-                field.BindProperty(prop);
-                SetOverrideBorder(field, false);
-            }
-            void BindToOverride(int i)
-            {
-                _keySO.ApplyModifiedProperties();
-                _keySO.Update();
-                var overridesProp = _keySO.FindProperty($"<{nameof(KeyContainer.SerializationOverrides)}>k__BackingField");
-                var prop = overridesProp.GetArrayElementAtIndex(i).FindPropertyRelative($"<{nameof(FactSerializationOverride.IsSerializable)}>k__BackingField");
-                field.BindProperty(prop);
-                SetOverrideBorder(field, true);
-            }
-            if (Key != null && TryGetOverride(out _, out int i)) BindToOverride(i);
-            else BindDirectly();
+            _serializationField.RemoveAt(0);
+            _serializationField.Add(_serializationIcon);
 
             if (Key != null)
             {
-                field.AddManipulator(new ContextualMenuManipulator(evt =>
+                _serializationField.AddContextualMenu(evt =>
                 {
-                    if (TryGetOverride(out var serializationOverride, out int i))
-                        evt.menu.AppendAction("Remove Override", (e) =>
-                        {
-                            Key.SerializationOverrides.RemoveAt(i);
-                            EditorUtility.SetDirty(Key);
-                            BindDirectly();
-                        });
-                    else
-                        evt.menu.AppendAction("Add Override", (e) =>
-                        {
-                            Key.SerializationOverrides.Add(new() { Fact = Fact, IsSerializable = true });
-                            EditorUtility.SetDirty(Key);
-                            BindToOverride(Key.SerializationOverrides.Count - 1);
-                        });
-                }));
-            }
-            // AddColumnField(field, 0.15f);
-            // _contentRow.Add(field);
-            Add(field);
-        }
-        private void AddDefaultValueField()
-        {
-            var field = new PropertyField { label = "", }; //  label = "Default Value"
-
-
-            bool TryGetOverride(out FactValueOverride valueOverride, out int i)
-            {
-                for (i = 0; i < Key.ValueOverrides.Count; i++)
-                {
-                    if (Key.ValueOverrides[i].Fact == Fact)
+                    if (TryGetSerializationOverride(out int i))
                     {
-                        valueOverride = Key.ValueOverrides[i];
-                        return true;
-                    }
-                }
-                valueOverride = default;
-                return false;
-            }
-            void BindDirectly()
-            {
-                _factSO.ApplyModifiedProperties();
-                _factSO.Update();
-                var prop = _factSO.FindProperty($"<{nameof(FactDefinition<int>.DefaultValue)}>k__BackingField");
-                if (prop != null) field.BindProperty(prop);
-                else field.Unbind();
-                field.SetEnabled(Key == null);
-                SetOverrideBorder(field, false);
-            }
-            void BindToOverride(int i)
-            {
-                _keySO.ApplyModifiedProperties();
-                _keySO.Update();
-                var overridesProp = _keySO.FindProperty($"<{nameof(KeyContainer.ValueOverrides)}>k__BackingField");
-                var prop = overridesProp.GetArrayElementAtIndex(i)
-                    .FindPropertyRelative($"<{nameof(FactValueOverride.Wrapper)}>k__BackingField")
-                    .FindPropertyRelative($"<{nameof(ValueHolder<object>.Value)}>k__BackingField");
-                if (prop != null) field.BindProperty(prop);
-                else field.Unbind();
-                field.SetEnabled(true);
-                SetOverrideBorder(field, true);
-            }
-
-            if (Key != null)
-            {
-                if (TryGetOverride(out _, out int i)) BindToOverride(i);
-                else BindDirectly();
-                this.AddManipulator(new ContextualMenuManipulator(evt =>
-                {
-                    if (TryGetOverride(out var valueOverride, out int i))
                         evt.menu.AppendAction("Remove Override", (e) =>
                         {
-                            Key.ValueOverrides.RemoveAt(i);
-                            EditorUtility.SetDirty(Key);
-                            BindDirectly();
+                            var reg = Key.FactRegistrations[i];
+                            reg.IsSerializable = default;
+                            Key.FactRegistrations[i] = reg;
+                            ApplyChanges();
                         });
+                    }
                     else
+                    {
                         evt.menu.AppendAction("Add Override", (e) =>
                         {
-                            if (Fact.GenericType == typeof(float))
-                                Key.ValueOverrides.Add(new FactValueOverride() { Fact = Fact, Wrapper = new FloatValueHolder() { RawValue = Fact.DefaultValueRaw } });
-                            else if (Fact.GenericType == typeof(int))
-                                Key.ValueOverrides.Add(new FactValueOverride() { Fact = Fact, Wrapper = new IntValueHolder() { RawValue = Fact.DefaultValueRaw } });
-                            else if (Fact.GenericType == typeof(bool))
-                                Key.ValueOverrides.Add(new FactValueOverride() { Fact = Fact, Wrapper = new BoolValueHolder() { RawValue = Fact.DefaultValueRaw } });
-                            else if (Fact.GenericType == typeof(string))
-                                Key.ValueOverrides.Add(new FactValueOverride() { Fact = Fact, Wrapper = new StringValueHolder() { RawValue = Fact.DefaultValueRaw } });
-                            else if (Fact.GenericType == typeof(Vector2))
-                                Key.ValueOverrides.Add(new FactValueOverride() { Fact = Fact, Wrapper = new Vector2ValueHolder() { RawValue = Fact.DefaultValueRaw } });
-                            else if (Fact.GenericType == typeof(Vector3))
-                                Key.ValueOverrides.Add(new FactValueOverride() { Fact = Fact, Wrapper = new Vector3ValueHolder() { RawValue = Fact.DefaultValueRaw } });
-                            else if (Fact.GenericType == typeof(Vector4))
-                                Key.ValueOverrides.Add(new FactValueOverride() { Fact = Fact, Wrapper = new Vector4ValueHolder() { RawValue = Fact.DefaultValueRaw } });
-                            else if (Fact.GenericType == typeof(Color))
-                                Key.ValueOverrides.Add(new FactValueOverride() { Fact = Fact, Wrapper = new ColorValueHolder() { RawValue = Fact.DefaultValueRaw } });
-                            else if (Fact.GenericType == typeof(Enum))
-                                Key.ValueOverrides.Add(new FactValueOverride() { Fact = Fact, Wrapper = new EnumValueHolder() { RawValue = ((Enum)Fact.DefaultValueRaw) ?? (Fact as EnumFactDefinition).DefaultEnumValue } });
+                            int targetIndex = GetRegistrationIndex();
+                            if (targetIndex < 0)
+                                Key.FactRegistrations.Add(new FactRegistration { Fact = Fact, IsSerializable = new Optional<bool>(true) });
                             else
                             {
-                                Print.Warn("Unknown type!");
-                                EditorUtility.SetDirty(Key);
-                                BindDirectly();
-                                return;
+                                var reg = Key.FactRegistrations[targetIndex];
+                                reg.IsSerializable = new Optional<bool>(true);
+                                Key.FactRegistrations[targetIndex] = reg;
                             }
-                            EditorUtility.SetDirty(Key);
-                            BindToOverride(Key.ValueOverrides.Count - 1);
+                            ApplyChanges();
                         });
-                }));
+                    }
+                });
             }
-            else
-            {
-                BindDirectly();
-            }
-            AddColumnField(field);
+            AddColumnField(_serializationField);
         }
 
-        private void AddCurentValueField()
-        {
-            if (Key == null) return;
-            var wrapper = Key.GetWrapper(Fact);
-            var valueProp = wrapper.GetType().GetProperty("Value");
-            if (valueProp != null && valueProp.CanRead && valueProp.CanWrite)
-            {
-                object currentValue = valueProp.GetValue(wrapper);
-                _curentValueField = FieldFactory.CreateFactValueField(
-                    currentValue.GetType(),
-                    "", // "Current Value"
-                    currentValue,
-                    val => valueProp.SetValue(wrapper, val)
-                );
-                wrapper.Subscribe(UpdateCurentValueField);
-                AddColumnField(_curentValueField);
-            }
-        }
-        private void SetOverrideBorder(VisualElement element, bool value)
-        {
-            Color borderColor = Color.yellow;
-            float borderWidth = value ? 0.5f : 0f;
-            float borderRadius = 4f;
-
-            element.style.borderBottomColor = borderColor;
-            element.style.borderTopColor = borderColor;
-            element.style.borderLeftColor = borderColor;
-            element.style.borderRightColor = borderColor;
-
-            element.style.borderBottomWidth = borderWidth;
-            element.style.borderTopWidth = borderWidth;
-            element.style.borderLeftWidth = borderWidth;
-            element.style.borderRightWidth = borderWidth;
-
-            element.style.borderBottomLeftRadius = borderRadius;
-            element.style.borderBottomRightRadius = borderRadius;
-            element.style.borderTopLeftRadius = borderRadius;
-            element.style.borderTopRightRadius = borderRadius;
-        }
-        private void AddTypeField()
-        {
-            var typeField = new TextField
-            {
-                // label = "Type",
-                value = Fact.GenericType.Name,
-                isReadOnly = true
-            };
-            AddColumnField(typeField, 0.5f);
-        }
-
-
-
-        private VisualElement _curentValueField;
+        private void AddTypeField() => AddColumnField(new TextField { value = Fact.GenericType.Name, isReadOnly = true }, 0.5f);
 
         private void UpdateCurentValueField(object value)
         {
-            if (_curentValueField == null) return;
-            _curentValueField.GetType().GetProperty("value").SetValue(_curentValueField, value);
+            if (_valueField == null) return;
+            var prop = _valueField.GetType().GetProperty("value");
+            if (prop != null) prop.SetValue(_valueField, value);
         }
-        ~FactRow()
+
+        private void AddReactionIndicator()
         {
-            if (_curentValueField != null)
-                Key.GetWrapper(Fact).Unsubscribe(UpdateCurentValueField);
+            if (Key == null) return;
+
+            _reactionIndicator = new Button()
+                .SetEnabledState(false).MakeRow().SetAlignItems(Align.Center).SetJustifyContent(Justify.Center)
+                .SetPadding(2, 4).SetMargin(0).SetTooltip("Right-click to manage reactions");
+
+            var icon = new Image { image = EditorGUIUtility.IconContent("d_EventSystem Icon").image }.SetSize(14, 14).SetMargin(0, 2, 0, 0);
+            _reactionCountLabel = new Label("0").SetFontStyle(FontStyle.Normal);
+
+            _reactionIndicator.Add(icon);
+            _reactionIndicator.Add(_reactionCountLabel);
+
+            _reactionIndicator.AddContextualMenu(evt =>
+            {
+                var reactionTypes = TypeCache.GetTypesDerivedFrom<FactReaction>().Where(t => !t.IsAbstract && !t.IsGenericTypeDefinition);
+
+                foreach (var type in reactionTypes)
+                {
+                    var attr = (SupportedFactTypesAttribute)Attribute.GetCustomAttribute(type, typeof(SupportedFactTypesAttribute));
+                    if (attr == null || attr.IsTypeSupported(Fact.GenericType))
+                    {
+                        string cleanName = ObjectNames.NicifyVariableName(type.Name.Replace("Reaction", ""));
+                        evt.menu.AppendAction($"Add Reaction/{cleanName}", (e) => AddNewReactionOfType(type));
+                    }
+                }
+
+                int idx = GetRegistrationIndex();
+                if (idx >= 0 && Key.FactRegistrations[idx].Reactions?.Count > 0)
+                {
+                    evt.menu.AppendSeparator("");
+                    evt.menu.AppendAction("Clear All Reactions", (e) =>
+                    {
+                        var reg = Key.FactRegistrations[idx];
+                        reg.Reactions.Clear();
+                        Key.FactRegistrations[idx] = reg;
+                        ApplyChanges();
+                    });
+                }
+            });
+
+            AddColumnField(_reactionIndicator, 0.1f);
+        }
+
+        private void AddNewReactionOfType(Type type)
+        {
+            var newReaction = (FactReaction)Activator.CreateInstance(type);
+            int index = GetRegistrationIndex();
+
+            if (index < 0)
+            {
+                Key.FactRegistrations.Add(new FactRegistration { Fact = Fact, Reactions = new() });
+                index = Key.FactRegistrations.Count - 1;
+            }
+
+            var reg = Key.FactRegistrations[index];
+            reg.Reactions ??= new();
+            reg.Reactions.Add(newReaction);
+            Key.FactRegistrations[index] = reg;
+
+            ApplyChanges();
+        }
+
+        private void UpdateIndicatorUI(int count)
+        {
+            if (_reactionCountLabel == null || _reactionIndicator == null) return;
+            _reactionCountLabel.text = count.ToString();
+            _reactionIndicator.SetOpacity(count > 0 ? 1f : 0.4f);
+        }
+
+        private void ApplyChanges()
+        {
+            EditorUtility.SetDirty(Key);
+            _keySO.Update();
+            UpdateBindings();
+        }
+
+        private object GetBoxedValueSafely(SerializedProperty prop)
+        {
+            return prop.boxedValue;
+        }
+
+        private void SetBoxedValueSafely(SerializedProperty prop, object value)
+        {
+            prop.boxedValue = value;
         }
     }
 }

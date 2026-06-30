@@ -91,11 +91,13 @@ namespace Lostbyte.Toolkit.FactSystem
             RootKeys.Add(key);
             overrides?.ForEach(o =>
             {
-                if (o.Fact != null && o.Wrapper != null)
+                if (o.Fact != null)
                 {
-                    key.ValueOverrides.Add(o.Copy());
-                    if (!key.Facts.Contains(o.Fact))
-                        key.Facts.Add(o.Fact);
+                    key.FactRegistrations.Add(new()
+                    {
+                        Fact = o.Fact,
+                        ValueOverride = o.Wrapper,
+                    });
                 }
             });
             key.Load();

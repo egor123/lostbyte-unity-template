@@ -5,7 +5,7 @@
         <ui:DropdownField label="View" choices="Keys,Facts,Events" name="tab-selector" index="0" />
     </ui:VisualElement>
     <Lostbyte.Toolkit.FactSystem.Editor.SplitView name="split-view">
-        <ui:VisualElement name="inspector" style="flex-grow: 1;" />
+        <ui:ScrollView name="inspector" mode="Vertical" style="flex-grow: 1;" />
         <ui:VisualElement name="main-view" style="flex-grow: 1;">
             <ui:VisualElement name="tool-bar" style="flex-grow: 1; height: 25px; max-height: 25px; flex-direction: row;">
                 <ui:Button text="+" parse-escape-sequences="true" display-tooltip-when-elided="true" name="add-btn" style="margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; width: 25px; height: 25px;" />

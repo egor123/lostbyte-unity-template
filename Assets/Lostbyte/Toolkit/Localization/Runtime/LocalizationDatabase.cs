@@ -115,6 +115,11 @@ namespace Lostbyte.Toolkit.Localization
             Print.MAssert(found, $"Table '{tableId}' not found in locale '{db.CurrentLocale}'");
             return table;
         }
+        public static void ReleaseAsset(UnityEngine.Object asset)
+        {
+            if (asset is UnityEngine.Object uObj && uObj != null)
+                Addressables.Release(uObj);
+        }
         public static T GetValue<T>(string tableId, string keyId, params object[] args)
         {
             var table = GetTable(tableId);
@@ -126,22 +131,21 @@ namespace Lostbyte.Toolkit.Localization
             if (typeof(T) == typeof(string))
                 res = table.StringEntries.TryGetValue(keyId, out var v) ? (args?.Length > 0 ? Formatter.Format(v, args) : v) : null;
             else if (typeof(T) == typeof(Texture))
-                res = table.TextureEntries.TryGetValue(keyId, out var v) ? v.Asset != null ? v.Asset : v.LoadAssetAsync<Texture>().WaitForCompletion() : null;
+                res = table.TextureEntries.TryGetValue(keyId, out var v) ? Addressables.LoadAssetAsync<Texture>(v.RuntimeKey).WaitForCompletion() : null;
             else if (typeof(T) == typeof(AudioClip))
-                res = table.AudioEntries.TryGetValue(keyId, out var v) ? v.Asset != null ? v.Asset : v.LoadAssetAsync<AudioClip>().WaitForCompletion() : null;
+                res = table.AudioEntries.TryGetValue(keyId, out var v) ? Addressables.LoadAssetAsync<AudioClip>(v.RuntimeKey).WaitForCompletion() : null;
             else if (typeof(T) == typeof(TextAsset))
-                res = table.FileEntries.TryGetValue(keyId, out var v) ? v.Asset != null ? v.Asset : v.LoadAssetAsync<TextAsset>().WaitForCompletion() : null;
+                res = table.FileEntries.TryGetValue(keyId, out var v) ? Addressables.LoadAssetAsync<TextAsset>(v.RuntimeKey).WaitForCompletion() : null;
 
             // --- ARRAYS ---
             else if (typeof(T) == typeof(string[]))
                 res = table.StringArrayEntries.TryGetValue(keyId, out var v) ? (args?.Length > 0 ? v.Select(s => Formatter.Format(s, args)).ToArray() : v.ToArray()) : null;
             else if (typeof(T) == typeof(Texture[]))
-                res = table.TextureArrayEntries.TryGetValue(keyId, out var v) ? v.Select(r => r.Asset as Texture != null ? r.Asset : r.LoadAssetAsync<Texture>().WaitForCompletion()).ToArray() : null;
+                res = table.TextureArrayEntries.TryGetValue(keyId, out var v) ? v.Select(r => Addressables.LoadAssetAsync<Texture>(r.RuntimeKey).WaitForCompletion()) : null;
             else if (typeof(T) == typeof(AudioClip[]))
-                res = table.AudioArrayEntries.TryGetValue(keyId, out var v) ? v.Select(r => r.Asset as AudioClip != null ? r.Asset : r.LoadAssetAsync<AudioClip>().WaitForCompletion()).ToArray() : null;
+                res = table.AudioArrayEntries.TryGetValue(keyId, out var v) ? v.Select(r => Addressables.LoadAssetAsync<AudioClip>(r.RuntimeKey).WaitForCompletion()) : null;
             else if (typeof(T) == typeof(TextAsset[]))
-                res = table.FileArrayEntries.TryGetValue(keyId, out var v) ? v.Select(r => r.Asset as TextAsset != null ? r.Asset : r.LoadAssetAsync<TextAsset>().WaitForCompletion()).ToArray() : null;
-
+                res = table.FileArrayEntries.TryGetValue(keyId, out var v) ? v.Select(r => Addressables.LoadAssetAsync<TextAsset>(r.RuntimeKey).WaitForCompletion()) : null;
             else
                 Print.MWarn($"Unsupported type: {typeof(T)}");
 
@@ -159,22 +163,21 @@ namespace Lostbyte.Toolkit.Localization
             if (typeof(T) == typeof(string))
                 res = table.StringEntries.TryGetValue(keyId, out var v) ? (args?.Length > 0 ? Formatter.Format(v, args) : v) : null;
             else if (typeof(T) == typeof(Texture))
-                res = table.TextureEntries.TryGetValue(keyId, out var v) ? (v.Asset as Texture != null ? v.Asset : await v.LoadAssetAsync<Texture>().Task) : null;
+                res = table.TextureEntries.TryGetValue(keyId, out var v) ? await Addressables.LoadAssetAsync<Texture>(v.RuntimeKey).Task : null;
             else if (typeof(T) == typeof(AudioClip))
-                res = table.AudioEntries.TryGetValue(keyId, out var v) ? (v.Asset as AudioClip != null ? v.Asset : await v.LoadAssetAsync<AudioClip>().Task) : null;
+                res = table.AudioEntries.TryGetValue(keyId, out var v) ? await Addressables.LoadAssetAsync<AudioClip>(v.RuntimeKey).Task : null;
             else if (typeof(T) == typeof(TextAsset))
-                res = table.FileEntries.TryGetValue(keyId, out var v) ? (v.Asset as TextAsset != null ? v.Asset : await v.LoadAssetAsync<TextAsset>().Task) : null;
+                res = table.FileEntries.TryGetValue(keyId, out var v) ? await Addressables.LoadAssetAsync<TextAsset>(v.RuntimeKey).Task : null;
 
             // --- ARRAYS ---
             else if (typeof(T) == typeof(string[]))
                 res = table.StringArrayEntries.TryGetValue(keyId, out var v) ? (args?.Length > 0 ? v.Select(s => Formatter.Format(s, args)).ToArray() : v.ToArray()) : null;
             else if (typeof(T) == typeof(Texture[]))
-                res = table.TextureArrayEntries.TryGetValue(keyId, out var v) ? await Task.WhenAll(v.Select(async r => r.Asset as Texture != null ? r.Asset : await r.LoadAssetAsync<Texture>().Task)) : null;
+                res = table.TextureArrayEntries.TryGetValue(keyId, out var v) ? await Task.WhenAll(v.Select(r => Addressables.LoadAssetAsync<Texture>(r.RuntimeKey).Task)) : null;
             else if (typeof(T) == typeof(AudioClip[]))
-                res = table.AudioArrayEntries.TryGetValue(keyId, out var v) ? await Task.WhenAll(v.Select(async r => r.Asset as AudioClip != null ? r.Asset : await r.LoadAssetAsync<AudioClip>().Task)) : null;
+                res = table.AudioArrayEntries.TryGetValue(keyId, out var v) ? await Task.WhenAll(v.Select(r => Addressables.LoadAssetAsync<AudioClip>(r.RuntimeKey).Task)) : null;
             else if (typeof(T) == typeof(TextAsset[]))
-                res = table.FileArrayEntries.TryGetValue(keyId, out var v) ? await Task.WhenAll(v.Select(async r => r.Asset as TextAsset != null ? r.Asset : await r.LoadAssetAsync<TextAsset>().Task)) : null;
-
+                res = table.FileArrayEntries.TryGetValue(keyId, out var v) ? await Task.WhenAll(v.Select(r => Addressables.LoadAssetAsync<TextAsset>(r.RuntimeKey).Task)) : null;
             else
                 Print.MWarn($"Unsupported type: {typeof(T)}");
 

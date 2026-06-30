@@ -3322,7 +3322,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_button: {fileID: 1129662296}
   m_key: {fileID: 4283477907835028808, guid: 6c08054baf9457644b18f9b93ea7fec1, type: 2}
-  m_event: {fileID: 6175346580498249907, guid: 6c08054baf9457644b18f9b93ea7fec1, type: 2}
+  m_event: {fileID: 0}
 --- !u!114 &1129662296
 MonoBehaviour:
   m_ObjectHideFlags: 0

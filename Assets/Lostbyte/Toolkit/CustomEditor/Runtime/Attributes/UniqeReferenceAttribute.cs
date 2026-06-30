@@ -61,7 +61,9 @@ namespace Lostbyte.Toolkit.CustomEditor
         {
             if (type == null) return "Null";
             var name = type.ToString().Split('+', '.')[^1];
-            if (type.GetCustomAttributes(typeof(TagAttribute), true).FirstOrDefault() is TagAttribute path) name = $"{path.Tag}/{name}";
+            name = ObjectNames.NicifyVariableName(name);
+            if (type.GetCustomAttributes(typeof(TagAttribute), true).FirstOrDefault() is TagAttribute path)
+                name = $"{path.Tag}/{name}";
             return name;
         }
         public class StringListProvider : ScriptableObject, ISearchWindowProvider
@@ -107,6 +109,15 @@ namespace Lostbyte.Toolkit.CustomEditor
             {
                 Callback.Invoke((int)SearchTreeEntry.userData);
                 return true;
+            }
+            private static string GetName(Type type)
+            {
+                if (type == null) return "Null";
+                var name = type.ToString().Split('+', '.')[^1];
+                name = ObjectNames.NicifyVariableName(name);
+                if (type.GetCustomAttributes(typeof(TagAttribute), true).FirstOrDefault() is TagAttribute path)
+                    name = $"{path.Tag}/{name}";
+                return name;
             }
         }
 #endif

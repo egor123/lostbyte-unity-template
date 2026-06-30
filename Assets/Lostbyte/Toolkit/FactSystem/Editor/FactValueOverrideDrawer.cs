@@ -1,6 +1,7 @@
 using UnityEditor;
 using UnityEngine;
 using System;
+using Lostbyte.Toolkit.Common;
 
 namespace Lostbyte.Toolkit.FactSystem.Editor
 {
@@ -24,7 +25,7 @@ namespace Lostbyte.Toolkit.FactSystem.Editor
             if (fact != null)
             {
                 var factType = fact.GenericType;
-                var expectedWrapperType = GetExpectedWrapperType(factType);
+                var expectedWrapperType = FieldFactory.GetExpectedWrapperType(factType);
 
                 if (wrapperProp.managedReferenceValue is not IValueHolder wrapper || wrapper.GetType() != expectedWrapperType)
                 {
@@ -48,21 +49,6 @@ namespace Lostbyte.Toolkit.FactSystem.Editor
             }
 
             EditorGUI.EndProperty();
-        }
-
-        private Type GetExpectedWrapperType(Type type)
-        {
-            if (type == typeof(int)) return typeof(IntValueHolder);
-            if (type == typeof(float)) return typeof(FloatValueHolder);
-            if (type == typeof(bool)) return typeof(BoolValueHolder);
-            if (type == typeof(string)) return typeof(StringValueHolder);
-            if (type == typeof(Vector2)) return typeof(Vector2ValueHolder);
-            if (type == typeof(Vector3)) return typeof(Vector3ValueHolder);
-            if (type == typeof(Vector4)) return typeof(Vector4ValueHolder);
-            if (type == typeof(Color)) return typeof(ColorValueHolder);
-            if (type == typeof(Enum)) return typeof(EnumValueHolder);
-
-            return typeof(StringValueHolder); // fallback
         }
     }
 }
