@@ -1,29 +1,17 @@
 using System;
 using Lostbyte.Toolkit.FactSystem.Nodes;
-using UnityEngine;
 
 namespace Lostbyte.Toolkit.FactSystem
 {
     [Serializable]
-    public class Condition
+    public class Condition : FactEvaluator<bool, IBoolNode>
     {
-        [SerializeField, SerializeReference] private IBoolNode m_rootNode;
-        private IKeyContainer _defaultKey;
         private event Action OnTrigger;
-        private event Action<bool> OnChange;
-
-        private bool? _isMet = null;
-        public bool IsMet => _isMet ?? m_rootNode?.Evaluate(_defaultKey) ?? false;
-        public Condition(IBoolNode rootNode = null, IKeyContainer defaultKey = null) => (m_rootNode, _defaultKey) = (rootNode, defaultKey);
-        public void OnConditionChange(object _)
+        public bool IsMet => Value;
+        public Condition(IBoolNode rootNode = null, IKeyContainer defaultKey = null) : base(rootNode, defaultKey) { }
+        protected override void OnValueChanged(bool newValue)
         {
-            var newValue = m_rootNode?.Evaluate(_defaultKey) ?? false;
-            if (!_isMet.HasValue || (_isMet.Value != newValue))
-            {
-                _isMet = newValue;
-                if (newValue) OnTrigger?.Invoke();
-                OnChange?.Invoke(newValue);
-            }
+            if (newValue) OnTrigger?.Invoke();
         }
         public void Subscribe(Action callback)
         {
@@ -31,22 +19,6 @@ namespace Lostbyte.Toolkit.FactSystem
             OnTrigger += callback;
         }
         public void Unsubscribe(Action callback) => OnTrigger -= callback;
-        public void Subscribe(Action<bool> callback)
-        {
-            callback?.Invoke(IsMet);
-            OnChange += callback;
-        }
-        public void Unsubscribe(Action<bool> callback) => OnChange -= callback;
-        public void SetDefaultKey(IKeyContainer key)
-        {
-            m_rootNode?.Unsubscribe(_defaultKey, OnConditionChange);
-            _defaultKey = key;
-            m_rootNode?.Subscribe(_defaultKey, OnConditionChange);
-        }
-        public override string ToString() => m_rootNode?.ToString();
-        public Condition Copy()
-        {
-            return new Condition() { m_rootNode = m_rootNode, _defaultKey = _defaultKey };
-        }
+        public Condition Copy() => new(m_rootNode, _defaultKey);
     }
 }

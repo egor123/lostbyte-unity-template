@@ -10,7 +10,7 @@ namespace Lostbyte.Toolkit.FactSystem.Nodes
         public FactDefinition Fact;
         private IFactWrapper _wrapper;
         private readonly bool HasAnyKey(IKeyContainer defaultKey) => Key != null || defaultKey != null;
-        private IFactWrapper GetWrapper(IKeyContainer defaultKey) => Key != null ? _wrapper ??= Key.Key.GetWrapper(Fact) : defaultKey?.Key.GetWrapper(Fact);
+        public IFactWrapper GetWrapper(IKeyContainer defaultKey) => Key != null ? _wrapper ??= Key.Key.GetWrapper(Fact) : defaultKey?.Key.GetWrapper(Fact);
         public void Subscribe(IKeyContainer defaultKey, Action<object> callback) { if (HasAnyKey(defaultKey)) GetWrapper(defaultKey).Subscribe(callback); }
         public void Unsubscribe(IKeyContainer defaultKey, Action<object> callback) { if (HasAnyKey(defaultKey)) GetWrapper(defaultKey).Unsubscribe(callback); }
         public override readonly string ToString() => $"{(Key != null ? Key.Name : "this")}[{Fact.name}]";
@@ -36,7 +36,7 @@ namespace Lostbyte.Toolkit.FactSystem.Nodes
             return false;
         }
 
-        string IStringNode.Evaluate(IKeyContainer defaultKey)
+        string IValueNode<string>.Evaluate(IKeyContainer defaultKey)
         {
             if (!HasAnyKey(defaultKey)) return "";
             var wrapper = GetWrapper(defaultKey);
@@ -44,7 +44,7 @@ namespace Lostbyte.Toolkit.FactSystem.Nodes
             return "";
         }
 
-        float INumericNode.Evaluate(IKeyContainer defaultKey)
+        float IValueNode<float>.Evaluate(IKeyContainer defaultKey)
         {
             if (!HasAnyKey(defaultKey)) return 0;
             var wrapper = GetWrapper(defaultKey);
@@ -54,7 +54,7 @@ namespace Lostbyte.Toolkit.FactSystem.Nodes
             return 0;
         }
 
-        Vector4 IVectorNode.Evaluate(IKeyContainer defaultKey)
+        Vector4 IValueNode<Vector4>.Evaluate(IKeyContainer defaultKey)
         {
             if (!HasAnyKey(defaultKey)) return Vector4.zero;
             var wrapper = GetWrapper(defaultKey);

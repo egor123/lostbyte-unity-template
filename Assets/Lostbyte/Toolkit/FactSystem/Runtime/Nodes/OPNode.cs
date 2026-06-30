@@ -8,7 +8,7 @@ namespace Lostbyte.Toolkit.FactSystem.Nodes
     {
         [SerializeReference] public INode LNode, RNode;
         public string Op;
-        readonly bool IBoolNode.Evaluate(IKeyContainer defaultKey)
+        readonly bool IValueNode<bool>.Evaluate(IKeyContainer defaultKey)
         {
             if (LNode is IBoolNode l1 && RNode is IBoolNode r1)
             {
@@ -43,7 +43,7 @@ namespace Lostbyte.Toolkit.FactSystem.Nodes
             }
             return false;
         }
-        readonly float INumericNode.Evaluate(IKeyContainer defaultKey)
+        readonly float IValueNode<float>.Evaluate(IKeyContainer defaultKey)
         {
             if (LNode is INumericNode l && RNode is INumericNode r)
             {
@@ -60,26 +60,27 @@ namespace Lostbyte.Toolkit.FactSystem.Nodes
             }
             return 0;
         }
-        public readonly int Precedence => 3;
+
+        public readonly int Precedence => Op switch
+        {
+            "^" => 7,
+            "*" or "/" or "%" => 6,
+            "+" or "-" => 5,
+            "<" or ">" or "<=" or ">=" => 4,
+            "==" or "!=" => 3,
+            _ => 0
+        };
+
         public override readonly string ToString() => $"{NodeUtils.ToStringWithParens(this, LNode)} {Op} {NodeUtils.ToStringWithParens(this, RNode)}";
         public readonly Type ValueType => Op switch
         {
-            "==" => typeof(bool),
-            "!=" => typeof(bool),
-            ">" => typeof(bool),
-            ">=" => typeof(bool),
-            "<" => typeof(bool),
-            "<=" => typeof(bool),
-            "+" => typeof(float),
-            "-" => typeof(float),
-            "*" => typeof(float),
-            "/" => typeof(float),
-            "%" => typeof(float),
-            "^" => typeof(float),
-            _ => throw new Exception("Unknown operator")
+            "==" or "!=" or ">" or ">=" or "<" or "<=" => typeof(bool),
+            "+" or "-" or "*" or "/" or "%" or "^" => typeof(float),
+            _ => throw new Exception($"Unknown operator: {Op}")
         };
         public readonly void Validate() { if (LNode.ValueType != RNode.ValueType) throw new Exception("Types does not match"); }
         public readonly void Subscribe(IKeyContainer defaultKey, Action<object> callback) { LNode.Subscribe(defaultKey, callback); RNode.Subscribe(defaultKey, callback); }
         public readonly void Unsubscribe(IKeyContainer defaultKey, Action<object> callback) { LNode.Unsubscribe(defaultKey, callback); RNode.Unsubscribe(defaultKey, callback); }
+
     }
 }

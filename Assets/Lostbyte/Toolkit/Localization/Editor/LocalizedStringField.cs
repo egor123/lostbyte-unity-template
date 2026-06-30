@@ -308,7 +308,7 @@ namespace Lostbyte.Toolkit.UI.Editor
         {
             return typeName switch
             {
-                "string" => typeof(StringFactDifenition),
+                "string" => typeof(StringFactDefinition),
                 "int" => typeof(IntFactDefinition),
                 "float" => typeof(FloatFactDefinition),
                 "bool" => typeof(BoolFactDefinition),

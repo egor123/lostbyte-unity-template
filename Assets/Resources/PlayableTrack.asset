@@ -12,8 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1a42321e32f60c34d9ff9b6cfa2f180a, type: 3}
   m_Name: Test Node 2
   m_EditorClassIdentifier: 
-  Position: {x: 1308.6666, y: 4.666666}
+  Position: {x: 1492.6666, y: 31.333334}
   In:
+  - {fileID: -3224868738110110065}
   - {fileID: 6231953369714422268}
   - {fileID: 6626836687833242164}
   - {fileID: 6626836687833242164}
@@ -26,9 +27,43 @@ MonoBehaviour:
     Number2: 0
     Out: []
   - Number: 112
-    Number2: 0
+    Number2: -50
     Out:
     - {fileID: 5251974714245448475}
+--- !u!114 &-3224868738110110065
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3be1764dc0eb6df4dbfb547e4994eca1, type: 3}
+  m_Name: Statement Node
+  m_EditorClassIdentifier: 
+  Position: {x: 1207.3333, y: -100}
+  In:
+  - {fileID: 6231953369714422268}
+  Out: {fileID: -6394396275358484631}
+  Statement:
+    m_rootNode:
+      rid: 358180907034345495
+  references:
+    version: 2
+    RefIds:
+    - rid: 358180907034345495
+      type: {class: AddAssignNode, ns: Lostbyte.Toolkit.FactSystem.Nodes, asm: Lostbyte.Toolkit.FactSystem}
+      data:
+        Target:
+          Key: {fileID: 4283477907835028808, guid: 6c08054baf9457644b18f9b93ea7fec1, type: 2}
+          Fact: {fileID: -7316681771992995001, guid: 6c08054baf9457644b18f9b93ea7fec1, type: 2}
+        ValueNode:
+          rid: 358180907034345496
+    - rid: 358180907034345496
+      type: {class: NumericNode, ns: Lostbyte.Toolkit.FactSystem.Nodes, asm: Lostbyte.Toolkit.FactSystem}
+      data:
+        Value: 3
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -72,7 +107,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 49557a02f60e48249973affaf8be2c0c, type: 3}
   m_Name: Switch Node
   m_EditorClassIdentifier: 
-  Position: {x: 376.66666, y: -31.333334}
+  Position: {x: 278, y: -10.666667}
   In:
   - {fileID: 0}
   Nodes:
@@ -82,7 +117,7 @@ MonoBehaviour:
     Out: {fileID: 6231953369714422268}
   - Condition:
       m_rootNode:
-        rid: 358180693752938497
+        rid: 358180907034345500
     Out: {fileID: 6626836687833242164}
   references:
     version: 2
@@ -91,10 +126,23 @@ MonoBehaviour:
       type: {class: BoolNode, ns: Lostbyte.Toolkit.FactSystem.Nodes, asm: Lostbyte.Toolkit.FactSystem}
       data:
         <Value>k__BackingField: 1
-    - rid: 358180693752938497
-      type: {class: BoolNode, ns: Lostbyte.Toolkit.FactSystem.Nodes, asm: Lostbyte.Toolkit.FactSystem}
+    - rid: 358180907034345500
+      type: {class: OPNode, ns: Lostbyte.Toolkit.FactSystem.Nodes, asm: Lostbyte.Toolkit.FactSystem}
       data:
-        <Value>k__BackingField: 1
+        LNode:
+          rid: 358180907034345501
+        RNode:
+          rid: 358180907034345502
+        Op: ==
+    - rid: 358180907034345501
+      type: {class: FactNode, ns: Lostbyte.Toolkit.FactSystem.Nodes, asm: Lostbyte.Toolkit.FactSystem}
+      data:
+        Key: {fileID: 6628457045445381566, guid: 6c08054baf9457644b18f9b93ea7fec1, type: 2}
+        Fact: {fileID: -140893777799597766, guid: 6c08054baf9457644b18f9b93ea7fec1, type: 2}
+    - rid: 358180907034345502
+      type: {class: NumericNode, ns: Lostbyte.Toolkit.FactSystem.Nodes, asm: Lostbyte.Toolkit.FactSystem}
+      data:
+        Value: 1
 --- !u!114 &5251974714245448475
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -107,7 +155,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7bfadb478cdf93c4587a9e6729fd50af, type: 3}
   m_Name: Dialogue Node
   m_EditorClassIdentifier: 
-  Position: {x: 1664, y: 44}
+  Position: {x: 1818, y: 31.333334}
   In:
   - {fileID: -6394396275358484631}
   - {fileID: -6394396275358484631}
@@ -164,7 +212,7 @@ MonoBehaviour:
         m_staticValue: 231
         m_key: {fileID: 7530528405163607904, guid: 6c08054baf9457644b18f9b93ea7fec1, type: 2}
         m_fact: {fileID: -3055759980319532786, guid: 6c08054baf9457644b18f9b93ea7fec1, type: 2}
-        m_isDynamic: 0
+        m_isDynamic: 1
     - rid: 1312422453416034309
       type: {class: LocArg, ns: Lostbyte.Toolkit.Localization, asm: Lostbyte.Toolkit.Localization}
       data:
@@ -210,46 +258,46 @@ MonoBehaviour:
     Out: {fileID: 0}
   - Condition:
       m_rootNode:
-        rid: 1312422490736689199
+        rid: 358180898366292461
     Out: {fileID: 0}
   - Condition:
       m_rootNode:
         rid: 1312422490736689195
-    Out: {fileID: 0}
+    Out: {fileID: -3224868738110110065}
   - Condition:
       m_rootNode:
-        rid: 1312422490736689203
+        rid: 358180898366292190
     Out: {fileID: -6394396275358484631}
   references:
     version: 2
     RefIds:
-    - rid: 1312422490736689195
+    - rid: 358180898366292190
       type: {class: BoolNode, ns: Lostbyte.Toolkit.FactSystem.Nodes, asm: Lostbyte.Toolkit.FactSystem}
       data:
         <Value>k__BackingField: 1
-    - rid: 1312422490736689199
+    - rid: 358180898366292461
       type: {class: OPNode, ns: Lostbyte.Toolkit.FactSystem.Nodes, asm: Lostbyte.Toolkit.FactSystem}
       data:
         LNode:
-          rid: 1312422490736689200
+          rid: 358180898366292462
         RNode:
-          rid: 1312422490736689201
+          rid: 358180898366292463
         Op: ==
-    - rid: 1312422490736689200
+    - rid: 358180898366292462
       type: {class: FactNode, ns: Lostbyte.Toolkit.FactSystem.Nodes, asm: Lostbyte.Toolkit.FactSystem}
       data:
         Key: {fileID: 4283477907835028808, guid: 6c08054baf9457644b18f9b93ea7fec1, type: 2}
-        Fact: {fileID: -1139778540106801879, guid: 6c08054baf9457644b18f9b93ea7fec1, type: 2}
-    - rid: 1312422490736689201
+        Fact: {fileID: -7316681771992995001, guid: 6c08054baf9457644b18f9b93ea7fec1, type: 2}
+    - rid: 358180898366292463
       type: {class: EnumNode, ns: Lostbyte.Toolkit.FactSystem.Nodes, asm: Lostbyte.Toolkit.FactSystem}
       data:
         Value:
-          rid: 1312422490736689202
-    - rid: 1312422490736689202
-      type: {class: Enums/GameState, ns: GameFacts, asm: Assembly-CSharp}
+          rid: 358180898366292464
+    - rid: 358180898366292464
+      type: {class: Enums/Level, ns: GameFacts, asm: Assembly-CSharp}
       data:
-        value__: 1
-    - rid: 1312422490736689203
+        value__: 0
+    - rid: 1312422490736689195
       type: {class: BoolNode, ns: Lostbyte.Toolkit.FactSystem.Nodes, asm: Lostbyte.Toolkit.FactSystem}
       data:
         <Value>k__BackingField: 1

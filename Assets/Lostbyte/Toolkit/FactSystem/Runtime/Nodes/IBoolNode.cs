@@ -1,7 +1,4 @@
 namespace Lostbyte.Toolkit.FactSystem.Nodes
 {
-    public interface IBoolNode : INode
-    {
-        bool Evaluate(IKeyContainer defaultKey);
-    }
+    public interface IBoolNode : IValueNode<bool> { }
 }

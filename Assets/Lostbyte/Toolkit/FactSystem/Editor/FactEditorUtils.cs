@@ -219,7 +219,7 @@ namespace Lostbyte.Toolkit.FactSystem.Editor
             object value = null;
             List<string> enumValues = new();
             Vector2 enumScroll = Vector2.zero;
-            Type[] types = { typeof(IntFactDefinition), typeof(FloatFactDefinition), typeof(BoolFactDefinition), typeof(StringFactDifenition), typeof(Vector2FactDifenition), typeof(Vector3FactDefinition), typeof(Vector4FactDefinition), typeof(ColorFactDefinition), typeof(EnumFactDefinition) };
+            Type[] types = { typeof(IntFactDefinition), typeof(FloatFactDefinition), typeof(BoolFactDefinition), typeof(StringFactDefinition), typeof(Vector2FactDefinition), typeof(Vector3FactDefinition), typeof(Vector4FactDefinition), typeof(ColorFactDefinition), typeof(EnumFactDefinition) };
             string[] names = { "int", "float", "bool", "string", "vector2", "vector3", "vector4", "color", "enum" };
             var popup = new PopupWindow(
                 (rect, window) =>

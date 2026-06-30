@@ -1,4 +1,3 @@
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -45,7 +44,7 @@ namespace Lostbyte.Toolkit.FactSystem.Editor
                         return new FactNode() { Key = key, Fact = fact };
                     case "NUMBER":
                         position++;
-                        return float.TryParse(tokenValue, out var numResult) ? new NumericNode() { Value = numResult } : throw new Exception("Cannot parse value");
+                        return float.TryParse(tokenValue.Replace('.', ','), out var numResult) ? new NumericNode() { Value = numResult } : throw new Exception("Cannot parse value");
                     case "STRING":
                         position++;
                         return new StringNode() { Value = tokenValue };
@@ -56,17 +55,32 @@ namespace Lostbyte.Toolkit.FactSystem.Editor
                         position++;
                         return new EnumNode() { ValueName = tokenValue };
                     default:
-                        throw new Exception("Unsupported token");
+                        throw new Exception($"Unsupported token: {{{tokenType}: {tokenValue}}}");
                 }
             }
-            INode ParseOP()
+
+            int GetPrecedence(string op) => op switch
+            {
+                "^" => 7,
+                "*" or "/" or "%" => 6,
+                "+" or "-" => 5,
+                "<" or ">" or "<=" or ">=" => 4,
+                "==" or "!=" => 3,
+                _ => 0
+            };
+
+            INode ParseOP(int minPrecedence = 0)
             {
                 INode node = ParsePrimary();
                 while (Peek().Item1 == "OP")
                 {
                     var op = Peek().Item2;
+                    int opPrecedence = GetPrecedence(op);
+                    if (opPrecedence < minPrecedence) break;
                     position++;
-                    INode rNode = ParsePrimary();
+                    int nextMinPrecedence = op == "^" ? opPrecedence : opPrecedence + 1;
+                    INode rNode = ParseOP(nextMinPrecedence);
+
                     if (node is EnumNode eNode1 && rNode is FactNode fNode1 && fNode1.Fact is EnumFactDefinition eFact1)
                     {
                         eNode1.Value = (Enum)Enum.Parse(eFact1.EnumType, eNode1.ValueName);
@@ -81,6 +95,7 @@ namespace Lostbyte.Toolkit.FactSystem.Editor
                 }
                 return node;
             }
+
             INode ParseAnd()
             {
                 INode node = ParseOP();
@@ -93,6 +108,7 @@ namespace Lostbyte.Toolkit.FactSystem.Editor
                 }
                 return node;
             }
+
             INode ParseOr()
             {
                 INode node = ParseAnd();
@@ -105,44 +121,106 @@ namespace Lostbyte.Toolkit.FactSystem.Editor
                 }
                 return node;
             }
+
+            INode ParseStatement()
+            {
+                INode node = ParseOr();
+                (var tokenType, var _) = Peek();
+
+                if (tokenType == "ASSIGN")
+                {
+                    position++;
+                    INode rightSide = ParseStatement();
+                    if (node is not FactNode fNode) throw new Exception("The left side of an assignment must be a Fact");
+
+                    if (rightSide is EnumNode eNode && fNode.Fact is EnumFactDefinition eFact)
+                    {
+                        eNode.Value = (Enum)Enum.Parse(eFact.EnumType, eNode.ValueName);
+                        rightSide = eNode;
+                    }
+
+                    return new AssignNode() { Target = fNode, ValueNode = rightSide };
+                }
+                else if (tokenType == "ADD_ASSIGN")
+                {
+                    position++;
+                    INode rightSide = ParseStatement();
+                    if (node is not FactNode fNode) throw new Exception("The left side of += must be a Fact");
+                    return new AddAssignNode() { Target = fNode, ValueNode = rightSide };
+                }
+                else if (tokenType == "SUB_ASSIGN")
+                {
+                    position++;
+                    INode rightSide = ParseStatement();
+                    if (node is not FactNode fNode) throw new Exception("The left side of -= must be a Fact");
+                    return new SubAssignNode() { Target = fNode, ValueNode = rightSide };
+                }
+                else if (tokenType == "INC")
+                {
+                    position++;
+                    if (node is not FactNode fNode) throw new Exception("The target of an increment must be a Fact");
+                    return new IncrementNode() { Target = fNode };
+                }
+                else if (tokenType == "DEC")
+                {
+                    position++;
+                    if (node is not FactNode fNode) throw new Exception("The target of a decrement must be a Fact");
+                    return new DecrementNode() { Target = fNode };
+                }
+                return node;
+            }
+
             INode Parse()
             {
-                return ParseOr();
+                return ParseStatement();
             }
+
             INode root = Parse();
             root?.Validate();
-            if (root is FactNode fNode && fNode.Fact is not BoolFactDefinition)
-                throw new Exception("Only bool facts are allowed as root");
+
+            // if (root is FactNode fNode && fNode.Fact is not BoolFactDefinition && root is not IActionNode)
+            //     throw new Exception("Only bool facts are allowed as root");
+
             return root;
         }
 
         private static List<Tuple<string, string>> Tokenize(string condition)
         {
             Dictionary<string, string> tokensMap = new()
-        {
-            // Values
-            { "FACT", @"\b[a-zA-Z_]\w*\[[a-zA-Z_]\w*\]" },  // key_name[fact_name]
-            { "NUMBER", @"\b\d+(\.\d+)?\b" },               // int or float (e.g. 42, 3.14)
-            { "STRING", @"""[^""]*""" },                    // quoted string
-            { "BOOL", @"\btrue\b|\bfalse\b" },              // true or false
-            { "ENUM", @"\b[A-Z_][a-zA-Z0-9_]*\b" },            // UPPERCASE_ENUM style (optional refinement based on context)
-            // Boolean operators
-            { "AND", @"\band\b" },
-            { "OR", @"\bor\b" },
-            // Comparison / arithmetic operators
-            { "OP", @"==|!=|>=|<=|>|<|\+|-|\*|/|%" },
-            // Parentheses
-            { "LPAREN", @"\(" },
-            { "RPAREN", @"\)" },
-            // Whitespace
-            { "SKIP", @"\s+" }
-        };
+            {
+                // Core Types
+                { "FACT", @"\b[a-zA-Z_]\w*\[[a-zA-Z_]\w*\]" },
+                { "NUMBER", @"\b\d+([.,]\d+)?\b" },
+                { "STRING", @"""[^""]*""" },                   
+                
+                // Logical keywords
+                { "BOOL", @"\btrue\b|\bfalse\b" },
+                { "AND", @"\band\b" },
+                { "OR", @"\bor\b" },
+                
+                // Action Operators 
+                { "INC", @"\+\+" },
+                { "DEC", @"--" },
+                { "ADD_ASSIGN", @"\+=" },
+                { "SUB_ASSIGN", @"-=" },
+                { "OP", @"==|!=|>=|<=|>|<|\+|-|\*|/|%|\^" },
+                { "ASSIGN", @"=" },
+
+                { "ENUM", @"\b[a-zA-Z_][a-zA-Z0-9_]*\b" }, 
+                
+                // Layout
+                { "LPAREN", @"\(" },
+                { "RPAREN", @"\)" },
+                { "SKIP", @"\s+" }
+            };
+
             string masterPattern = string.Join("|", tokensMap.Select(kvp => $"(?<{kvp.Key}>{kvp.Value})"));
             Regex regex = new(masterPattern);
 
             List<Tuple<string, string>> tokens = new();
             var matches = regex.Matches(condition);
             int currentIndex = 0;
+
             foreach (Match match in matches)
             {
                 foreach (var key in tokensMap.Keys)
@@ -158,9 +236,10 @@ namespace Lostbyte.Toolkit.FactSystem.Editor
                 }
                 currentIndex += match.Length;
             }
+
             if (currentIndex != condition.Length)
             {
-                throw new Exception($"Unrecognized trailing input");
+                throw new Exception($"Unrecognized trailing input at index {currentIndex}");
             }
 
             return tokens;

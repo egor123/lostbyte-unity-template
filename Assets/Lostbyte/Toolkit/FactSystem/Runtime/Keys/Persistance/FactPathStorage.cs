@@ -5,7 +5,7 @@ namespace Lostbyte.Toolkit.FactSystem.Persistance
     public class FactPathStorage : ISaveStorage
     {
         [SerializeField] private KeyContainer m_key;
-        [SerializeField] private StringFactDifenition m_fact;
+        [SerializeField] private StringFactDefinition m_fact;
         public void Write(ISaveFormatter formatter, object data)
         {
             string path = SaveStorageUtils.GetFullPath(m_key.GetValue(m_fact));

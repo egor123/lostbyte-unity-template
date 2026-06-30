@@ -347,6 +347,14 @@ MonoBehaviour:
     <SaveOnChange>k__BackingField: 1
   m_children: []
   <FactRegistrations>k__BackingField:
+  - Fact: {fileID: -3055759980319532786}
+    ValueOverride:
+      rid: -2
+    IsSerializable:
+      m_hasValue: 0
+      m_value: 0
+    Reactions:
+    - rid: 358180874591666197
   - Fact: {fileID: -140893777799597766}
     ValueOverride:
       rid: -2
@@ -363,14 +371,13 @@ MonoBehaviour:
       m_value: 0
     Reactions:
     - rid: 358180874591666196
-  - Fact: {fileID: -3055759980319532786}
+  - Fact: {fileID: 8265675034329682347}
     ValueOverride:
       rid: -2
     IsSerializable:
       m_hasValue: 0
       m_value: 0
-    Reactions:
-    - rid: 358180874591666197
+    Reactions: []
   <Events>k__BackingField: []
   references:
     version: 2

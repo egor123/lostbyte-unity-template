@@ -78,9 +78,9 @@ namespace Lostbyte.Toolkit.FactSystem.Editor
             if (argType == typeof(bool))
                 return typeof(BoolFactDefinition);
             if (argType == typeof(string))
-                return typeof(StringFactDifenition);
+                return typeof(StringFactDefinition);
             if (argType == typeof(Vector2))
-                return typeof(Vector2FactDifenition);
+                return typeof(Vector2FactDefinition);
             if (argType == typeof(Vector3))
                 return typeof(Vector3FactDefinition);
             if (argType == typeof(Vector4))

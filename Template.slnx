@@ -1,5 +1,4 @@
 ﻿<Solution>
-  <Project Path="Lostbyte.Toolkit.FactSystem.Editor.csproj" />
   <Project Path="Lostbyte.Toolkit.Tween.TMP.csproj" />
   <Project Path="Lostbyte.Toolkit.Audio.csproj" />
   <Project Path="Lostbyte.Toolkit.CustomEditor.csproj" />
@@ -8,6 +7,7 @@
   <Project Path="Assembly-CSharp.csproj" />
   <Project Path="Lostbyte.Toolkit.Graphs.csproj" />
   <Project Path="Lostbyte.Toolkit.Director.csproj" />
+  <Project Path="Lostbyte.Toolkit.FactSystem.Editor.csproj" />
   <Project Path="Lostbyte.Toolkit.TimelineExtensions.csproj" />
   <Project Path="Lostbyte.Toolkit.CustomEditor.Editor.csproj" />
   <Project Path="Lostbyte.Toolkit.Common.csproj" />

@@ -1,4 +1,4 @@
 namespace Lostbyte.Toolkit.FactSystem
 {
-    public class StringFactDifenition : FactDefinition<string> { }
+    public class StringFactDefinition : FactDefinition<string> { }
 }

@@ -14,7 +14,7 @@ namespace Lostbyte.Toolkit.Director
         {
             var manager = playerData as SubtitlesManager;
             if (!manager) return;
-            string text = "";
+            // string text = "";
             float time = 1, duration = 1;
             int count = playable.GetInputCount();
             for (int i = 0; i < count; i++)

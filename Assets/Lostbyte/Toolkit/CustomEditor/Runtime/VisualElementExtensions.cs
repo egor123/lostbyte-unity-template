@@ -44,6 +44,13 @@ namespace Lostbyte.Toolkit.CustomEditor
             return element;
         }
 
+        public static T SetColor<T>(this T element, StyleColor color) where T : VisualElement
+        {
+            element.style.color = color;
+            return element;
+        }
+
+
         public static T SetBorderColor<T>(this T element, StyleColor color) where T : VisualElement
         {
             element.style.borderTopColor = color;
@@ -356,6 +363,28 @@ namespace Lostbyte.Toolkit.CustomEditor
         public static T MakeColumn<T>(this T element) where T : VisualElement
         {
             element.style.flexDirection = FlexDirection.Column;
+            return element;
+        }
+
+        public static T MakeColumn<T>(this T element, Align align) where T : VisualElement
+        {
+            element.style.flexDirection = FlexDirection.Column;
+            element.style.alignItems = align;
+            return element;
+        }
+
+        public static T MakeColumn<T>(this T element, Justify justify) where T : VisualElement
+        {
+            element.style.flexDirection = FlexDirection.Column;
+            element.style.justifyContent = justify;
+            return element;
+        }
+        public static T MakeColumn<T>(this T element, Align align, Justify justify) where T : VisualElement
+        {
+            element.style.flexDirection = FlexDirection.Column;
+            element.style.alignItems = align;
+            element.style.justifyContent = justify;
+
             return element;
         }
 
