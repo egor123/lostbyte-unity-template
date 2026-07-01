@@ -2,7 +2,7 @@ using Lostbyte.Toolkit.CustomEditor.Graphs;
 
 namespace Lostbyte.Toolkit.Director
 {
-    [CustomGraphNode("Checkpoint Node")]
+    [CustomGraphNode("State/Checkpoint Node")]
     public class CheckpointNode : PlayableTrackNode
     {
         [GraphIn("In")] public PlayableTrackNode[] In;

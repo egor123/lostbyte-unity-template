@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEditor;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
@@ -22,23 +23,26 @@ namespace Lostbyte.Toolkit.CustomEditor.Editor.Graphs
         {
             List<SearchTreeEntry> tree = new() { new SearchTreeGroupEntry(new GUIContent("Create Node"), 0) };
             Dictionary<string, SearchTreeGroupEntry> groupDict = new();
-            foreach (var info in _nodeInfos)
+            var sortedInfos = _nodeInfos.OrderBy(n => n.Name).ToList();
+            foreach (var info in sortedInfos)
             {
                 var pathParts = info.Name.Split('/');
-                SearchTreeGroupEntry currentGroup = null;
                 string currentPath = "";
-
                 for (int i = 0; i < pathParts.Length - 1; i++)
                 {
                     currentPath = string.IsNullOrEmpty(currentPath) ? pathParts[i] : $"{currentPath}/{pathParts[i]}";
-                    if (!groupDict.TryGetValue(currentPath, out currentGroup))
+                    if (!groupDict.ContainsKey(currentPath))
                     {
-                        currentGroup = new SearchTreeGroupEntry(new GUIContent(pathParts[i]), i + 1);
+                        var currentGroup = new SearchTreeGroupEntry(new GUIContent(pathParts[i]), i + 1);
                         groupDict[currentPath] = currentGroup;
                         tree.Add(currentGroup);
                     }
                 }
-                tree.Add(new SearchTreeEntry(new GUIContent(pathParts[^1])) { level = pathParts.Length, userData = info });
+                tree.Add(new SearchTreeEntry(new GUIContent(pathParts[^1]))
+                {
+                    level = pathParts.Length,
+                    userData = info
+                });
             }
             return tree;
         }

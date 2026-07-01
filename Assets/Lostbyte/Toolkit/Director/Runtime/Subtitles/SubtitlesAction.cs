@@ -5,7 +5,7 @@ using Lostbyte.Toolkit.Localization;
 
 namespace Lostbyte.Toolkit.Director
 {
-    [TimelineExtension(Name = "Subtitles/Clip", BindingType = typeof(KeyContainer), ColorHex = "#00ffd5")]
+    [TimelineExtension(Name = "Dialogue/Clip", BindingType = typeof(KeyContainer), ColorHex = "#00ffd5")]
     public class SubtitlesAction : BaseTimelineAction
     {
         public LocalizedReference<string> String;

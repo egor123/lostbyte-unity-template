@@ -12,7 +12,7 @@ namespace Lostbyte.Toolkit.FactSystem.Editor
 {
     [CustomPropertyDrawer(typeof(FactEvaluator<,>), true)]
     [CustomPropertyDrawer(typeof(Statement))]
-    public class ConditionDrawer : PropertyDrawer
+    public class FactEvaluatorDrawer : PropertyDrawer
     {
         private readonly Dictionary<string, Tuple<string, bool>> _conditions = new();
 
@@ -21,11 +21,16 @@ namespace Lostbyte.Toolkit.FactSystem.Editor
             var root = new VisualElement().MakeRow();
             root.AddToClassList("unity-base-field");
             root.AddToClassList("unity-property-field");
-
             var rootNodeProp = property.FindPropertyRelative("m_rootNode");
-            var label = new Label(property.displayName);
-            label.AddToClassList("unity-base-field__label");
-            label.AddToClassList("unity-property-field__label");
+
+            if (!string.IsNullOrEmpty(preferredLabel))
+            {
+                var label = new Label(preferredLabel);
+                label.AddToClassList("unity-base-field__label");
+                label.AddToClassList("unity-property-field__label");
+                label.tooltip = property.tooltip;
+                root.Add(label);
+            }
 
             var iconContainer = new VisualElement().SetSize(16, 16).SetAlignSelf(Align.Center).SetFlex(0, 0);
 
@@ -37,7 +42,7 @@ namespace Lostbyte.Toolkit.FactSystem.Editor
             var fieldContainer = new VisualElement().MakeColumn(Justify.Center).SetFlex(1, 0);
             var textField = new TextField().Hide().SetEnabledState(!Application.isPlaying);
 
-            var tokenDisplay = new VisualElement().MakeRow(Align.Center).SetFlexWrap(Wrap.Wrap).SetMinSize(0, 20);
+            var tokenDisplay = new VisualElement().MakeRow(Align.Center).SetFlex(1, 0);
             tokenDisplay.AddToClassList("unity-base-text-field__input");
 
             var initialNode = rootNodeProp.managedReferenceValue as INode;
@@ -121,7 +126,6 @@ namespace Lostbyte.Toolkit.FactSystem.Editor
             fieldContainer.Add(tokenDisplay);
             fieldContainer.Add(textField);
 
-            root.Add(label);
             root.Add(iconContainer);
             root.Add(fieldContainer);
 

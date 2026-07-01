@@ -4,7 +4,7 @@ using Lostbyte.Toolkit.FactSystem;
 
 namespace Lostbyte.Toolkit.Director
 {
-    [CustomGraphNode("Save Node")]
+    [CustomGraphNode("State/Save Node")]
     public class SaveNode : PlayableTrackNode
     {
         [GraphIn("In")] public PlayableTrackNode[] In;

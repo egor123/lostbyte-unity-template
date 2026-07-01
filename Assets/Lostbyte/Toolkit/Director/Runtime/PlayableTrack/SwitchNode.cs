@@ -7,7 +7,7 @@ using Lostbyte.Toolkit.FactSystem;
 
 namespace Lostbyte.Toolkit.Director
 {
-    [CustomGraphNode("Switch Node")]
+    [CustomGraphNode("Logic/Switch Node")]
     public class SwitchNode : PlayableTrackNode
     {
         [GraphIn("In")] public PlayableTrackNode[] In;
@@ -17,7 +17,7 @@ namespace Lostbyte.Toolkit.Director
         [Serializable]
         public struct Option
         {
-            [GraphField] public Condition Condition;
+            [GraphField("")] public Condition Condition;
             [GraphOut("Out")] public PlayableTrackNode Out;
         }
         public override IPlayableClipNodeBehaviour GetClip(PlayableTrackBehaviour track) => new SwitchNodeBehaviour(this, track);

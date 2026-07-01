@@ -90,6 +90,7 @@ namespace Lostbyte.Toolkit.CustomEditor.Editor.Graphs
                 else
                 {
                     var propField = new PropertyField(prop);
+                    if (fieldAttr.Name != null) propField.label = fieldAttr.Name;
                     propField.BindProperty(prop);
                     fields.Add(propField);
                 }

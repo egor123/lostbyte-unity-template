@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Lostbyte.Toolkit.Director
 {
-    [CustomGraphNode("Random Node")]
+    [CustomGraphNode("Logic/Random Node")]
     public class RandomNode : PlayableTrackNode
     {
         [GraphIn("In")] public PlayableTrackNode[] In;

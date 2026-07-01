@@ -10,11 +10,10 @@ namespace Lostbyte.Toolkit.Localization
     {
         [field: SerializeField] public string TableId { get; protected set; }
         [field: SerializeField] public string KeyId { get; protected set; }
-        [SerializeField, SerializeReference] protected ILocArg[] m_args; // do some way to store and access either val (like string, int etc) or FactWrapper (FactWrapper<string> or StringFactWrapper) 
+        [SerializeField, SerializeReference] protected ILocArg[] m_args;
         private object[] _cachedArgs;
         protected bool _isDynamicInitialized;
         protected int _subscriberCount;
-        private int _refreshVersion;
 
         public LocRef(string tableId, string keyId, params ILocArg[] args) => (TableId, KeyId, m_args) = (tableId, keyId, args);
 

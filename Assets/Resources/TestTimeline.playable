@@ -475,7 +475,7 @@ MonoBehaviour:
     m_PreExtrapolationMode: 0
     m_PostExtrapolationTime: 0.8333333333333335
     m_PreExtrapolationTime: 1.3333333333333333
-    m_DisplayName: UniversalClip
+    m_DisplayName: Dialogue/Clip
   m_Markers:
     m_Objects: []
 --- !u!114 &-2749454497218604116
@@ -491,17 +491,36 @@ MonoBehaviour:
   m_Name: UniversalClip
   m_EditorClassIdentifier: 
   action:
-    rid: 358180309429911554
+    rid: 1238504223764119558
   references:
     version: 2
     RefIds:
-    - rid: 358180309429911554
+    - rid: -2
+      type: {class: , ns: , asm: }
+    - rid: 1238504223764119558
       type: {class: SubtitlesAction, ns: Lostbyte.Toolkit.Director, asm: Lostbyte.Toolkit.Director}
       data:
         String:
-          <TableId>k__BackingField: 
-          <KeyId>k__BackingField: 
-          m_args: []
+          <TableId>k__BackingField: game
+          <KeyId>k__BackingField: test_key
+          m_args:
+          - rid: 1238504223764119574
+          - rid: 1238504223764119575
+    - rid: 1238504223764119574
+      type: {class: LocFloatArg, ns: Lostbyte.Toolkit.Localization, asm: Lostbyte.Toolkit.Localization}
+      data:
+        m_staticValue: 1
+        m_key: {fileID: 0}
+        m_fact: {fileID: 0}
+        m_isDynamic: 0
+    - rid: 1238504223764119575
+      type: {class: LocArg, ns: Lostbyte.Toolkit.Localization, asm: Lostbyte.Toolkit.Localization}
+      data:
+        m_staticValue:
+          rid: -2
+        m_key: {fileID: 7530528405163607904, guid: 6c08054baf9457644b18f9b93ea7fec1, type: 2}
+        m_fact: {fileID: 4818604433467273284, guid: 6c08054baf9457644b18f9b93ea7fec1, type: 2}
+        m_isDynamic: 1
 --- !u!114 &-2372933682136061571
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -536,12 +555,17 @@ MonoBehaviour:
   m_Name: UniversalClip
   m_EditorClassIdentifier: 
   action:
-    rid: -2
+    rid: 1238504223764119576
   references:
     version: 2
     RefIds:
-    - rid: -2
-      type: {class: , ns: , asm: }
+    - rid: 1238504223764119576
+      type: {class: SubtitlesAction, ns: Lostbyte.Toolkit.Director, asm: Lostbyte.Toolkit.Director}
+      data:
+        String:
+          <TableId>k__BackingField: ui
+          <KeyId>k__BackingField: start_btn
+          m_args: []
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0

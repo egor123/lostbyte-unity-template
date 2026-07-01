@@ -33,7 +33,7 @@ namespace Lostbyte.Toolkit.Director.Editor
         public override void UpdateStyles()
         {
             base.UpdateStyles();
-            var borderColor = Color.green;
+            var borderColor = new Color(0.24f, 0.52f, 0.34f);
             contentContainer.SetBorderColor(borderColor);
         }
         public override Vector2 LoadPosition() => Asset.StartNodePosition;

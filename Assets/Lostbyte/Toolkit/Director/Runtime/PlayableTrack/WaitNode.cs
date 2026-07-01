@@ -2,7 +2,7 @@ using Lostbyte.Toolkit.CustomEditor.Graphs;
 
 namespace Lostbyte.Toolkit.Director
 {
-    [CustomGraphNode("Wait Node")]
+    [CustomGraphNode("Logic/Wait Node")]
     public class WaitNode : PlayableTrackNode
     {
         [GraphIn("In")] public PlayableTrackNode[] In;

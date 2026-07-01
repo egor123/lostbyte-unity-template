@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace Lostbyte.Toolkit.Director
 {
-    [CustomGraphNode("Dialogue Node")]
+    [CustomGraphNode("Narrative/Dialogue Node")]
     public class DialogueNode : PlayableTrackNode
     {
         [GraphIn("In")] public PlayableTrackNode[] In;
