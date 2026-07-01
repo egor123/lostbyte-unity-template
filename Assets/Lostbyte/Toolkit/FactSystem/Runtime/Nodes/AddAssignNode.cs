@@ -23,7 +23,6 @@ namespace Lostbyte.Toolkit.FactSystem.Nodes
             else if (Target.Fact is ColorFactDefinition cFact && ValueNode is IVectorNode cNode) key.SetValue(cFact, (Vector4)key.GetValue(cFact) + cNode.Evaluate(defaultKey));
             else if (Target.Fact is EnumFactDefinition eFact && ValueNode is EnumNode eNode) key.SetValue(eFact, (Enum)Enum.GetValues(eFact.EnumType).GetValue(Convert.ToInt32(key.GetValue(eFact)) + (int)eNode.Evaluate(defaultKey)));
             else if (Target.Fact is EnumFactDefinition enFact && ValueNode is INumericNode enNode) key.SetValue(enFact, (Enum)Enum.GetValues(enFact.EnumType).GetValue(Convert.ToInt32(key.GetValue(enFact)) + (int)enNode.Evaluate(defaultKey)));
-
         }
         public readonly void Validate()
         {

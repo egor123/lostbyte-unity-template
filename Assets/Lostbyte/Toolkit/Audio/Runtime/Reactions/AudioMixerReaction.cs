@@ -26,7 +26,7 @@ namespace Lostbyte.Toolkit.Audio
             MappingMode = MappingMode
         };
 
-        protected override void OnValueChanged(object newValue)
+        protected override void OnValueChanged(object oldValue, object newValue)
         {
             if (Mixer == null || string.IsNullOrEmpty(Group)) return;
             float dB = MappingMode == VolumeMapping.LinearToDecibel

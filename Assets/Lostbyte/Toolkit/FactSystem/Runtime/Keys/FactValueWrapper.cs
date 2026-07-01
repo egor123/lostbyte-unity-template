@@ -6,6 +6,8 @@ namespace Lostbyte.Toolkit.FactSystem
     {
         private event Action OnChange;
         private event Action<object> OnChangeRaw;
+        private event Action<object, object> OnChangeOldNewRaw;
+
         private event Action<T> OnChangeNew;
         private event Action<T, T> OnChangeOldNew;
         private T _value = default;
@@ -23,6 +25,7 @@ namespace Lostbyte.Toolkit.FactSystem
                 OnChangeRaw?.Invoke(_value);
                 OnChangeNew?.Invoke(_value);
                 OnChangeOldNew?.Invoke(old, _value);
+                OnChangeOldNewRaw?.Invoke(old, _value);
             }
         }
         public object RawValue { get => Value; set => Value = (T)value; }
@@ -34,5 +37,8 @@ namespace Lostbyte.Toolkit.FactSystem
         public void Unsubscribe(Action callback) => OnChange -= callback;
         public void Subscribe(Action<object> callback) => OnChangeRaw += callback;
         public void Unsubscribe(Action<object> callback) => OnChangeRaw -= callback;
+        public void Subscribe(Action<object, object> callback) => OnChangeOldNewRaw += callback;
+        public void Unsubscribe(Action<object, object> callback) => OnChangeOldNewRaw -= callback;
+
     }
 }

@@ -7,7 +7,7 @@ namespace Lostbyte.Toolkit.FactSystem
     public class Condition : FactEvaluator<bool, IBoolNode>
     {
         private event Action OnTrigger;
-        public bool IsMet => Value;
+        public bool IsMet => m_rootNode == null || Value;
         public Condition(IBoolNode rootNode = null, IKeyContainer defaultKey = null) : base(rootNode, defaultKey) { }
         protected override void OnValueChanged(bool newValue)
         {

@@ -38,6 +38,10 @@ namespace GameFacts
         public static FactDefinition<System.String> Locale = _Locale != null ? _Locale : _Locale = (FactDefinition<System.String>) FactDatabase.Instance.GetFact("locale");
         private static FactDefinition<System.Enum> _Level = null;
         public static FactDefinition<System.Enum> Level = _Level != null ? _Level : _Level = (FactDefinition<System.Enum>) FactDatabase.Instance.GetFact("level");
+        private static FactDefinition<System.Single> _Hp = null;
+        public static FactDefinition<System.Single> Hp = _Hp != null ? _Hp : _Hp = (FactDefinition<System.Single>) FactDatabase.Instance.GetFact("hp");
+        private static FactDefinition<System.Boolean> _IsAlive = null;
+        public static FactDefinition<System.Boolean> IsAlive = _IsAlive != null ? _IsAlive : _IsAlive = (FactDefinition<System.Boolean>) FactDatabase.Instance.GetFact("is_alive");
     }
     //------------- Events -------------
     public static class Events

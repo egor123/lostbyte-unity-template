@@ -1,5 +1,21 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-8472106169253750812
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1be785bf2dbda3a44928275f491abdb9, type: 3}
+  m_Name: hp
+  m_EditorClassIdentifier: 
+  <Guid>k__BackingField: hp
+  <IsSerializable>k__BackingField: 1
+  <Description>k__BackingField: 
+  <DefaultValue>k__BackingField: 100
 --- !u!114 &-7316681771992995001
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -16,14 +32,14 @@ MonoBehaviour:
   <IsSerializable>k__BackingField: 1
   <Description>k__BackingField: 
   <DefaultValue>k__BackingField:
-    rid: 358180898366292158
+    rid: 1238504223764119662
   <Values>k__BackingField:
   - level_1
   - level_2
   references:
     version: 2
     RefIds:
-    - rid: 358180898366292158
+    - rid: 1238504223764119662
       type: {class: Enums/Level, ns: GameFacts, asm: Assembly-CSharp}
       data:
         value__: 0
@@ -56,7 +72,7 @@ MonoBehaviour:
   m_Name: game_state
   m_EditorClassIdentifier: 
   <Guid>k__BackingField: game_state
-  <IsSerializable>k__BackingField: 1
+  <IsSerializable>k__BackingField: 0
   <Description>k__BackingField: 
   <DefaultValue>k__BackingField:
     rid: 358180898366292157
@@ -113,6 +129,8 @@ MonoBehaviour:
   - {fileID: 4818604433467273284}
   - {fileID: 8265675034329682347}
   - {fileID: -7316681771992995001}
+  - {fileID: -8472106169253750812}
+  - {fileID: 5253352405738191616}
   <EventStorage>k__BackingField: []
 --- !u!114 &12290745125359689
 MonoBehaviour:
@@ -306,6 +324,22 @@ MonoBehaviour:
   <IsSerializable>k__BackingField: 1
   <Description>k__BackingField: 
   <DefaultValue>k__BackingField: save
+--- !u!114 &5253352405738191616
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 55bd1434fae716744b112cd489bae88d, type: 3}
+  m_Name: is_alive
+  m_EditorClassIdentifier: 
+  <Guid>k__BackingField: is_alive
+  <IsSerializable>k__BackingField: 1
+  <Description>k__BackingField: 
+  <DefaultValue>k__BackingField: 1
 --- !u!114 &6322980757709942554
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -433,13 +467,67 @@ MonoBehaviour:
     <AutoLoad>k__BackingField: 0
     <SaveOnChange>k__BackingField: 0
   m_children: []
-  <FactRegistrations>k__BackingField: []
+  <FactRegistrations>k__BackingField:
+  - Fact: {fileID: -8472106169253750812}
+    ValueOverride:
+      rid: -2
+    IsSerializable:
+      m_hasValue: 0
+      m_value: 0
+    Reactions:
+    - rid: 1238504223764119770
+  - Fact: {fileID: 5253352405738191616}
+    ValueOverride:
+      rid: -2
+    IsSerializable:
+      m_hasValue: 0
+      m_value: 0
+    Reactions: []
   <Events>k__BackingField: []
   references:
     version: 2
     RefIds:
     - rid: -2
       type: {class: , ns: , asm: }
+    - rid: 1238504223764119770
+      type: {class: FloatActionReaction, ns: Lostbyte.Toolkit.FactSystem, asm: Lostbyte.Toolkit.FactSystem}
+      data:
+        InvocationCount: 1
+        PreCondition:
+          m_rootNode:
+            rid: 1238504223764119773
+        Rules:
+        - Mode: 0
+          TargetCount: 0
+          Condition:
+            rid: 1238504223764119780
+          Action: {fileID: 11400000, guid: 1d47d5a71879791489b4fcd8c8731e2f, type: 2}
+    - rid: 1238504223764119773
+      type: {class: OPNode, ns: Lostbyte.Toolkit.FactSystem.Nodes, asm: Lostbyte.Toolkit.FactSystem}
+      data:
+        LNode:
+          rid: 1238504223764119774
+        RNode:
+          rid: 1238504223764119775
+        Op: ==
+    - rid: 1238504223764119774
+      type: {class: FactNode, ns: Lostbyte.Toolkit.FactSystem.Nodes, asm: Lostbyte.Toolkit.FactSystem}
+      data:
+        Key: {fileID: 4283477907835028808}
+        Fact: {fileID: -7316681771992995001}
+    - rid: 1238504223764119775
+      type: {class: EnumNode, ns: Lostbyte.Toolkit.FactSystem.Nodes, asm: Lostbyte.Toolkit.FactSystem}
+      data:
+        Value:
+          rid: 1238504223764119776
+    - rid: 1238504223764119776
+      type: {class: Enums/Level, ns: GameFacts, asm: Assembly-CSharp}
+      data:
+        value__: 0
+    - rid: 1238504223764119780
+      type: {class: FloatActionReaction/LessThan, ns: Lostbyte.Toolkit.FactSystem, asm: Lostbyte.Toolkit.FactSystem}
+      data:
+        TargetValue: 6
 --- !u!114 &8265675034329682347
 MonoBehaviour:
   m_ObjectHideFlags: 0

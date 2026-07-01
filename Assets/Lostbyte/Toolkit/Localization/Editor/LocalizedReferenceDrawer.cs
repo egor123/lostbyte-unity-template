@@ -87,9 +87,13 @@ namespace Lostbyte.Toolkit.Localization.Editor
             headerRow.AddToClassList("unity-base-field");
             headerRow.AddToClassList("unity-property-field");
 
-            var label = new Label(preferredLabel);
-            label.AddToClassList("unity-base-field__label");
-            label.AddToClassList("unity-property-field__label");
+            if (!string.IsNullOrEmpty(preferredLabel))
+            {
+                var label = new Label(preferredLabel);
+                label.AddToClassList("unity-base-field__label");
+                label.AddToClassList("unity-property-field__label");
+                headerRow.Add(label);
+            }
 
             var selectorBtn = new Button
             {
@@ -103,7 +107,6 @@ namespace Lostbyte.Toolkit.Localization.Editor
                 }
             };
 
-            headerRow.Add(label);
             headerRow.Add(selectorBtn);
 
             var argsContainer = new VisualElement { style = { marginLeft = 15 } };

@@ -7,6 +7,6 @@ namespace Lostbyte.Toolkit.FactSystem
     public class LogReaction : FactReaction
     {
         public override FactReaction Copy() => new LogReaction() { };
-        protected override void OnValueChanged(object newValue) => Print.Log($"{Key.name}[{Fact.name}] = {newValue}");
+        protected override void OnValueChanged(object oldValue, object newValue) => Print.Log($"{Key.name}[{Fact.name}]: {oldValue} -> {newValue}");
     }
 }

@@ -101,8 +101,14 @@ namespace Lostbyte.Toolkit.FactSystem
                 }
 
                 object defaultValue = reg.ValueOverride?.RawValue ?? reg.Fact.DefaultValueRaw;
-                wrapper.RawValue = _store.GetData(reg.Fact.Guid, defaultValue);
-
+                try
+                {
+                    wrapper.RawValue = _store.GetData(reg.Fact.Guid, defaultValue);
+                }
+                catch (Exception ex)
+                {
+                    Print.MError(ex);
+                }
             }
             foreach (var @event in Events)
             {
@@ -116,8 +122,12 @@ namespace Lostbyte.Toolkit.FactSystem
             if (UseSaveSystem && (forceReadFile || m_save.AutoLoad)) _store.OnLoad();
             foreach (var reg in FactRegistrations)
             {
-                foreach (var reaction in reg.Reactions)
+                for (int i = 0; i < reg.Reactions.Count; i++)
+                {
+                    var reaction = reg.Reactions[i];
                     reaction?.Initialize(this, reg.Fact);
+                    reaction?.OnLoad(_store.GetData<object>($"{reg.Fact.Guid}_{reaction.Guid}_{i}", null)); // FIXME
+                }
             }
 
         }
@@ -146,6 +156,13 @@ namespace Lostbyte.Toolkit.FactSystem
                     object defaultValue = reg.ValueOverride?.RawValue ?? reg.Fact.DefaultValueRaw;
                     if (!defaultValue.Equals(wrapper.RawValue))
                         _store.SetData(reg.Fact.Guid, wrapper.RawValue);
+                    foreach (var reaction in reg.Reactions)
+                        _store.SetData($"{reg.Fact.Guid}_{reaction.Guid}", reaction?.OnSave());
+                    for (int i = 0; i < reg.Reactions.Count; i++)
+                    {
+                        var reaction = reg.Reactions[i];
+                        _store.SetData($"{reg.Fact.Guid}_{reaction.Guid}_{i}", reaction?.OnSave());
+                    }
                 }
             }
 

@@ -5,6 +5,7 @@ namespace Lostbyte.Toolkit.FactSystem
     [Serializable]
     public abstract class FactReaction
     {
+        internal string Guid => GetType().Name.ToLowerInvariant();
         public FactDefinition Fact { get; private set; }
         public KeyContainer Key { get; private set; }
         protected IFactWrapper Wrapper { get; private set; }
@@ -24,7 +25,9 @@ namespace Lostbyte.Toolkit.FactSystem
             Wrapper?.Unsubscribe(OnValueChanged);
             Wrapper = null;
         }
-        protected abstract void OnValueChanged(object newValue);
+        protected abstract void OnValueChanged(object oldValue, object newValue);
+        public virtual void OnLoad(object data) { }
+        public virtual object OnSave() => null;
         public abstract FactReaction Copy();
     }
 }

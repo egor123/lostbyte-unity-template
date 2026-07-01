@@ -1,5 +1,39 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-7040001798609008515
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca2c321e2e5f4dc41961f24e1cd3faa0, type: 3}
+  m_Name: Log Node
+  m_EditorClassIdentifier: 
+  Position: {x: 2012.6666, y: -64}
+  In:
+  - {fileID: 2122028574239651581}
+  Out: {fileID: 0}
+  Message: finished!
+--- !u!114 &-4124155588672988009
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca2c321e2e5f4dc41961f24e1cd3faa0, type: 3}
+  m_Name: Log Node
+  m_EditorClassIdentifier: 
+  Position: {x: 252, y: -76.666664}
+  In:
+  - {fileID: 0}
+  Out: {fileID: 5229469007161320668}
+  Message: Starting event!
 --- !u!114 &-3224868738110110065
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -15,25 +49,31 @@ MonoBehaviour:
   Position: {x: 1207.3333, y: -100}
   In:
   - {fileID: 6231953369714422268}
-  Out: {fileID: 5251974714245448475}
+  - {fileID: 6231953369714422268}
+  Out: {fileID: 2122028574239651581}
   Statement:
     m_rootNode:
-      rid: 358180907034345495
+      rid: 1238504223764119583
   references:
     version: 2
     RefIds:
-    - rid: 358180907034345495
-      type: {class: AddAssignNode, ns: Lostbyte.Toolkit.FactSystem.Nodes, asm: Lostbyte.Toolkit.FactSystem}
+    - rid: 1238504223764119583
+      type: {class: AssignNode, ns: Lostbyte.Toolkit.FactSystem.Nodes, asm: Lostbyte.Toolkit.FactSystem}
       data:
         Target:
           Key: {fileID: 4283477907835028808, guid: 6c08054baf9457644b18f9b93ea7fec1, type: 2}
           Fact: {fileID: -7316681771992995001, guid: 6c08054baf9457644b18f9b93ea7fec1, type: 2}
         ValueNode:
-          rid: 358180907034345496
-    - rid: 358180907034345496
-      type: {class: NumericNode, ns: Lostbyte.Toolkit.FactSystem.Nodes, asm: Lostbyte.Toolkit.FactSystem}
+          rid: 1238504223764119584
+    - rid: 1238504223764119584
+      type: {class: EnumNode, ns: Lostbyte.Toolkit.FactSystem.Nodes, asm: Lostbyte.Toolkit.FactSystem}
       data:
-        Value: 3
+        Value:
+          rid: 1238504223764119585
+    - rid: 1238504223764119585
+      type: {class: Enums/Level, ns: GameFacts, asm: Assembly-CSharp}
+      data:
+        value__: 1
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -48,7 +88,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Priority: 1
   <OnContinueBehaviour>k__BackingField: 0
-  StartNode: {fileID: 5229469007161320668}
+  StartNode: {fileID: -4124155588672988009}
   StartNodePosition: {x: 0, y: 0}
 --- !u!114 &301225545311402483
 MonoBehaviour:
@@ -65,6 +105,24 @@ MonoBehaviour:
   Position: {x: 0, y: 0}
   In: []
   Out: {fileID: 0}
+--- !u!114 &2122028574239651581
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a466c546469d8ad43bc4a3ec1cd7e340, type: 3}
+  m_Name: Wait Node
+  m_EditorClassIdentifier: 
+  Position: {x: 1816, y: -64}
+  In:
+  - {fileID: 5251974714245448475}
+  - {fileID: -3224868738110110065}
+  NextNode: {fileID: -7040001798609008515}
+  Time: 2
 --- !u!114 &5229469007161320668
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -79,7 +137,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Position: {x: 409.3333, y: -136}
   In:
-  - {fileID: 0}
+  - {fileID: -4124155588672988009}
   Nodes:
   - Condition:
       m_rootNode:
@@ -125,10 +183,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7bfadb478cdf93c4587a9e6729fd50af, type: 3}
   m_Name: Dialogue Node
   m_EditorClassIdentifier: 
-  Position: {x: 1460.6666, y: -51.333336}
+  Position: {x: 1221.3333, y: -427.33334}
   In:
-  - {fileID: -3224868738110110065}
-  Out: {fileID: 0}
+  - {fileID: 6231953369714422268}
+  Out: {fileID: 2122028574239651581}
   Actor: {fileID: 1706909347228400817, guid: 6c08054baf9457644b18f9b93ea7fec1, type: 2}
   Paragraphs:
   - String:
@@ -139,8 +197,8 @@ MonoBehaviour:
       - rid: 1312422453416034309
     Gap: 3
   - String:
-      <TableId>k__BackingField: 
-      <KeyId>k__BackingField: 
+      <TableId>k__BackingField: locales
+      <KeyId>k__BackingField: ru-RU
       m_args: []
     Gap: 2.5
   references:
@@ -181,27 +239,19 @@ MonoBehaviour:
   Nodes:
   - Condition:
       m_rootNode:
-        rid: 1312422512482058240
-    Out: {fileID: 0}
+        rid: 1238504223764119579
+    Out: {fileID: 5251974714245448475}
   - Condition:
       m_rootNode:
         rid: 358180898366292461
-    Out: {fileID: 0}
+    Out: {fileID: -3224868738110110065}
   - Condition:
       m_rootNode:
         rid: 1312422490736689195
     Out: {fileID: -3224868738110110065}
-  - Condition:
-      m_rootNode:
-        rid: 358180898366292190
-    Out: {fileID: 0}
   references:
     version: 2
     RefIds:
-    - rid: 358180898366292190
-      type: {class: BoolNode, ns: Lostbyte.Toolkit.FactSystem.Nodes, asm: Lostbyte.Toolkit.FactSystem}
-      data:
-        <Value>k__BackingField: 1
     - rid: 358180898366292461
       type: {class: OPNode, ns: Lostbyte.Toolkit.FactSystem.Nodes, asm: Lostbyte.Toolkit.FactSystem}
       data:
@@ -224,11 +274,11 @@ MonoBehaviour:
       type: {class: Enums/Level, ns: GameFacts, asm: Assembly-CSharp}
       data:
         value__: 0
-    - rid: 1312422490736689195
+    - rid: 1238504223764119579
       type: {class: BoolNode, ns: Lostbyte.Toolkit.FactSystem.Nodes, asm: Lostbyte.Toolkit.FactSystem}
       data:
-        <Value>k__BackingField: 1
-    - rid: 1312422512482058240
+        <Value>k__BackingField: 0
+    - rid: 1312422490736689195
       type: {class: BoolNode, ns: Lostbyte.Toolkit.FactSystem.Nodes, asm: Lostbyte.Toolkit.FactSystem}
       data:
         <Value>k__BackingField: 1

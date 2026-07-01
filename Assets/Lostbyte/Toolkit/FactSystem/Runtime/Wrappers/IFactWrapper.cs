@@ -6,7 +6,9 @@ namespace Lostbyte.Toolkit.FactSystem
     {
         object RawValue { get; set; }
         void Subscribe(Action<object> callback);
+        void Subscribe(Action<object, object> callback);
         void Unsubscribe(Action<object> callback);
+        void Unsubscribe(Action<object, object> callback);
     }
 
     public interface IFactWrapper<T> : IFactWrapper

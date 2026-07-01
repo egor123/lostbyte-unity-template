@@ -44,5 +44,7 @@ namespace Lostbyte.Toolkit.FactSystem
         public void Unsubscribe(Action<T, T> callback) => Wrapper.Unsubscribe(callback);
         public void Subscribe(Action<object> callback) => Wrapper.Subscribe(callback);
         public void Unsubscribe(Action<object> callback) => Wrapper.Unsubscribe(callback);
+        public void Subscribe(Action<object, object> callback) => Wrapper.Subscribe(callback);
+        public void Unsubscribe(Action<object, object> callback) => Wrapper.Unsubscribe(callback);
     }
 }

@@ -52,6 +52,7 @@ namespace Lostbyte.Toolkit.FactSystem
             m_rootNode?.Unsubscribe(_defaultKey, OnConditionChange);
             _defaultKey = key;
             m_rootNode?.Subscribe(_defaultKey, OnConditionChange);
+            OnConditionChange(null);
         }
 
         public override string ToString() => m_rootNode?.ToString();

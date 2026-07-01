@@ -61,10 +61,10 @@ namespace Lostbyte.Toolkit.Scenes
             }
 #endif
             base.Initialize(key, fact);
-            if (!adoptedEditorScenes) OnValueChanged(Wrapper.RawValue);
+            if (!adoptedEditorScenes) OnValueChanged(null, Wrapper.RawValue);
         }
 
-        protected override void OnValueChanged(object newValue)
+        protected override void OnValueChanged(object oldValue, object newValue)
         {
             var newCondition = (Enum)newValue;
             if (newCondition.Equals(_currentScene)) return;
