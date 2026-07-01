@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using Lostbyte.Toolkit.Common;
 using Lostbyte.Toolkit.Management;
@@ -17,7 +16,6 @@ namespace Lostbyte.Toolkit.Scenes
         public List<SceneReference> DesiredScenes = new();
         public List<Scene> ActiveScenes = new();
         public bool UseLoadingScreen;
-        public CancellationTokenSource Cts;
     }
 
     [DefaultExecutionOrder(-100)]
@@ -30,15 +28,20 @@ namespace Lostbyte.Toolkit.Scenes
 
         private SceneNode _rootNode;
         private int _loadingScreenFades = 0;
+        private bool _initialized = false;
+
+        private bool _isApplyingConstraints = false;
+        private bool _stateChanged = false;
 
         protected override void OnAwake()
         {
             _rootNode = new(gameObject.scene, null);
             _loadedNodes[_rootNode.SceneInstance] = _rootNode;
         }
-#if UNITY_EDITOR
+
         private void Start()
         {
+#if UNITY_EDITOR
             foreach ((var key, var constraint) in _constraints)
             {
                 var parentScene = UnityEngine.SceneManagement.SceneManager.GetSceneByPath(constraint.ParentRef.ScenePath);
@@ -62,28 +65,30 @@ namespace Lostbyte.Toolkit.Scenes
             {
                 _loadedNodes.Remove(node.SceneInstance);
             }
+
             UnityEngine.SceneManagement.SceneManager.sceneCount.ToStream()
                 .Select(UnityEngine.SceneManagement.SceneManager.GetSceneAt)
                 .Where(scene => !_loadedNodes.ContainsKey(scene))
                 .ForEach(scene => UnityEngine.SceneManagement.SceneManager.UnloadSceneAsync(scene));
-
-            foreach (var constraint in _constraints.Values)
-                ApplyConstraintAsync(constraint, constraint.Cts.Token).Forget();
-        }
 #endif
+            _initialized = true;
+            _stateChanged = true;
+            ApplyAllConstraintChanges().Forget();
+        }
+
         public static bool TryRegisterEditorConstraint(string id, SceneReference parent, SceneReference adoptedRef, Scene activeScene, bool useLoadingScreen)
         {
             if (Instance != null) return false;
             bool isParentLoaded = !parent.IsValid || UnityEngine.SceneManagement.SceneManager.GetSceneByPath(parent.ScenePath).isLoaded;
             if (!isParentLoaded) return false;
+
             if (!_constraints.TryGetValue(id, out var constraint))
             {
                 constraint = new SceneConstraint
                 {
                     Id = id,
                     ParentRef = parent,
-                    UseLoadingScreen = useLoadingScreen,
-                    Cts = new CancellationTokenSource()
+                    UseLoadingScreen = useLoadingScreen
                 };
                 _constraints[id] = constraint;
             }
@@ -104,9 +109,6 @@ namespace Lostbyte.Toolkit.Scenes
                 constraint = new SceneConstraint { Id = constraintId };
                 _constraints[constraintId] = constraint;
             }
-            constraint.Cts?.Cancel();
-            constraint.Cts?.Dispose();
-            constraint.Cts = new CancellationTokenSource();
 
             constraint.ParentRef = parent;
             constraint.DesiredScenes = desiredScenes ?? new List<SceneReference>();
@@ -114,89 +116,146 @@ namespace Lostbyte.Toolkit.Scenes
 
             constraint.ActiveScenes.RemoveAll(s => !s.IsValid() || !s.isLoaded);
 
-            if (Instance == null) return;
-            if (!parent.IsValid || GetNodeByPath(parent.ScenePath) != null)
-                Instance.ApplyConstraintAsync(constraint, constraint.Cts.Token).Forget();
+            if (Instance == null || !Instance._initialized) return;
+
+            Instance._stateChanged = true;
+            Instance.ApplyAllConstraintChanges().Forget();
         }
 
-        private async Task ApplyConstraintAsync(SceneConstraint constraint, CancellationToken token)
+        private async Task ApplyAllConstraintChanges()
         {
-            var currentPaths = constraint.ActiveScenes.Select(s => s.path).ToList();
-            var desiredPaths = constraint.DesiredScenes.Select(s => s.ScenePath).ToList();
-
-            var scenesToUnload = constraint.ActiveScenes.Where(s => !desiredPaths.Contains(s.path)).ToList();
-            var scenesToLoad = constraint.DesiredScenes.Where(s => !currentPaths.Contains(s.ScenePath)).ToList();
-
-            if (scenesToUnload.Count == 0 && scenesToLoad.Count == 0) return;
-
-            bool useFades = constraint.UseLoadingScreen;
+            if (_isApplyingConstraints) return;
+            _isApplyingConstraints = true;
             try
             {
-                if (useFades) await HandleFades(true);
-
-                if (scenesToUnload.Count > 0)
+                while (_stateChanged)
                 {
-                    List<Task> unloadTasks = new();
-                    foreach (var scene in scenesToUnload)
+                    _stateChanged = false;
+                    Dictionary<string, SceneReference> desiredScenesDict = new();
+                    Dictionary<string, string> childToParentMap = new();
+                    Dictionary<string, bool> desiredPathFades = new();
+
+                    Queue<string> evalQueue = new();
+                    evalQueue.Enqueue(_rootNode.ScenePath);
+
+                    while (evalQueue.TryDequeue(out var currentPath))
                     {
-                        if (_loadedNodes.TryGetValue(scene, out SceneNode node))
+                        foreach (var constraint in _constraints.Values)
+                        {
+                            if (constraint.ParentRef.IsValid && constraint.ParentRef.ScenePath == currentPath)
+                            {
+                                foreach (var desiredRef in constraint.DesiredScenes)
+                                {
+                                    if (!desiredRef.IsValid) continue;
+                                    if (desiredPathFades.TryGetValue(desiredRef.ScenePath, out bool existingFade))
+                                        desiredPathFades[desiredRef.ScenePath] = existingFade || constraint.UseLoadingScreen;
+                                    else
+                                        desiredPathFades[desiredRef.ScenePath] = constraint.UseLoadingScreen;
+
+                                    if (desiredScenesDict.TryAdd(desiredRef.ScenePath, desiredRef))
+                                    {
+                                        evalQueue.Enqueue(desiredRef.ScenePath);
+                                        childToParentMap[desiredRef.ScenePath] = currentPath;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    Dictionary<string, bool> activePathFades = new();
+                    foreach (var constraint in _constraints.Values)
+                    {
+                        foreach (var activeScene in constraint.ActiveScenes)
+                        {
+                            if (!activeScene.IsValid()) continue;
+                            if (activePathFades.TryGetValue(activeScene.path, out bool existingFade))
+                                activePathFades[activeScene.path] = existingFade || constraint.UseLoadingScreen;
+                            else
+                                activePathFades[activeScene.path] = constraint.UseLoadingScreen;
+                        }
+                    }
+
+                    HashSet<string> currentPaths = _loadedNodes.Values
+                        .Where(n => n != _rootNode)
+                        .Select(n => n.ScenePath)
+                        .ToHashSet();
+
+                    List<string> pathsToLoad = desiredScenesDict.Keys.Except(currentPaths).ToList();
+                    List<string> pathsToUnload = currentPaths.Except(desiredScenesDict.Keys).ToList();
+
+                    if (pathsToLoad.Count == 0 && pathsToUnload.Count == 0) continue;
+                    bool useFades = false;
+                    foreach (var path in pathsToLoad)
+                    {
+                        if (desiredPathFades.TryGetValue(path, out bool requiresFade) && requiresFade)
+                        {
+                            useFades = true;
+                            break;
+                        }
+                    }
+                    if (!useFades)
+                    {
+                        foreach (var path in pathsToUnload)
+                        {
+                            if (activePathFades.TryGetValue(path, out bool requiresFade) && requiresFade)
+                            {
+                                useFades = true;
+                                break;
+                            }
+                        }
+                    }
+                    try
+                    {
+                        if (useFades) await HandleFades(true);
+                        List<Task> pendingTasks = new();
+                        if (pathsToUnload.Count > 0)
                         {
                             List<AsyncOperation> ops = new();
-                            UnloadNode(node, ops);
-                            foreach (var op in ops) unloadTasks.Add(WaitOperation(op));
+                            foreach (var path in pathsToUnload) UnloadNode(GetNodeByPath(path), ops);
+                            foreach (var op in ops) pendingTasks.Add(WaitOperation(op));
                         }
-                        constraint.ActiveScenes.Remove(scene);
+                        if (pathsToLoad.Count > 0)
+                        {
+                            foreach (var path in pathsToLoad)
+                            {
+                                if (_stateChanged) break;
+                                pendingTasks.Add(LoadAndRegisterSceneAsync(path));
+                            }
+                        }
+                        if (pendingTasks.Count > 0) await Task.WhenAll(pendingTasks);
+                        async Task LoadAndRegisterSceneAsync(string path)
+                        {
+                            var sceneRef = desiredScenesDict[path];
+                            var op = UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(sceneRef.SceneName, LoadSceneMode.Additive);
+                            await WaitOperation(op);
+                            Scene loadedScene = UnityEngine.SceneManagement.SceneManager.GetSceneByPath(sceneRef.ScenePath);
+                            string parentPath = childToParentMap.TryGetValue(path, out var p) ? p : _rootNode.ScenePath;
+                            SceneNode parentNode = GetNodeByPath(parentPath) ?? _rootNode;
+                            RegisterNewNode(loadedScene, parentNode);
+                            foreach (var constraint in _constraints.Values)
+                                if (constraint.ParentRef.ScenePath == parentPath && constraint.DesiredScenes.Any(s => s.ScenePath == path))
+                                    if (!constraint.ActiveScenes.Contains(loadedScene))
+                                        constraint.ActiveScenes.Add(loadedScene);
+                        }
                     }
-                    await Task.WhenAll(unloadTasks);
-                }
-
-                if (token.IsCancellationRequested) return;
-
-                if (scenesToLoad.Count > 0)
-                {
-                    SceneNode parentNode = constraint.ParentRef.IsValid ? GetNodeByPath(constraint.ParentRef.ScenePath) : _rootNode;
-
-                    foreach (var sceneRef in scenesToLoad)
+                    catch (Exception ex)
                     {
-                        if (!sceneRef.IsValid) continue;
-
-                        var op = UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(sceneRef.SceneName, LoadSceneMode.Additive);
-                        await WaitOperation(op);
-
-                        Scene loadedScene = UnityEngine.SceneManagement.SceneManager.GetSceneAt(UnityEngine.SceneManagement.SceneManager.sceneCount - 1);
-                        var newNode = RegisterNewNode(loadedScene, parentNode);
-                        constraint.ActiveScenes.Add(loadedScene);
-
-                        if (token.IsCancellationRequested) return;
-
-                        await EvaluateConstraintsForParent(newNode);
+                        Print.MError($"Constraint application failed during execution: {ex.Message}");
+                    }
+                    finally
+                    {
+                        if (useFades) await HandleFades(false);
                     }
                 }
-            }
-            catch (Exception ex)
-            {
-                Print.MError($"Constraint application failed: {ex.Message}");
             }
             finally
             {
-                if (useFades) await HandleFades(false);
-            }
-        }
-
-        private async Task EvaluateConstraintsForParent(SceneNode parentNode)
-        {
-            var constraintsToTrigger = _constraints.Values
-                .Where(c => c.ParentRef.IsValid && c.ParentRef.ScenePath == parentNode.ScenePath)
-                .ToList();
-
-            foreach (var constraint in constraintsToTrigger)
-            {
-                await ApplyConstraintAsync(constraint, constraint.Cts.Token);
+                _isApplyingConstraints = false;
             }
         }
 
         private void UnloadNode(SceneNode node, List<AsyncOperation> ops)
         {
+            if (node == null) return;
             var childrenCopy = new List<SceneNode>(node.Children);
             foreach (var child in childrenCopy)
                 UnloadNode(child, ops);
@@ -246,6 +305,7 @@ namespace Lostbyte.Toolkit.Scenes
         {
             return _loadedNodes.TryGetValue(scene, out node);
         }
+
         public static SceneNode RegisterNewNode(Scene scene, SceneNode parent)
         {
             var node = new SceneNode(scene, parent);

@@ -38,6 +38,7 @@ namespace Lostbyte.Toolkit.Scenes
         {
             _constraintId = Guid.NewGuid().ToString();
             bool adoptedEditorScenes = false;
+            _currentScene = null;
 #if UNITY_EDITOR
             Dispose();
             for (int i = 0; i < UnityEngine.SceneManagement.SceneManager.sceneCount; i++)
@@ -65,7 +66,6 @@ namespace Lostbyte.Toolkit.Scenes
 
         protected override void OnValueChanged(object newValue)
         {
-            Print.MLog(newValue);
             var newCondition = (Enum)newValue;
             if (newCondition.Equals(_currentScene)) return;
 

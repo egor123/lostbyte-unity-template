@@ -260,12 +260,12 @@ MonoBehaviour:
             rid: 358180897263714306
           Scene:
             m_sceneAsset: {fileID: 102900000, guid: 71b06dd3362f4fc469a5a27eba14f2f6, type: 3}
-            m_scenePath: Assets/PROJECT_NAME/Scenes/Test.unity
+            m_scenePath: Assets/PROJECT_NAME/Scenes/Level1.unity
         - Condition:
             rid: 358180897263714307
           Scene:
-            m_sceneAsset: {fileID: 0}
-            m_scenePath: 
+            m_sceneAsset: {fileID: 102900000, guid: 934e5756dd9f8b744bfc80641b49e0d8, type: 3}
+            m_scenePath: Assets/PROJECT_NAME/Scenes/Level2.unity
     - rid: 358180897263714306
       type: {class: Enums/Level, ns: GameFacts, asm: Assembly-CSharp}
       data:

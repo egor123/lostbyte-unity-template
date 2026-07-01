@@ -22,5 +22,8 @@ namespace Lostbyte.Toolkit.Scenes
                 return m_scenePath.Substring(slash + 1, dot - slash - 1);
             }
         }
+        public SceneReference(string path) => m_scenePath = path;
+        public override bool Equals(object obj) => obj is SceneReference scene && scene.ScenePath == m_scenePath;
+        public override int GetHashCode() => m_scenePath.GetHashCode();
     }
 }
