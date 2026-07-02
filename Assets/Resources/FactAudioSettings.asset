@@ -1,0 +1,42 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 40c5258ace227f84290d379a27cccdd3, type: 3}
+  m_Name: FactAudioSettings
+  m_EditorClassIdentifier: 
+  Settings:
+  - <Name>k__BackingField: Test 1
+    <Clips>k__BackingField: []
+    <Priority>k__BackingField: 0
+    <StopActive>k__BackingField: 1
+    <AllowMultiple>k__BackingField: 1
+    <MinVolume>k__BackingField: 0.8
+    <MaxVolume>k__BackingField: 1
+    <MinPitch>k__BackingField: 0.51
+    <MaxPitch>k__BackingField: 1.45
+    <Trigger>k__BackingField:
+      rid: -2
+  - <Name>k__BackingField: Test 2
+    <Clips>k__BackingField: []
+    <Priority>k__BackingField: 0
+    <StopActive>k__BackingField: 0
+    <AllowMultiple>k__BackingField: 0
+    <MinVolume>k__BackingField: 0.39
+    <MaxVolume>k__BackingField: 0.82
+    <MinPitch>k__BackingField: 0
+    <MaxPitch>k__BackingField: 0
+    <Trigger>k__BackingField:
+      rid: -2
+  references:
+    version: 2
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }

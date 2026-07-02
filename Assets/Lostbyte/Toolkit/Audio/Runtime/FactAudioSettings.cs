@@ -15,14 +15,16 @@ namespace Lostbyte.Toolkit.Audio
     public struct AudioSettings
     {
         [field: SerializeField] public string Name { get; private set; }
-        [field: SerializeField] public AudioClip[] Clips { get; private set; }
+        [field: SerializeField, Required] public AudioClip[] Clips { get; private set; }
         [field: SerializeField] public int Priority { get; private set; }
         [field: SerializeField] public bool StopActive { get; private set; }
         [field: SerializeField] public bool AllowMultiple { get; private set; }
-        [field: SerializeField, Range(0, 1)] public float Volume { get; private set; }// = 1;
-        [field: SerializeField, Range(0, 1)] public float VolumeRandomization { get; private set; } //= 0;
-        [field: SerializeField, Range(0, 3)] public float Pitch { get; private set; }// = 1;
-        [field: SerializeField, Range(0, 1)] public float PitchRandomization { get; private set; } //= 0;
+
+        [field: SerializeField, Range(0, 1)] public float MinVolume { get; private set; }
+        [field: SerializeField, Range(0, 1)] public float MaxVolume { get; private set; }
+        [field: SerializeField, Range(-3, 3)] public float MinPitch { get; private set; }
+        [field: SerializeField, Range(-3, 3)] public float MaxPitch { get; private set; }
+
         public readonly AudioSettingsRunner Create(KeyContainer key, FactAudio audio) => new(key, audio, this);
         [field: SerializeField, SerializeReference, UniqeReference] public IAudioTrigger Trigger { get; private set; }
     }

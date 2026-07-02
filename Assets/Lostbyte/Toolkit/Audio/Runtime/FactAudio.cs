@@ -47,14 +47,9 @@ namespace Lostbyte.Toolkit.Audio
             }
             if (source == null) return;
 
-            float pitch = Random.Range(
-                (settings.Pitch - settings.PitchRandomization) / 2f,
-                (settings.Pitch + settings.PitchRandomization) / 2f);
-            pitch = Mathf.Clamp(pitch, -3f, 3f); // Allow wide pitch range
-
-            float volume = Random.Range(
-                (settings.Volume - settings.VolumeRandomization) / 2f,
-                (settings.Volume + settings.VolumeRandomization) / 2f);
+            float pitch = Random.Range(settings.MinPitch, settings.MaxPitch);
+            pitch = Mathf.Clamp(pitch, -3f, 3f);
+            float volume = Random.Range(settings.MinVolume, settings.MaxVolume);
             volume = Mathf.Clamp01(volume);
 
             AudioClip clip = settings.Clips[Random.Range(0, settings.Clips.Length)];

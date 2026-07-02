@@ -1,7 +1,8 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.UIElements;
+using UnityEditor.UIElements;
+using Lostbyte.Toolkit.CustomEditor;
 
 namespace Lostbyte.Toolkit.Audio.Editor
 {
@@ -9,117 +10,159 @@ namespace Lostbyte.Toolkit.Audio.Editor
     public class SFXClipEditor : UnityEditor.Editor
     {
         private SerializedProperty _clips;
-        private SerializedProperty _minVolume;
-        private SerializedProperty _maxVolume;
-        private SerializedProperty _minPitch;
-        private SerializedProperty _maxPitch;
-        private SerializedProperty _spatialBlend;
-        private SerializedProperty _steroPan;
-        private SerializedProperty _reverb;
-        private SerializedProperty _minDist;
-        private SerializedProperty _maxDist;
-        private SerializedProperty _rolloff;
-        private SerializedProperty _spread;
-        private SerializedProperty _dopler;
+        private SerializedProperty _minVolume, _maxVolume, _minPitch, _maxPitch;
+        private SerializedProperty _spatialBlend, _steroPan, _reverb;
+        private SerializedProperty _minDist, _maxDist, _rolloff, _spread, _dopler;
+
+        private SerializedProperty GetProp(string propName) => serializedObject.FindProperty($"<{propName}>k__BackingField");
 
         private void OnEnable()
         {
-            _clips = serializedObject.FindProperty($"<{nameof(SFXClip.Clips)}>k__BackingField");
-            _minVolume = serializedObject.FindProperty($"<{nameof(SFXClip.MinVolume)}>k__BackingField");
-            _maxVolume = serializedObject.FindProperty($"<{nameof(SFXClip.MaxVolume)}>k__BackingField");
-            _minPitch = serializedObject.FindProperty($"<{nameof(SFXClip.MinPitch)}>k__BackingField");
-            _maxPitch = serializedObject.FindProperty($"<{nameof(SFXClip.MaxPitch)}>k__BackingField");
-            _spatialBlend = serializedObject.FindProperty($"<{nameof(SFXClip.SpatialBlend)}>k__BackingField");
-            _steroPan = serializedObject.FindProperty($"<{nameof(SFXClip.StereoPan)}>k__BackingField");
-            _reverb = serializedObject.FindProperty($"<{nameof(SFXClip.ReverbZoneMix)}>k__BackingField");
-            _minDist = serializedObject.FindProperty($"<{nameof(SFXClip.MinDistance)}>k__BackingField");
-            _maxDist = serializedObject.FindProperty($"<{nameof(SFXClip.MaxDistance)}>k__BackingField");
-            _rolloff = serializedObject.FindProperty($"<{nameof(SFXClip.RolloffMode)}>k__BackingField");
-            _spread = serializedObject.FindProperty($"<{nameof(SFXClip.Spread)}>k__BackingField");
-            _dopler = serializedObject.FindProperty($"<{nameof(SFXClip.DopplerLevel)}>k__BackingField");
+            _clips = GetProp(nameof(SFXClip.Clips));
 
+            _minVolume = GetProp(nameof(SFXClip.MinVolume));
+            _maxVolume = GetProp(nameof(SFXClip.MaxVolume));
+            _minPitch = GetProp(nameof(SFXClip.MinPitch));
+            _maxPitch = GetProp(nameof(SFXClip.MaxPitch));
+
+            _spatialBlend = GetProp(nameof(SFXClip.SpatialBlend));
+            _steroPan = GetProp(nameof(SFXClip.StereoPan));
+            _reverb = GetProp(nameof(SFXClip.ReverbZoneMix));
+
+            _minDist = GetProp(nameof(SFXClip.MinDistance));
+            _maxDist = GetProp(nameof(SFXClip.MaxDistance));
+            _rolloff = GetProp(nameof(SFXClip.RolloffMode));
+            _spread = GetProp(nameof(SFXClip.Spread));
+            _dopler = GetProp(nameof(SFXClip.DopplerLevel));
         }
 
-        public override void OnInspectorGUI()
+        public override VisualElement CreateInspectorGUI()
         {
-            serializedObject.Update();
-
-            // --- CLIPS SECTION ---
-            EditorGUILayout.PropertyField(_clips, true);
-
-            // --- VOLUME & PITCH (MIN/MAX SLIDERS) ---
-            EditorGUILayout.LabelField("Audio Dynamics", EditorStyles.boldLabel);
-
-            DrawMinMaxSlider("Volume", _minVolume, _maxVolume, 0f, 1f);
-            DrawMinMaxSlider("Pitch", _minPitch, _maxPitch, -3f, 3f);
-
-            EditorGUILayout.Space(5);
-
-            // --- SPATIAL SETTINGS ---
-            EditorGUILayout.LabelField("Spatial Settings", EditorStyles.boldLabel);
-            EditorGUILayout.PropertyField(_spatialBlend);
-            EditorGUILayout.PropertyField(_steroPan);
-            EditorGUILayout.PropertyField(_reverb);
-
-            // Draw Min/Max distance on one line
-            if (_spatialBlend.floatValue > 0)
+            VisualElement root = new();
+            var clipsCard = CreateTogglableCard("Audio Clips");
+            var listView = new ListView
             {
-                EditorGUILayout.Space(5);
-                EditorGUILayout.LabelField("3D Settings", EditorStyles.boldLabel);
-                EditorGUILayout.PropertyField(_dopler);
-                EditorGUILayout.PropertyField(_spread);
-                EditorGUILayout.PropertyField(_rolloff);
+                bindingPath = _clips.propertyPath,
+                reorderable = true,
+                reorderMode = ListViewReorderMode.Animated,
+                showAddRemoveFooter = true,
+                showFoldoutHeader = false,
+                showBoundCollectionSize = false,
+                showBorder = false,
+                virtualizationMethod = CollectionVirtualizationMethod.DynamicHeight,
+                style = { marginTop = 0, flexGrow = 1 },
+                makeItem = () => new PropertyField { style = { marginTop = 0, marginBottom = 0, paddingRight = 0 } },
+                bindItem = (element, i) =>
+                    {
+                        var propField = (PropertyField)element;
+                        propField.BindProperty(_clips.GetArrayElementAtIndex(i));
+                        propField.label = string.Empty;
+                    }
+            };
 
-                Rect rect = EditorGUILayout.GetControlRect();
-                rect = EditorGUI.PrefixLabel(rect, new GUIContent("Distance (Min/Max)"));
-                float halfWidth = rect.width / 2f - 5f;
-                Rect minRect = new(rect.x, rect.y, halfWidth, rect.height);
-                Rect maxRect = new(rect.x + halfWidth + 10f, rect.y, halfWidth, rect.height);
-                EditorGUI.PropertyField(minRect, _minDist, GUIContent.none);
-                EditorGUI.LabelField(new Rect(rect.x + halfWidth, rect.y, 10f, rect.height), "-", EditorStyles.centeredGreyMiniLabel);
-                EditorGUI.PropertyField(maxRect, _maxDist, GUIContent.none);
+            clipsCard.Add(listView);
+            root.Add(clipsCard);
 
+            var dynamicsCard = CreateTogglableCard("Audio Dynamics");
+            dynamicsCard.Add(CreateMinMaxSlider("Volume", _minVolume, _maxVolume, 0f, 1f));
+            dynamicsCard.Add(CreateMinMaxSlider("Pitch", _minPitch, _maxPitch, -3f, 3f));
+            root.Add(dynamicsCard);
 
-            }
-            EditorGUILayout.Space(10);
+            var spatialCard = CreateTogglableCard("Spatial Settings");
+            spatialCard.Add(CreateCompactProperty(_spatialBlend));
+            spatialCard.Add(CreateCompactProperty(_steroPan));
+            spatialCard.Add(CreateCompactProperty(_reverb));
+            root.Add(spatialCard);
 
-            // --- PREVIEW BUTTON ---
-            GUIContent playContent = EditorGUIUtility.IconContent("d_PlayButton");
-            playContent.text = " Play Preview";
-            if (GUILayout.Button(playContent, GUILayout.Height(30)))
+            var spatial3DCard = CreateTogglableCard("3D Settings");
+            spatial3DCard.Add(CreateCompactProperty(_dopler));
+            spatial3DCard.Add(CreateCompactProperty(_spread));
+            spatial3DCard.Add(CreateCompactProperty(_rolloff));
+
+            var distanceGroup = new VisualElement { style = { flexDirection = FlexDirection.Row, marginTop = 0, marginBottom = 0 } };
+            distanceGroup.Add(new Label("Distance (Min/Max)") { style = { width = 140, unityTextAlign = TextAnchor.MiddleLeft } });
+
+            distanceGroup.Add(new PropertyField(_minDist, "") { style = { flexGrow = 1 } });
+            distanceGroup.Add(new Label("-") { style = { width = 12, unityTextAlign = TextAnchor.MiddleCenter } });
+            distanceGroup.Add(new PropertyField(_maxDist, "") { style = { flexGrow = 1 } });
+
+            spatial3DCard.Add(distanceGroup);
+            root.Add(spatial3DCard);
+
+            spatial3DCard.style.display = _spatialBlend.floatValue > 0 ? DisplayStyle.Flex : DisplayStyle.None;
+            spatial3DCard.TrackPropertyValue(_spatialBlend, prop =>
             {
-                PreviewAudio();
-            }
-
-            serializedObject.ApplyModifiedProperties();
+                spatial3DCard.style.display = prop.floatValue > 0 ? DisplayStyle.Flex : DisplayStyle.None;
+            });
+            var previewBtn = new Button(PreviewAudio)
+            {
+                text = "Play Preview",
+                style = { height = 22, marginTop = 2, unityFontStyleAndWeight = FontStyle.Bold }
+            }.SetBorderRadius(4);
+            root.Add(previewBtn);
+            return root;
         }
 
-        private void DrawMinMaxSlider(string label, SerializedProperty minProp, SerializedProperty maxProp, float min, float max)
+        private void ApplyCardStyle(VisualElement element)
         {
-            float lower = (float)System.Math.Round(minProp.floatValue, 2);
-            float upper = (float)System.Math.Round(maxProp.floatValue, 2);
-
-            EditorGUILayout.BeginHorizontal();
-            EditorGUILayout.PrefixLabel(label);
-
-            EditorGUI.BeginChangeCheck();
-            lower = EditorGUILayout.DelayedFloatField(lower, GUILayout.Width(50));
-            EditorGUILayout.MinMaxSlider(ref lower, ref upper, min, max);
-            upper = EditorGUILayout.DelayedFloatField(upper, GUILayout.Width(50));
-
-            if (EditorGUI.EndChangeCheck())
-            {
-                minProp.floatValue = (float)System.Math.Round(lower, 2);
-                maxProp.floatValue = (float)System.Math.Round(upper, 2);
-            }
-
-            EditorGUILayout.EndHorizontal();
+            element.SetBackgroundColor(new Color(0f, 0f, 0f, 0.1f))
+                .SetBorderRadius(4)
+                .SetPadding(2, 3, 0)
+                .SetMargin(0, 0, 3, 0);
         }
+
+        private Foldout CreateTogglableCard(string title, bool defaultState = true)
+        {
+            var foldout = new Foldout { text = title, value = defaultState, viewDataKey = $"SFXClipEditor_{title.Replace(" ", "")}" };
+            ApplyCardStyle(foldout);
+            var toggle = foldout.Q<Toggle>();
+            if (toggle != null)
+            {
+                toggle.SetMargin(2, 0).SetPadding(0, 0, 2);
+                toggle.style.borderBottomWidth = 1;
+                toggle.style.borderBottomColor = new Color(0f, 0f, 0f, 0.2f);
+                var label = toggle.Q<Label>();
+                if (label != null) label.style.unityFontStyleAndWeight = FontStyle.Bold;
+            }
+            return foldout;
+        }
+
+        private VisualElement CreateCompactProperty(SerializedProperty prop) => new PropertyField(prop) { style = { marginBottom = 0, marginTop = 0 } };
+
+        private VisualElement CreateMinMaxSlider(string labelText, SerializedProperty minProp, SerializedProperty maxProp, float minLimit, float maxLimit)
+        {
+            var container = new VisualElement().MakeRow().SetMargin(0);
+            var label = new Label(labelText) { style = { width = 140, unityTextAlign = TextAnchor.MiddleLeft } };
+            var minField = new FloatField { bindingPath = minProp.propertyPath, style = { width = 45 } };
+            var maxField = new FloatField { bindingPath = maxProp.propertyPath, style = { width = 45 } };
+            var slider = new MinMaxSlider(minProp.floatValue, maxProp.floatValue, minLimit, maxLimit) { style = { flexGrow = 1, paddingLeft = 2, paddingRight = 2 } };
+            slider.RegisterValueChangedCallback(evt =>
+            {
+                minProp.floatValue = (float)System.Math.Round(evt.newValue.x, 2);
+                maxProp.floatValue = (float)System.Math.Round(evt.newValue.y, 2);
+                serializedObject.ApplyModifiedProperties();
+            });
+            slider.TrackPropertyValue(minProp, prop => slider.value = new Vector2(prop.floatValue, slider.value.y));
+            slider.TrackPropertyValue(maxProp, prop => slider.value = new Vector2(slider.value.x, prop.floatValue));
+            container.Add(label);
+            container.Add(minField);
+            container.Add(slider);
+            container.Add(maxField);
+            return container;
+        }
+
         private void PreviewAudio()
         {
             SFXClip clip = (SFXClip)target;
-            Vector3 viewPos = SceneView.lastActiveSceneView.camera.transform.position;
-            clip.Play(viewPos);
+            if (SceneView.lastActiveSceneView != null && SceneView.lastActiveSceneView.camera != null)
+            {
+                Vector3 viewPos = SceneView.lastActiveSceneView.camera.transform.position;
+                clip.Play(viewPos);
+            }
+            else
+            {
+                clip.Play(Vector3.zero);
+            }
         }
     }
 }
