@@ -11,7 +11,6 @@ namespace Lostbyte.Toolkit.Management
     public class GameManager : Manager<GameManager>
     {
         [SerializeField, Autowired, Hide] private KeyReference m_key;
-        [SerializeField] private EventWrapper m_onGameExit;
         [SerializeField] private FactWrapper<bool> m_gamePausedFact;
         [SerializeField] private FactWrapper<bool> m_cursorLockedFact;
 
@@ -20,7 +19,6 @@ namespace Lostbyte.Toolkit.Management
 
         protected override void OnAwake()
         {
-            _subscriptions.Subscribe(m_onGameExit, OnExit);
             _subscriptions.Subscribe(m_gamePausedFact, OnGamePaused, invokeImidiate: true);
             _subscriptions.Subscribe(m_cursorLockedFact, OnCursorLock, invokeImidiate: true);
         }
@@ -48,17 +46,6 @@ namespace Lostbyte.Toolkit.Management
             Print.MLog("Game is " + (isPaused ? "paused" : "resumed"));
             Time.timeScale = targetTimeScale;
             _previousTimeScale = targetPrevioutTimeScale;
-        }
-
-        private void OnExit()
-        {
-            Print.MLog("Exiting Game...");
-
-#if UNITY_EDITOR
-            UnityEditor.EditorApplication.ExitPlaymode();
-#else
-            Application.Quit();
-#endif
         }
     }
 }

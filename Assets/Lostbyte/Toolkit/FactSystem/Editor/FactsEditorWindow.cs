@@ -137,6 +137,38 @@ namespace Lostbyte.Toolkit.FactSystem.Editor
                         }
                     }
                 }
+                if (item is EventDefinition evt)
+                {
+                    var parentKey = GetParentKey(_treeView.selectedIndex);
+                    if (parentKey != null)
+                    {
+                        var keySO = new SerializedObject(parentKey);
+                        var regsProp = keySO.FindProperty($"<{nameof(KeyContainer.EventRegistrations)}>k__BackingField")
+                                    ?? keySO.FindProperty(nameof(KeyContainer.EventRegistrations));
+
+                        if (regsProp != null)
+                        {
+                            for (int i = 0; i < regsProp.arraySize; i++)
+                            {
+                                var regProp = regsProp.GetArrayElementAtIndex(i);
+                                var eventProp = regProp.FindPropertyRelative(nameof(EventRegistration.Event));
+
+                                if (eventProp != null && eventProp.objectReferenceValue == evt)
+                                {
+                                    inspectorPanel.Add(new VisualElement()
+                                        .SetBackgroundColor(new Color(0.15f, 0.15f, 0.15f))
+                                        .SetMargin(10, 0));
+
+                                    var regField = new PropertyField(regProp);
+                                    regField.BindProperty(regProp);
+                                    inspectorPanel.Add(regField);
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+
             }
         }
 

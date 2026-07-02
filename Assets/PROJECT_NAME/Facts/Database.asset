@@ -43,6 +43,19 @@ MonoBehaviour:
       type: {class: Enums/Level, ns: GameFacts, asm: Assembly-CSharp}
       data:
         value__: 0
+--- !u!114 &-4104580026132030384
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8da7de9db6a834b408ee34fa4ca64fe9, type: 3}
+  m_Name: on_app_quit
+  m_EditorClassIdentifier: 
+  <Guid>k__BackingField: on_app_quit
 --- !u!114 &-3055759980319532786
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -131,7 +144,8 @@ MonoBehaviour:
   - {fileID: -7316681771992995001}
   - {fileID: -8472106169253750812}
   - {fileID: 5253352405738191616}
-  <EventStorage>k__BackingField: []
+  <EventStorage>k__BackingField:
+  - {fileID: -4104580026132030384}
 --- !u!114 &12290745125359689
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -174,7 +188,7 @@ MonoBehaviour:
   m_children:
   - {fileID: 7530528405163607904}
   <FactRegistrations>k__BackingField: []
-  <Events>k__BackingField: []
+  <EventRegistrations>k__BackingField: []
   references:
     version: 2
     RefIds:
@@ -234,7 +248,10 @@ MonoBehaviour:
       m_value: 0
     Reactions:
     - rid: 358180897263714305
-  <Events>k__BackingField: []
+  <EventRegistrations>k__BackingField:
+  - Event: {fileID: -4104580026132030384}
+    Reactions:
+    - rid: 1238504247619223553
   references:
     version: 2
     RefIds:
@@ -292,6 +309,10 @@ MonoBehaviour:
       type: {class: Enums/Level, ns: GameFacts, asm: Assembly-CSharp}
       data:
         value__: 1
+    - rid: 1238504247619223553
+      type: {class: AppQuitReaction, ns: Lostbyte.Toolkit.Management, asm: Lostbyte.Toolkit.Management}
+      data:
+        _guid: 61c02c30-7db6-467f-853e-2a849bcb00b4
 --- !u!114 &4525860068350932383
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -412,7 +433,7 @@ MonoBehaviour:
       m_hasValue: 0
       m_value: 0
     Reactions: []
-  <Events>k__BackingField: []
+  <EventRegistrations>k__BackingField: []
   references:
     version: 2
     RefIds:
@@ -483,7 +504,7 @@ MonoBehaviour:
       m_hasValue: 0
       m_value: 0
     Reactions: []
-  <Events>k__BackingField: []
+  <EventRegistrations>k__BackingField: []
   references:
     version: 2
     RefIds:
@@ -492,7 +513,7 @@ MonoBehaviour:
     - rid: 1238504223764119770
       type: {class: FloatActionReaction, ns: Lostbyte.Toolkit.FactSystem, asm: Lostbyte.Toolkit.FactSystem}
       data:
-        InvocationCount: 1
+        InvocationCount: 3
         PreCondition:
           m_rootNode:
             rid: 1238504223764119773
@@ -527,7 +548,7 @@ MonoBehaviour:
     - rid: 1238504223764119780
       type: {class: FloatActionReaction/LessThan, ns: Lostbyte.Toolkit.FactSystem, asm: Lostbyte.Toolkit.FactSystem}
       data:
-        TargetValue: 6
+        TargetValue: 10
 --- !u!114 &8265675034329682347
 MonoBehaviour:
   m_ObjectHideFlags: 0

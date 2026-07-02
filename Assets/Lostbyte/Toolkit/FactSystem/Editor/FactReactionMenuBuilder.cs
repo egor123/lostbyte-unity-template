@@ -48,5 +48,33 @@ namespace Lostbyte.Toolkit.FactSystem.Editor
 
             menu.DropDown(anchor.worldBound);
         }
+        public static void ShowAddReactionMenu(VisualElement anchor, EventDefinition fact, Action<Type> onReactionSelected)
+        {
+            var menu = new GenericMenu();
+            var reactionTypes = TypeCache.GetTypesDerivedFrom<EventReaction>()
+                .Where(t => !t.IsAbstract && !t.IsGenericTypeDefinition);
+
+            foreach (var type in reactionTypes)
+            {
+                string baseName = ObjectNames.NicifyVariableName(type.Name.Replace("Reaction", ""));
+                var tagAttr = (TagAttribute)Attribute.GetCustomAttribute(type, typeof(TagAttribute));
+                string menuPath;
+                if (tagAttr != null && !string.IsNullOrWhiteSpace(tagAttr.Tag))
+                {
+                    string cleanTag = tagAttr.Tag.TrimEnd('/');
+                    menuPath = $"{cleanTag}/{baseName}";
+                }
+                else
+                {
+                    menuPath = baseName;
+                }
+                menu.AddItem(new GUIContent(menuPath), false, () => onReactionSelected(type));
+            }
+            if (menu.GetItemCount() == 0)
+            {
+                menu.AddDisabledItem(new GUIContent("No compatible reactions found for this type"));
+            }
+            menu.DropDown(anchor.worldBound);
+        }
     }
 }

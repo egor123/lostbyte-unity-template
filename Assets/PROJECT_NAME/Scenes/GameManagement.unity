@@ -359,9 +359,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_key: {fileID: 0}
-  m_onGameExit:
-    <Key>k__BackingField: {fileID: 4283477907835028808, guid: 6c08054baf9457644b18f9b93ea7fec1, type: 2}
-    <Event>k__BackingField: {fileID: 0}
   m_gamePausedFact:
     <Key>k__BackingField: {fileID: 4283477907835028808, guid: 6c08054baf9457644b18f9b93ea7fec1, type: 2}
     <Fact>k__BackingField: {fileID: 4525860068350932383, guid: 6c08054baf9457644b18f9b93ea7fec1, type: 2}

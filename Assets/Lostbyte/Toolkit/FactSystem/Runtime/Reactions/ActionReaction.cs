@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Lostbyte.Toolkit.Common;
 using Lostbyte.Toolkit.CustomEditor;
 using UnityEngine;
@@ -367,5 +368,85 @@ namespace Lostbyte.Toolkit.FactSystem
         }
     }
 
+    #endregion
+
+    #region Event
+
+    [Serializable]
+    public struct EventReactionRule
+    {
+        public CountMode Mode;
+        public int TargetCount;
+        [OfType(typeof(IInvokable))] public ScriptableObject Action;
+
+        public readonly bool IsCountMet(int currentCount)
+        {
+            return Mode switch
+            {
+                CountMode.Always => true,
+                CountMode.Once => currentCount == 0,
+                CountMode.Exactly => currentCount == TargetCount,
+                CountMode.GreaterThan => currentCount > TargetCount,
+                CountMode.LessThan => currentCount < TargetCount,
+                _ => false
+            };
+        }
+
+        public EventReactionRule Copy()
+        {
+            return new EventReactionRule
+            {
+                Mode = Mode,
+                TargetCount = TargetCount,
+                Action = Action,
+            };
+        }
+    }
+
+    [Tag("Events")]
+    public class EventActionReaction : EventReaction
+    {
+        [PlayModeOnly(PlayModeOnly.Type.Hide)] public int InvocationCount = 0;
+        public Condition PreCondition;
+        public List<EventReactionRule> Rules = new();
+
+        public override void Initialize(KeyContainer key, EventDefinition fact)
+        {
+            InvocationCount = 0;
+            PreCondition?.SetDefaultKey(key);
+            base.Initialize(key, fact);
+        }
+
+        public override void OnLoad(object data)
+        {
+            if (data is int count) InvocationCount = count;
+        }
+
+        public override object OnSave() => InvocationCount;
+
+        protected override void OnRaise()
+        {
+            if (PreCondition != null && !PreCondition.IsMet) return;
+            foreach (var rule in Rules)
+            {
+                if (rule.IsCountMet(InvocationCount))
+                {
+                    (rule.Action as IInvokable)?.Invoke();
+                    Print.Log($"Invoking Rule ({InvocationCount}): {rule.Action}");
+                    InvocationCount++;
+                    break;
+                }
+            }
+        }
+        public override EventReaction Copy()
+        {
+            return new EventActionReaction()
+            {
+                InvocationCount = InvocationCount,
+                PreCondition = PreCondition.Copy(),
+                Rules = Rules.Select(r => r.Copy()).ToList(),
+            };
+        }
+    }
     #endregion
 }

@@ -350,7 +350,7 @@ namespace Lostbyte.Toolkit.FactSystem.Editor
                             AssetDatabase.SaveAssets();
 
                             if (parentKey != null)
-                                parentKey.Events.Add(@event);
+                                parentKey.EventRegistrations.Add(new() { Event = @event });
                             Database.EventStorage.Add(@event);
 
                             EditorUtility.SetDirty(Database);
@@ -375,7 +375,7 @@ namespace Lostbyte.Toolkit.FactSystem.Editor
                 evt => "Empty",
                 evt =>
                 {
-                    parentKey.Events.Add(evt);
+                    parentKey.EventRegistrations.Add(new() { Event = evt });
                     EditorUtility.SetDirty(Database);
                     EditorUtility.SetDirty(parentKey);
                     AssetDatabase.SaveAssets();
@@ -470,7 +470,7 @@ namespace Lostbyte.Toolkit.FactSystem.Editor
         public static void RemoveEvent(KeyContainer key, EventDefinition @event)
         {
             if (key == null) return;
-            key.Events.Remove(@event);
+            key.EventRegistrations.Remove(new() { Event = @event });
             EditorUtility.SetDirty(Database);
             EditorUtility.SetDirty(key);
             AssetDatabase.SaveAssets();
@@ -479,7 +479,7 @@ namespace Lostbyte.Toolkit.FactSystem.Editor
         {
             foreach (var key in GetAllKeys())
             {
-                bool v = key.Events.Remove(@event);
+                bool v = key.EventRegistrations.Remove(new() { Event = @event });
                 if (v) EditorUtility.SetDirty(key);
             }
             Database.EventStorage.Remove(@event);
@@ -529,9 +529,9 @@ namespace Lostbyte.Toolkit.FactSystem.Editor
             {
                 if (parent != null)
                 {
-                    int i = parent.Events.IndexOf(@event);
+                    int i = parent.EventRegistrations.IndexOf(new() { Event = @event });
                     if (i < 1) return;
-                    (parent.Events[i - 1], parent.Events[i]) = (@event, parent.Events[i - 1]);
+                    (parent.EventRegistrations[i - 1], parent.EventRegistrations[i]) = (parent.EventRegistrations[i], parent.EventRegistrations[i - 1]);
                     EditorUtility.SetDirty(parent);
                 }
                 else
@@ -590,9 +590,9 @@ namespace Lostbyte.Toolkit.FactSystem.Editor
             {
                 if (parent != null)
                 {
-                    int i = parent.Events.IndexOf(@event);
-                    if (i < 0 || i >= parent.Events.Count - 1) return;
-                    (parent.Events[i], parent.Events[i + 1]) = (parent.Events[i + 1], @event);
+                    int i = parent.EventRegistrations.IndexOf(new() { Event = @event });
+                    if (i < 0 || i >= parent.EventRegistrations.Count - 1) return;
+                    (parent.EventRegistrations[i], parent.EventRegistrations[i + 1]) = (parent.EventRegistrations[i + 1], parent.EventRegistrations[i]);
                     EditorUtility.SetDirty(parent);
                 }
                 else
@@ -643,7 +643,7 @@ namespace Lostbyte.Toolkit.FactSystem.Editor
 
             protected override AdvancedDropdownItem BuildRoot()
             {
-                var root = new AdvancedDropdownItem("Facts");
+                var root = new AdvancedDropdownItem(ObjectNames.NicifyVariableName(typeof(T).Name));
                 values.ForEach(i => root.AddChild(new Item(i, nameSelector(i), typeSelector(i))));
                 return root;
             }

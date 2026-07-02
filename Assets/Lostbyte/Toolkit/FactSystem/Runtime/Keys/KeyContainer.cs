@@ -30,6 +30,7 @@ namespace Lostbyte.Toolkit.FactSystem
 #endif
             }
         }
+
         [field: SerializeField] internal List<FactRegistration> FactRegistrations { get; private set; } = new();
         public IReadOnlyCollection<FactDefinition> DefinedFacts
         {
@@ -42,13 +43,13 @@ namespace Lostbyte.Toolkit.FactSystem
 #endif
             }
         }
-        [field: SerializeField] internal List<EventDefinition> Events { get; private set; } = new();
+        [field: SerializeField] internal List<EventRegistration> EventRegistrations { get; private set; } = new();
         public IReadOnlyCollection<EventDefinition> DefinedEvents
         {
             get
             {
 #if UNITY_EDITOR
-                return Application.isPlaying ? _eventStorage.Keys : Events;
+                return Application.isPlaying ? _eventStorage.Keys : EventRegistrations.Select(r => r.Event).ToList();
 #else
                 return _eventStorage.Keys;
 #endif
@@ -64,13 +65,19 @@ namespace Lostbyte.Toolkit.FactSystem
         {
             foreach (var reg in FactRegistrations)
                 foreach (var reaction in reg.Reactions)
-                    reaction.Dispose();
+                    reaction?.Dispose();
+
+            foreach (var reg in EventRegistrations)
+                foreach (var reaction in reg.Reactions)
+                    reaction?.Dispose();
 
             _factStorage.Clear();
             _eventStorage.Clear();
             m_children.ForEach(k => k.ClearStorages());
         }
+
         private bool UseSaveSystem => IsSerializable && m_save.Enabled;
+
         public void Clear()
         {
 #if UNITY_EDITOR
@@ -80,6 +87,7 @@ namespace Lostbyte.Toolkit.FactSystem
         }
 
         private readonly Store _store = new();
+
         public void Load(object file = null, bool forceReadFile = false)
         {
             if (UseSaveSystem && (forceReadFile || m_save.AutoLoad)) _store.SetStore(m_save.Read<Dictionary<string, object>>());
@@ -110,27 +118,47 @@ namespace Lostbyte.Toolkit.FactSystem
                     Print.MError(ex);
                 }
             }
-            foreach (var @event in Events)
+
+            foreach (var reg in EventRegistrations)
             {
-                var wrapper = _eventStorage.TryGetValue(@event, out var w) ? w : new EventValueWrapper();
-                _eventStorage[@event] = wrapper;
+                if (reg.Event == null) continue;
+
+                foreach (var reaction in reg.Reactions)
+                    reaction?.Dispose();
+
+                if (_eventStorage.TryGetValue(reg.Event, out var wrapper) == false)
+                {
+                    wrapper = reg.Event.GetValueWrapper();
+                    _eventStorage[reg.Event] = wrapper;
+                }
             }
+
             foreach (var key in Children)
             {
                 key.Load(_store.GetData<Dictionary<string, object>>(key.Guid, null));
             }
+
             if (UseSaveSystem && (forceReadFile || m_save.AutoLoad)) _store.OnLoad();
+
             foreach (var reg in FactRegistrations)
             {
-                for (int i = 0; i < reg.Reactions.Count; i++)
+                foreach (var reaction in reg.Reactions)
                 {
-                    var reaction = reg.Reactions[i];
                     reaction?.Initialize(this, reg.Fact);
-                    reaction?.OnLoad(_store.GetData<object>($"{reg.Fact.Guid}_{reaction.Guid}_{i}", null)); // FIXME
+                    reaction?.OnLoad(_store.GetData<object>($"{reg.Fact.Guid}_{reaction.Guid}", null));
                 }
             }
 
+            foreach (var reg in EventRegistrations)
+            {
+                foreach (var reaction in reg.Reactions)
+                {
+                    reaction?.Initialize(this, reg.Event);
+                    reaction?.OnLoad(_store.GetData<object>($"{reg.Event.Guid}_{reaction.Guid}", null));
+                }
+            }
         }
+
         public object Save()
         {
             _store.SetStore(new());
@@ -150,19 +178,31 @@ namespace Lostbyte.Toolkit.FactSystem
             {
                 if (reg.Fact == null) continue;
                 if (!_factStorage.TryGetValue(reg.Fact, out var wrapper)) continue;
+
                 bool isSerializable = reg.IsSerializable.GetValueOrDefault(reg.Fact.IsSerializable);
                 if (isSerializable)
                 {
                     object defaultValue = reg.ValueOverride?.RawValue ?? reg.Fact.DefaultValueRaw;
                     if (!defaultValue.Equals(wrapper.RawValue))
                         _store.SetData(reg.Fact.Guid, wrapper.RawValue);
-                    foreach (var reaction in reg.Reactions)
-                        _store.SetData($"{reg.Fact.Guid}_{reaction.Guid}", reaction?.OnSave());
-                    for (int i = 0; i < reg.Reactions.Count; i++)
-                    {
-                        var reaction = reg.Reactions[i];
-                        _store.SetData($"{reg.Fact.Guid}_{reaction.Guid}_{i}", reaction?.OnSave());
-                    }
+                }
+
+                foreach (var reaction in reg.Reactions)
+                {
+                    var data = reaction?.OnSave();
+                    if (data != null) _store.SetData($"{reg.Fact.Guid}_{reaction.Guid}", data);
+                }
+            }
+
+            foreach (var reg in EventRegistrations)
+            {
+                if (reg.Event == null) continue;
+                if (!_eventStorage.TryGetValue(reg.Event, out var wrapper)) continue;
+
+                foreach (var reaction in reg.Reactions)
+                {
+                    var data = reaction?.OnSave();
+                    if (data != null) _store.SetData($"{reg.Event.Guid}_{reaction.Guid}", data);
                 }
             }
 
@@ -174,12 +214,14 @@ namespace Lostbyte.Toolkit.FactSystem
 
             return _store.IsEmpty ? null : _store.GetStore();
         }
+
         public void SetValue<T>(FactDefinition<T> fact, T value)
         {
             var wrapper = GetWrapper(fact);
             if (wrapper.Value.Equals(value)) return;
             wrapper.Value = value;
         }
+
         public T GetValue<T>(FactDefinition<T> fact) => GetWrapper(fact).Value;
         public void Raise(EventDefinition @event) => GetWrapper(@event).Raise();
         public void AddOnFactAddedListener(Action<FactDefinition> callback) => OnFactAdded += callback;
@@ -200,11 +242,13 @@ namespace Lostbyte.Toolkit.FactSystem
         public void Unsubscribe<T>(FactDefinition<T> fact, Action<T, T> callback) => GetWrapper(fact).Unsubscribe(callback);
         public void Subscribe(EventDefinition @event, Action callback) => GetWrapper(@event).Subscribe(callback);
         public void Unsubscribe(EventDefinition @event, Action callback) => GetWrapper(@event).Unsubscribe(callback);
+
         private void RaiseChange()
         {
             if (UseSaveSystem && m_save.SaveOnChange) Save();
             OnChange?.Invoke();
         }
+
         public IFactWrapper<T> GetWrapper<T>(FactDefinition<T> fact)
         {
             if (_factStorage.TryGetValue(fact, out var wrapperRaw) == false || wrapperRaw is not IFactWrapper<T> wrapper)
@@ -216,6 +260,7 @@ namespace Lostbyte.Toolkit.FactSystem
             }
             return wrapper;
         }
+
         public IFactWrapper GetWrapper(FactDefinition fact)
         {
             if (_factStorage.TryGetValue(fact, out var wrapperRaw) == false || wrapperRaw is not IFactWrapper wrapper)
@@ -227,6 +272,7 @@ namespace Lostbyte.Toolkit.FactSystem
             }
             return wrapper;
         }
+
         public IEventWrapper GetWrapper(EventDefinition @event)
         {
             if (_eventStorage.TryGetValue(@event, out var wrapperRaw) == false || wrapperRaw is not IEventWrapper wrapper)
@@ -236,6 +282,7 @@ namespace Lostbyte.Toolkit.FactSystem
             }
             return wrapper;
         }
+
         public IWrapper GetWrapper(Definition def)
         {
             if (def is EventDefinition @event)
@@ -261,6 +308,7 @@ namespace Lostbyte.Toolkit.FactSystem
             Print.Error("Unknown defenition!");
             return null;
         }
+
         public KeyContainer RequestTempKey(string name, List<FactValueOverride> overrides = null)
         {
 #if UNITY_EDITOR
