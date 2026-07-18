@@ -44,7 +44,7 @@ namespace Lostbyte.Toolkit.FactSystem.Editor
 
             var tokenDisplay = new VisualElement().MakeRow(Align.Center).SetFlex(1, 0);
             tokenDisplay.AddToClassList("unity-base-text-field__input");
-
+            Print.Assert(rootNodeProp != null, "!!!!!!!!");
             var initialNode = rootNodeProp.managedReferenceValue as INode;
             string initialText = initialNode?.ToString() ?? string.Empty;
             textField.SetValueWithoutNotify(initialText);

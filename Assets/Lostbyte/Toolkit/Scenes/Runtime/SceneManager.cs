@@ -26,6 +26,12 @@ namespace Lostbyte.Toolkit.Scenes
         [ClearStatic] private static readonly Dictionary<Scene, SceneNode> _loadedNodes = new();
         [ClearStatic] private static readonly Dictionary<string, SceneConstraint> _constraints = new();
 
+        private readonly Dictionary<string, Action> _beforeSceneLoadsCallback = new();
+        private readonly Dictionary<string, Action> _afterSceneLoadsCallback = new();
+        private readonly Dictionary<string, Action> _beforeSceneUnloadsCallback = new();
+        private readonly Dictionary<string, Action> _afterSceneUnloadsCallback = new();
+
+
         private SceneNode _rootNode;
         private int _loadingScreenFades = 0;
         private bool _initialized = false;
@@ -60,6 +66,9 @@ namespace Lostbyte.Toolkit.Scenes
             {
                 orphanedNodes.Remove(node);
                 node.Children.ForEach(rootQueue.Enqueue);
+                TriggerBeforeSceneLoad(node.Path);
+                TriggerAfterSceneLoad(node.Path);
+
             }
             foreach (var node in orphanedNodes)
             {
@@ -102,8 +111,38 @@ namespace Lostbyte.Toolkit.Scenes
             return true;
         }
 
+        public SceneNode LoadScene(SceneReference scene, Scene parent)
+        {
+            if (!TryGetNode(parent, out var parentNode)) return null;
+            TriggerBeforeSceneLoad(scene.ScenePath);
+            UnityEngine.SceneManagement.SceneManager.LoadScene(scene.SceneName, LoadSceneMode.Additive);
+            Scene loadedScene = UnityEngine.SceneManagement.SceneManager.GetSceneByPath(scene.ScenePath);
+            var node = RegisterNewNode(loadedScene, parentNode);
+            TriggerAfterSceneLoad(scene.ScenePath);
+            return node;
+        }
+
+        public async Task<SceneNode> LoadSceneAsync(SceneReference scene, Scene parent)
+        {
+            if (!TryGetNode(parent, out var parentNode)) return null;
+            TriggerBeforeSceneLoad(scene.ScenePath);
+            await WaitOperation(UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(scene.SceneName));
+            Scene loadedScene = UnityEngine.SceneManagement.SceneManager.GetSceneByPath(scene.ScenePath);
+            var node = RegisterNewNode(loadedScene, parentNode);
+            TriggerAfterSceneLoad(scene.ScenePath);
+            if (!TryGetNode(parent, out _))
+            {
+                UnloadScene(node);
+                return null;
+            }
+            return node;
+        }
+
+        public void UnloadScene(SceneNode scene) => UnloadNode(scene, null);
+
         public static void UpdateConstraint(string constraintId, SceneReference parent, List<SceneReference> desiredScenes, bool useLoadingScreen)
         {
+            Print.MLog($"Update constraint [{constraintId}]: {parent.SceneName} -> {string.Join(", ", desiredScenes.Select(s => s.SceneName))}");
             if (!_constraints.TryGetValue(constraintId, out var constraint))
             {
                 constraint = new SceneConstraint { Id = constraintId };
@@ -121,11 +160,88 @@ namespace Lostbyte.Toolkit.Scenes
             Instance._stateChanged = true;
             Instance.ApplyAllConstraintChanges().Forget();
         }
+        public void AddBeforeSceneLoadedCallback(SceneReference scene, Action callback)
+        {
+            _beforeSceneLoadsCallback.TryGetValue(scene.ScenePath, out var existingAction);
+            _beforeSceneLoadsCallback[scene.ScenePath] = existingAction + callback;
+        }
+
+        public void AddAfterSceneLoadedCallback(SceneReference scene, Action callback)
+        {
+            _afterSceneLoadsCallback.TryGetValue(scene.ScenePath, out var existingAction);
+            _afterSceneLoadsCallback[scene.ScenePath] = existingAction + callback;
+        }
+
+        public void AddBeforeSceneUnloadedCallback(SceneReference scene, Action callback)
+        {
+            _beforeSceneUnloadsCallback.TryGetValue(scene.ScenePath, out var existingAction);
+            _beforeSceneUnloadsCallback[scene.ScenePath] = existingAction + callback;
+        }
+
+        public void AddAfterSceneUnloadedCallback(SceneReference scene, Action callback)
+        {
+            _beforeSceneUnloadsCallback.TryGetValue(scene.ScenePath, out var existingAction);
+            _beforeSceneUnloadsCallback[scene.ScenePath] = existingAction + callback;
+        }
+
+        public void RemoveBeforeSceneLoadedCallback(SceneReference scene, Action callback)
+        {
+            if (!_beforeSceneLoadsCallback.TryGetValue(scene.ScenePath, out var existingAction)) return;
+            existingAction -= callback;
+            if (existingAction == null) _beforeSceneLoadsCallback.Remove(scene.ScenePath);
+            else _beforeSceneLoadsCallback[scene.ScenePath] = existingAction;
+        }
+
+        public void RemoveAfterSceneLoadedCallback(SceneReference scene, Action callback)
+        {
+            if (!_afterSceneLoadsCallback.TryGetValue(scene.ScenePath, out var existingAction)) return;
+            existingAction -= callback;
+            if (existingAction == null) _afterSceneLoadsCallback.Remove(scene.ScenePath);
+            else _afterSceneLoadsCallback[scene.ScenePath] = existingAction;
+        }
+
+        public void RemoveBeforeSceneUnloadedCallback(SceneReference scene, Action callback)
+        {
+            if (!_beforeSceneUnloadsCallback.TryGetValue(scene.ScenePath, out var existingAction)) return;
+            existingAction -= callback;
+            if (existingAction == null) _beforeSceneUnloadsCallback.Remove(scene.ScenePath);
+            else _beforeSceneUnloadsCallback[scene.ScenePath] = existingAction;
+        }
+
+        public void RemoveAfterSceneUnloadedCallback(SceneReference scene, Action callback)
+        {
+            if (!_afterSceneUnloadsCallback.TryGetValue(scene.ScenePath, out var existingAction)) return;
+            existingAction -= callback;
+            if (existingAction == null) _afterSceneUnloadsCallback.Remove(scene.ScenePath);
+            else _afterSceneUnloadsCallback[scene.ScenePath] = existingAction;
+        }
+
+        private void TriggerBeforeSceneLoad(string scene)
+        {
+            if (_beforeSceneLoadsCallback.TryGetValue(scene, out var callbacks)) callbacks?.Invoke();
+        }
+
+        private void TriggerAfterSceneLoad(string scene)
+        {
+            if (_afterSceneLoadsCallback.TryGetValue(scene, out var callbacks)) callbacks?.Invoke();
+        }
+
+        private void TriggerBeforeSceneUnload(string scene)
+        {
+            if (_beforeSceneUnloadsCallback.TryGetValue(scene, out var callbacks)) callbacks?.Invoke();
+        }
+
+        private void TriggerAfterSceneUnload(string scene)
+        {
+            if (_afterSceneUnloadsCallback.TryGetValue(scene, out var callbacks)) callbacks?.Invoke();
+        }
+
 
         private async Task ApplyAllConstraintChanges()
         {
             if (_isApplyingConstraints) return;
             _isApplyingConstraints = true;
+            bool _fadedIn = false;
             try
             {
                 while (_stateChanged)
@@ -136,7 +252,7 @@ namespace Lostbyte.Toolkit.Scenes
                     Dictionary<string, bool> desiredPathFades = new();
 
                     Queue<string> evalQueue = new();
-                    evalQueue.Enqueue(_rootNode.ScenePath);
+                    evalQueue.Enqueue(_rootNode.Path);
 
                     while (evalQueue.TryDequeue(out var currentPath))
                     {
@@ -161,6 +277,7 @@ namespace Lostbyte.Toolkit.Scenes
                             }
                         }
                     }
+
                     Dictionary<string, bool> activePathFades = new();
                     foreach (var constraint in _constraints.Values)
                     {
@@ -176,13 +293,13 @@ namespace Lostbyte.Toolkit.Scenes
 
                     HashSet<string> currentPaths = _loadedNodes.Values
                         .Where(n => n != _rootNode)
-                        .Select(n => n.ScenePath)
+                        .Select(n => n.Path)
                         .ToHashSet();
 
                     List<string> pathsToLoad = desiredScenesDict.Keys.Except(currentPaths).ToList();
                     List<string> pathsToUnload = currentPaths.Except(desiredScenesDict.Keys).ToList();
 
-                    if (pathsToLoad.Count == 0 && pathsToUnload.Count == 0) continue;
+                    if (pathsToLoad.Count == 0 && pathsToUnload.Count == 0 && !_fadedIn) continue;
                     bool useFades = false;
                     foreach (var path in pathsToLoad)
                     {
@@ -203,16 +320,18 @@ namespace Lostbyte.Toolkit.Scenes
                             }
                         }
                     }
+                    if (useFades && !_fadedIn)
+                    {
+                        _fadedIn = true;
+                        if (LoadingScreen != null)
+                            await LoadingScreen.FadeIn();
+                    }
                     try
                     {
-                        if (useFades) await HandleFades(true);
                         List<Task> pendingTasks = new();
                         if (pathsToUnload.Count > 0)
-                        {
-                            List<AsyncOperation> ops = new();
-                            foreach (var path in pathsToUnload) UnloadNode(GetNodeByPath(path), ops);
-                            foreach (var op in ops) pendingTasks.Add(WaitOperation(op));
-                        }
+                            foreach (var path in pathsToUnload) UnloadNode(GetNodeByPath(path), pendingTasks);
+
                         if (pathsToLoad.Count > 0)
                         {
                             foreach (var path in pathsToLoad)
@@ -222,15 +341,17 @@ namespace Lostbyte.Toolkit.Scenes
                             }
                         }
                         if (pendingTasks.Count > 0) await Task.WhenAll(pendingTasks);
+
                         async Task LoadAndRegisterSceneAsync(string path)
                         {
-                            var sceneRef = desiredScenesDict[path];
-                            var op = UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(sceneRef.SceneName, LoadSceneMode.Additive);
+                            TriggerBeforeSceneLoad(path);
+                            var op = UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(path, LoadSceneMode.Additive);
                             await WaitOperation(op);
-                            Scene loadedScene = UnityEngine.SceneManagement.SceneManager.GetSceneByPath(sceneRef.ScenePath);
-                            string parentPath = childToParentMap.TryGetValue(path, out var p) ? p : _rootNode.ScenePath;
+                            Scene loadedScene = UnityEngine.SceneManagement.SceneManager.GetSceneByPath(path);
+                            string parentPath = childToParentMap.TryGetValue(path, out var p) ? p : _rootNode.Path;
                             SceneNode parentNode = GetNodeByPath(parentPath) ?? _rootNode;
                             RegisterNewNode(loadedScene, parentNode);
+                            TriggerAfterSceneLoad(path);
                             foreach (var constraint in _constraints.Values)
                                 if (constraint.ParentRef.ScenePath == parentPath && constraint.DesiredScenes.Any(s => s.ScenePath == path))
                                     if (!constraint.ActiveScenes.Contains(loadedScene))
@@ -241,11 +362,20 @@ namespace Lostbyte.Toolkit.Scenes
                     {
                         Print.MError($"Constraint application failed during execution: {ex.Message}");
                     }
-                    finally
+                    if (_stateChanged) continue;
+                    await Task.Yield();
+                    if (_stateChanged) continue;
+                    await Task.Yield();
+                    if (_stateChanged) continue;
+
+                    if (_fadedIn)
                     {
-                        if (useFades) await HandleFades(false);
+                        if (LoadingScreen != null)
+                            await LoadingScreen.FadeOut();
+                        _fadedIn = false;
                     }
                 }
+                Print.MAssert(!_fadedIn, "Fade Out has not been applied!");
             }
             finally
             {
@@ -253,9 +383,10 @@ namespace Lostbyte.Toolkit.Scenes
             }
         }
 
-        private void UnloadNode(SceneNode node, List<AsyncOperation> ops)
+        private void UnloadNode(SceneNode node, List<Task> ops = null)
         {
-            if (node == null) return;
+            if (node == null || node.SceneInstance == null || node.Path == null) return;
+            var path = node.Path;
             var childrenCopy = new List<SceneNode>(node.Children);
             foreach (var child in childrenCopy)
                 UnloadNode(child, ops);
@@ -263,8 +394,12 @@ namespace Lostbyte.Toolkit.Scenes
             if (node != _rootNode)
             {
                 node.Parent?.Children.Remove(node);
+                TriggerBeforeSceneUnload(path);
                 var op = UnityEngine.SceneManagement.SceneManager.UnloadSceneAsync(node.SceneInstance);
-                if (op != null) ops?.Add(op);
+                if (op != null)
+                    ops?.Add(WaitOperation(op).Then(() => TriggerAfterSceneUnload(path)));
+                else
+                    TriggerAfterSceneUnload(path);
                 _loadedNodes.Remove(node.SceneInstance);
 
                 foreach (var constraint in _constraints.Values)
@@ -276,29 +411,6 @@ namespace Lostbyte.Toolkit.Scenes
         {
             if (op == null) return;
             while (!op.isDone) await Task.Yield();
-        }
-
-        private async Task HandleFades(bool fadeIn)
-        {
-            if (LoadingScreen == null) return;
-            if (fadeIn)
-            {
-                _loadingScreenFades++;
-                if (_loadingScreenFades == 1)
-                {
-                    LoadingScreen.FadeIn();
-                    while (LoadingScreen.InTransition) await Task.Yield();
-                }
-            }
-            else
-            {
-                _loadingScreenFades = Mathf.Max(0, _loadingScreenFades - 1);
-                if (_loadingScreenFades == 0)
-                {
-                    LoadingScreen.FadeOut();
-                    while (LoadingScreen.InTransition) await Task.Yield();
-                }
-            }
         }
 
         public static bool TryGetNode(Scene scene, out SceneNode node)
@@ -316,7 +428,7 @@ namespace Lostbyte.Toolkit.Scenes
         private static SceneNode GetNodeByPath(string path)
         {
             foreach (var kvp in _loadedNodes)
-                if (kvp.Value.ScenePath == path) return kvp.Value;
+                if (kvp.Value.Path == path) return kvp.Value;
             return null;
         }
 

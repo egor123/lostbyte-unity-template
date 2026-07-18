@@ -10,7 +10,8 @@ namespace Lostbyte.Toolkit.Scenes
         public Scene SceneInstance { get; set; }
         public SceneNode Parent { get; private set; }
         public List<SceneNode> Children { get; private set; }
-        public string ScenePath => SceneInstance.path;
+        public string Path => SceneInstance.path;
+        public string Name => SceneInstance.name;
 
         internal void SetParent(SceneNode parent)
         {

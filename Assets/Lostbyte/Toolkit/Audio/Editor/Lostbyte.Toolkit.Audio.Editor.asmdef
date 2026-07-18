@@ -5,7 +5,8 @@
         "Lostbyte.Toolkit.CustomEditor.Editor",
         "Lostbyte.Toolkit.CustomEditor",
         "Lostbyte.Toolkit.Common",
-        "Lostbyte.Toolkit.Audio"
+        "Lostbyte.Toolkit.Audio",
+        "Lostbyte.Toolkit.Audio.Music"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

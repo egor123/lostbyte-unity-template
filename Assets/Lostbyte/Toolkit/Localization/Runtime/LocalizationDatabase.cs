@@ -16,7 +16,7 @@ namespace Lostbyte.Toolkit.Localization
     public class LocalizationDatabase : ScriptableObject
     {
         [field: SerializeField, ReadOnly] public LocalizationSchema Schema { get; private set; }
-        public string CurrentLocale { get; internal set; }
+        public string CurrentLocale { get; internal set; } = "en-US";
         private readonly Dictionary<string, LocalizedTable> m_activeTables = new();
         private AsyncOperationHandle<IList<LocalizedTable>> m_currentLoadHandle;
         public event Action<string> OnLocalizationChanged;
@@ -110,6 +110,14 @@ namespace Lostbyte.Toolkit.Localization
 
         public static LocalizedTable GetTable(string tableId)
         {
+#if UNITY_EDITOR
+            if (!Application.isPlaying)
+            {
+                Print.MWarn($"Localized tables are not supported in edit mode!");
+
+                return null;
+            }
+#endif
             var db = LocalizationSettings.Database;
             var found = db.m_activeTables.TryGetValue(tableId, out var table);
             Print.MAssert(found, $"Table '{tableId}' not found in locale '{db.CurrentLocale}'");
@@ -122,6 +130,22 @@ namespace Lostbyte.Toolkit.Localization
         }
         public static T GetValue<T>(string tableId, string keyId, params object[] args)
         {
+#if UNITY_EDITOR
+            if (!Application.isPlaying)
+            {
+                var db = LocalizationSettings.Database;
+                var schema = db.Schema;
+                var t = schema.Tables.FirstOrDefault(t => t.Id == tableId);
+                var k = t.Keys.FirstOrDefault(k => k.Id == keyId);
+                if (typeof(T) == typeof(string))
+                {
+                    var r = $"{t.Id}/{k.Id}";
+                    return r is T rt ? rt : default;
+                }
+                Print.MWarn($"Localized values of type \"{typeof(T).Name}\" are not supported in edit mode!");
+                return default;
+            }
+#endif
             var table = GetTable(tableId);
             if (table == null) return default;
 

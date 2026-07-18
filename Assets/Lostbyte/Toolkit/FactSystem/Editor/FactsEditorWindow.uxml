@@ -1,5 +1,5 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="True">
-    <Style src="project://database/Assets/Scripts/Core/Facts/Editor/FactsEditorWindow.uss?fileID=7433441132597879392&amp;guid=3addff597ee9d194da5281c6ee724516&amp;type=3#FactsEditorWindow" />
+    <Style src="project://database/Assets/Lostbyte/Toolkit/FactSystem/Editor/FactsEditorWindow.uss?fileID=7433441132597879392&amp;guid=3addff597ee9d194da5281c6ee724516&amp;type=3#FactsEditorWindow" />
     <ui:VisualElement name="header" style="flex-grow: 1; height: 20px; max-height: 20px; flex-direction: row; background-color: rgb(60, 60, 60); border-bottom-color: rgb(35, 35, 35); border-bottom-width: 1px;">
         <ui:Button text="Compile" parse-escape-sequences="true" display-tooltip-when-elided="true" name="compile-btn" style="margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; background-color: rgb(60, 60, 60);" />
         <ui:DropdownField label="View" choices="Keys,Facts,Events" name="tab-selector" index="0" />

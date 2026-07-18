@@ -14,25 +14,29 @@ namespace Lostbyte.Toolkit.FactSystem.Editor
     {
         [SerializeField] private VisualTreeAsset m_VisualTreeAsset = default;
         [SerializeField] private StyleSheet m_StyleSheet = default;
+
         private TreeView _treeView;
         private int _lastAssetHash = 0;
         private string _filter = "";
         private int _view = 0;
         private Vector2 _lastMousePosition;
 
-        [MenuItem("Window/Facts/FactsEditorWindow")]
+        private class RowContext
+        {
+            public object Item;
+            public int Index;
+        }
+
+        [MenuItem("Window/Facts/Facts Editor")]
         public static void ShowFactsEditorWindow()
         {
             var wnd = GetWindow<FactsEditorWindow>();
-            wnd.titleContent = new GUIContent("FactsEditorWindow");
+            wnd.titleContent = new GUIContent("Facts Editor");
         }
 
         public void CreateGUI()
         {
-            if (m_VisualTreeAsset == null)
-                m_VisualTreeAsset = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>("Packages/com.lostbyte.toolkit/FactSystem/Editor/FactsEditorWindow.uxml");
-            if (m_StyleSheet == null)
-                m_StyleSheet = AssetDatabase.LoadAssetAtPath<StyleSheet>("Packages/com.lostbyte.toolkit/FactSystem/Editor/FactsEditorWindow.uss");
+            LoadAssetsDynamically();
 
             VisualElement root = rootVisualElement;
             m_VisualTreeAsset.CloneTree(root);
@@ -40,13 +44,9 @@ namespace Lostbyte.Toolkit.FactSystem.Editor
 
             _treeView = root.Q<TreeView>("tree-view");
 
+            // Event bindings
             root.Q<Button>("add-btn").clicked += OnAddButtonClicked;
-
-            root.Q<Button>("compile-btn").clicked += () =>
-            {
-                if (Application.isPlaying) Print.Warn("Cannot compile when playing!");
-                else FactCodeGenerator.Generate(FactEditorUtils.Database);
-            };
+            root.Q<Button>("compile-btn").clicked += OnCompileButtonClicked;
 
             root.Q<ToolbarSearchField>("search-bar").RegisterValueChangedCallback(evt =>
             {
@@ -73,6 +73,35 @@ namespace Lostbyte.Toolkit.FactSystem.Editor
             EditorApplication.playModeStateChanged += OnGameStateChange;
         }
 
+        private void LoadAssetsDynamically()
+        {
+            if (m_VisualTreeAsset == null)
+            {
+                string[] guids = AssetDatabase.FindAssets("t:VisualTreeAsset FactsEditorWindow");
+                if (guids.Length > 0)
+                    m_VisualTreeAsset = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(AssetDatabase.GUIDToAssetPath(guids[0]));
+            }
+
+            if (m_StyleSheet == null)
+            {
+                string[] guids = AssetDatabase.FindAssets("t:StyleSheet FactsEditorWindow");
+                if (guids.Length > 0)
+                    m_StyleSheet = AssetDatabase.LoadAssetAtPath<StyleSheet>(AssetDatabase.GUIDToAssetPath(guids[0]));
+            }
+        }
+
+        private void OnCompileButtonClicked()
+        {
+            if (Application.isPlaying)
+            {
+                Print.Warn("Cannot compile when playing!");
+                return;
+            }
+
+            AssetDatabase.SaveAssets();
+            FactCodeGenerator.Generate(FactEditorUtils.Database);
+        }
+
         private void OnAddButtonClicked()
         {
             switch (_view)
@@ -88,87 +117,59 @@ namespace Lostbyte.Toolkit.FactSystem.Editor
         {
             inspectorPanel.Clear();
             var selectedItem = selectedItems.FirstOrDefault();
-            if (selectedItem == null) return;
+            if (selectedItem == null || !(selectedItem is ScriptableObject item)) return;
 
-            if (selectedItem is ScriptableObject item)
+            var serializedObject = new SerializedObject(item);
+            var iterator = serializedObject.GetIterator();
+            bool enterChildren = true;
+
+            while (iterator.NextVisible(enterChildren))
             {
-                var serializedObject = new SerializedObject(item);
-                var iterator = serializedObject.GetIterator();
-                bool enterChildren = true;
+                enterChildren = false;
+                if (iterator.name == "m_Script") continue;
 
-                while (iterator.NextVisible(enterChildren))
+                var field = new PropertyField(iterator.Copy());
+                field.Bind(serializedObject);
+                inspectorPanel.Add(field);
+            }
+            if (item is FactDefinition fact)
+            {
+                DrawRegistrationInspector(inspectorPanel, fact, nameof(KeyContainer.FactRegistrations), nameof(FactRegistration.Fact));
+            }
+            else if (item is EventDefinition evt)
+            {
+                DrawRegistrationInspector(inspectorPanel, evt, nameof(KeyContainer.EventRegistrations), nameof(EventRegistration.Event));
+            }
+        }
+
+        private void DrawRegistrationInspector(ScrollView inspectorPanel, ScriptableObject item, string listPropertyName, string elementPropertyName)
+        {
+            var parentKey = GetParentKey(_treeView.selectedIndex);
+            if (parentKey == null) return;
+
+            var keySO = new SerializedObject(parentKey);
+
+            var regsProp = keySO.FindProperty(listPropertyName) ??
+                           keySO.FindProperty($"<{listPropertyName}>k__BackingField");
+
+            if (regsProp == null) return;
+
+            for (int i = 0; i < regsProp.arraySize; i++)
+            {
+                var regProp = regsProp.GetArrayElementAtIndex(i);
+                var elementProp = regProp.FindPropertyRelative(elementPropertyName);
+
+                if (elementProp != null && elementProp.objectReferenceValue == item)
                 {
-                    enterChildren = false;
-                    if (iterator.name == "m_Script") continue;
+                    inspectorPanel.Add(new VisualElement()
+                        .SetBackgroundColor(new Color(0.15f, 0.15f, 0.15f))
+                        .SetMargin(10, 0));
 
-                    var field = new PropertyField(iterator.Copy());
-                    field.Bind(serializedObject);
-                    inspectorPanel.Add(field);
+                    var regField = new PropertyField(regProp);
+                    regField.BindProperty(regProp);
+                    inspectorPanel.Add(regField);
+                    break;
                 }
-
-                if (item is FactDefinition fact)
-                {
-                    var parentKey = GetParentKey(_treeView.selectedIndex);
-                    if (parentKey != null)
-                    {
-                        var keySO = new SerializedObject(parentKey);
-                        var regsProp = keySO.FindProperty($"<{nameof(KeyContainer.FactRegistrations)}>k__BackingField")
-                                    ?? keySO.FindProperty(nameof(KeyContainer.FactRegistrations));
-
-                        if (regsProp != null)
-                        {
-                            for (int i = 0; i < regsProp.arraySize; i++)
-                            {
-                                var regProp = regsProp.GetArrayElementAtIndex(i);
-                                var factProp = regProp.FindPropertyRelative(nameof(FactRegistration.Fact));
-
-                                if (factProp != null && factProp.objectReferenceValue == fact)
-                                {
-                                    inspectorPanel.Add(new VisualElement()
-                                        .SetBackgroundColor(new Color(0.15f, 0.15f, 0.15f))
-                                        .SetMargin(10, 0));
-
-                                    var regField = new PropertyField(regProp);
-                                    regField.BindProperty(regProp);
-                                    inspectorPanel.Add(regField);
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                }
-                if (item is EventDefinition evt)
-                {
-                    var parentKey = GetParentKey(_treeView.selectedIndex);
-                    if (parentKey != null)
-                    {
-                        var keySO = new SerializedObject(parentKey);
-                        var regsProp = keySO.FindProperty($"<{nameof(KeyContainer.EventRegistrations)}>k__BackingField")
-                                    ?? keySO.FindProperty(nameof(KeyContainer.EventRegistrations));
-
-                        if (regsProp != null)
-                        {
-                            for (int i = 0; i < regsProp.arraySize; i++)
-                            {
-                                var regProp = regsProp.GetArrayElementAtIndex(i);
-                                var eventProp = regProp.FindPropertyRelative(nameof(EventRegistration.Event));
-
-                                if (eventProp != null && eventProp.objectReferenceValue == evt)
-                                {
-                                    inspectorPanel.Add(new VisualElement()
-                                        .SetBackgroundColor(new Color(0.15f, 0.15f, 0.15f))
-                                        .SetMargin(10, 0));
-
-                                    var regField = new PropertyField(regProp);
-                                    regField.BindProperty(regProp);
-                                    inspectorPanel.Add(regField);
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                }
-
             }
         }
 
@@ -204,74 +205,28 @@ namespace Lostbyte.Toolkit.FactSystem.Editor
                     break;
             }
 
-            _treeView.makeItem = () => new VisualElement();
+            _treeView.makeItem = () =>
+            {
+                var container = new VisualElement();
+                container.AddManipulator(new ContextualMenuManipulator(evt => BuildContextMenu(evt, container)));
+                return container;
+            };
+
             _treeView.bindItem = (element, i) =>
             {
-                element.Clear();
+                element.Clear(); 
                 var item = _treeView.GetItemDataForIndex<object>(i);
-
+                element.userData = new RowContext { Item = item, Index = i };
                 if (item is ScriptableObject obj)
                 {
                     element.name = obj.name;
-                    VisualElement row = null;
-
-                    if (item is KeyContainer key)
+                    VisualElement row = item switch
                     {
-                        row = new KeyRow(key);
-                        row.AddContextualMenu(evt =>
-                        {
-                            _lastMousePosition = Event.current.mousePosition;
-                            evt.menu.AppendAction("Move Up", (e) => FactEditorUtils.MoveUp(GetParentKey(i), GetItemByIndex(i)));
-                            evt.menu.AppendAction("Move Down", (e) => FactEditorUtils.MoveDown(GetParentKey(i), GetItemByIndex(i)));
-                            if (!Application.isPlaying)
-                            {
-                                evt.menu.AppendAction("Add New Key", (e) => FactEditorUtils.ShowAddNewKeyPopup(key, "", _lastMousePosition));
-                                evt.menu.AppendAction("Add New Fact", (e) => FactEditorUtils.ShowAddNewFactPopup(key, "", true, _lastMousePosition));
-                            }
-                            evt.menu.AppendAction("Add Existing Fact", (e) => FactEditorUtils.ShowAddExistingFactPopup(key, "", _lastMousePosition));
-                            if (!Application.isPlaying)
-                                evt.menu.AppendAction("Add New Event", (e) => FactEditorUtils.ShowAddNewEventPopup(key, "", true, _lastMousePosition));
-                            evt.menu.AppendAction("Add Existing Event", (e) => FactEditorUtils.ShowAddExistingEventPopup(key, "", _lastMousePosition));
-                            if (!Application.isPlaying)
-                                evt.menu.AppendAction("Delete", (e) => FactEditorUtils.ShowDeleteKeyModal(key));
-                        });
-                    }
-                    else if (item is FactDefinition fact)
-                    {
-                        row = new FactRow(fact, GetParentKey(i));
-                        row.AddContextualMenu(evt =>
-                        {
-                            _lastMousePosition = Event.current.mousePosition;
-                            if (!Application.isPlaying || _view == 1)
-                            {
-                                evt.menu.AppendAction("Move Up", (e) => FactEditorUtils.MoveUp(GetParentKey(i), GetItemByIndex(i)));
-                                evt.menu.AppendAction("Move Down", (e) => FactEditorUtils.MoveDown(GetParentKey(i), GetItemByIndex(i)));
-                            }
-                            if (!Application.isPlaying)
-                            {
-                                if (_view == 0) evt.menu.AppendAction("Remove", (e) => FactEditorUtils.RemoveFact(GetParentKey(i), fact));
-                                evt.menu.AppendAction("Delete", (e) => FactEditorUtils.ShowDeleteFactModal(fact));
-                            }
-                        });
-                    }
-                    else if (item is EventDefinition @event)
-                    {
-                        row = new EventRow(@event, GetParentKey(i));
-                        row.AddContextualMenu(evt =>
-                        {
-                            _lastMousePosition = Event.current.mousePosition;
-                            if (!Application.isPlaying || _view == 2)
-                            {
-                                evt.menu.AppendAction("Move Up", (e) => FactEditorUtils.MoveUp(GetParentKey(i), GetItemByIndex(i)));
-                                evt.menu.AppendAction("Move Down", (e) => FactEditorUtils.MoveDown(GetParentKey(i), GetItemByIndex(i)));
-                            }
-                            if (!Application.isPlaying)
-                            {
-                                if (_view == 0) evt.menu.AppendAction("Remove", (e) => FactEditorUtils.RemoveEvent(GetParentKey(i), @event));
-                                evt.menu.AppendAction("Delete", (e) => FactEditorUtils.ShowDeleteEventModal(@event));
-                            }
-                        });
-                    }
+                        KeyContainer key => new KeyRow(key),
+                        FactDefinition fact => new FactRow(fact, GetParentKey(i)),
+                        EventDefinition @event => new EventRow(@event, GetParentKey(i)),
+                        _ => null
+                    };
 
                     if (row != null)
                     {
@@ -281,31 +236,80 @@ namespace Lostbyte.Toolkit.FactSystem.Editor
                     }
                 }
             };
-
             _treeView.SetRootItems(treeItems);
             _treeView.Rebuild();
             LoadTreeViewState();
         }
 
-        private void EnsureGuidsExist<T>(IEnumerable<T> items) where T : Definition
+        private void BuildContextMenu(ContextualMenuPopulateEvent evt, VisualElement container)
         {
-            foreach (var item in items)
+            if (container.userData is not RowContext context) return;
+
+            _lastMousePosition = Event.current.mousePosition;
+            var item = context.Item;
+            var index = context.Index;
+            var parentKey = GetParentKey(index);
+
+            if (item is KeyContainer key)
             {
-                if (string.IsNullOrWhiteSpace(item.Guid))
+                evt.menu.AppendAction("Move Up", (e) => FactEditorUtils.MoveUp(parentKey, item as ScriptableObject));
+                evt.menu.AppendAction("Move Down", (e) => FactEditorUtils.MoveDown(parentKey, item as ScriptableObject));
+
+                if (!Application.isPlaying)
                 {
-                    item.Guid = FactEditorUtils.GenerateGuid(item.name);
-                    EditorUtility.SetDirty(item);
+                    evt.menu.AppendAction("Add New Key", (e) => FactEditorUtils.ShowAddNewKeyPopup(key, "", _lastMousePosition));
+                    evt.menu.AppendAction("Add New Fact", (e) => FactEditorUtils.ShowAddNewFactPopup(key, "", true, _lastMousePosition));
+                }
+
+                evt.menu.AppendAction("Add Existing Fact", (e) => FactEditorUtils.ShowAddExistingFactPopup(key, "", _lastMousePosition));
+
+                if (!Application.isPlaying)
+                    evt.menu.AppendAction("Add New Event", (e) => FactEditorUtils.ShowAddNewEventPopup(key, "", true, _lastMousePosition));
+
+                evt.menu.AppendAction("Add Existing Event", (e) => FactEditorUtils.ShowAddExistingEventPopup(key, "", _lastMousePosition));
+
+                if (!Application.isPlaying)
+                    evt.menu.AppendAction("Delete", (e) => FactEditorUtils.ShowDeleteKeyModal(key));
+            }
+            else if (item is FactDefinition fact)
+            {
+                if (!Application.isPlaying || _view == 1)
+                {
+                    evt.menu.AppendAction("Move Up", (e) => FactEditorUtils.MoveUp(parentKey, item as ScriptableObject));
+                    evt.menu.AppendAction("Move Down", (e) => FactEditorUtils.MoveDown(parentKey, item as ScriptableObject));
+                }
+                if (!Application.isPlaying)
+                {
+                    if (_view == 0) evt.menu.AppendAction("Remove", (e) => FactEditorUtils.RemoveFact(parentKey, fact));
+                    evt.menu.AppendAction("Delete", (e) => FactEditorUtils.ShowDeleteFactModal(fact));
+                }
+            }
+            else if (item is EventDefinition @event)
+            {
+                if (!Application.isPlaying || _view == 2)
+                {
+                    evt.menu.AppendAction("Move Up", (e) => FactEditorUtils.MoveUp(parentKey, item as ScriptableObject));
+                    evt.menu.AppendAction("Move Down", (e) => FactEditorUtils.MoveDown(parentKey, item as ScriptableObject));
+                }
+                if (!Application.isPlaying)
+                {
+                    if (_view == 0) evt.menu.AppendAction("Remove", (e) => FactEditorUtils.RemoveEvent(parentKey, @event));
+                    evt.menu.AppendAction("Delete", (e) => FactEditorUtils.ShowDeleteEventModal(@event));
                 }
             }
         }
 
-        private void EnsureGuidsExist(IEnumerable<KeyContainer> items)
+        private void EnsureGuidsExist<T>(IEnumerable<T> items) where T : ScriptableObject
         {
             foreach (var item in items)
             {
-                if (string.IsNullOrWhiteSpace(item.Guid))
+                var so = new SerializedObject(item);
+                var guidProp = so.FindProperty("Guid") ?? so.FindProperty("<Guid>k__BackingField");
+
+                if (guidProp != null && string.IsNullOrWhiteSpace(guidProp.stringValue))
                 {
-                    item.Guid = FactEditorUtils.GenerateGuid(item.name);
+                    guidProp.stringValue = FactEditorUtils.GenerateGuid(item.name);
+                    so.ApplyModifiedProperties();
                     EditorUtility.SetDirty(item);
                 }
             }
@@ -337,10 +341,10 @@ namespace Lostbyte.Toolkit.FactSystem.Editor
             return false;
         }
 
-        private ScriptableObject GetItemByIndex(int index) => _treeView.GetItemDataForIndex<object>(index) as ScriptableObject;
-
         private TreeViewItemData<object>? FilterKeyView(KeyContainer key, string filter, ref int id)
         {
+            if (key == null) return null;
+
             var children = new List<TreeViewItemData<object>>();
             bool addAll = string.IsNullOrEmpty(filter);
             bool matchesSelf = MatchesFilter(key.name, typeof(KeyContainer), filter);
@@ -350,6 +354,11 @@ namespace Lostbyte.Toolkit.FactSystem.Editor
 
             foreach (var fact in key.DefinedFacts)
             {
+                if (fact == null)
+                {
+                    Print.MWarn($"{key.name} contains null fact");
+                    continue;
+                }
                 if (MatchesFilter(fact.name, typeof(FactDefinition), filter))
                 {
                     children.Add(new TreeViewItemData<object>(id++, fact));
@@ -359,6 +368,7 @@ namespace Lostbyte.Toolkit.FactSystem.Editor
 
             foreach (var @event in key.DefinedEvents)
             {
+                if (@event == null) continue;
                 if (MatchesFilter(@event.name, typeof(EventDefinition), filter))
                 {
                     children.Add(new TreeViewItemData<object>(id++, @event));
@@ -381,20 +391,26 @@ namespace Lostbyte.Toolkit.FactSystem.Editor
 
         private List<TreeViewItemData<object>> FilterFactView(FactDatabase db, string filter, ref int id)
         {
-            List<TreeViewItemData<object>> items = new();
-            foreach (var fact in db.FactStorage)
-                if (MatchesFilter(fact.name, typeof(FactDefinition), filter))
-                    items.Add(new TreeViewItemData<object>(id++, fact));
-            return items;
+            int nextId = id;
+            var result = db.FactStorage
+                .Where(fact => fact != null && MatchesFilter(fact.name, typeof(FactDefinition), filter))
+                .Select(fact => new TreeViewItemData<object>(nextId++, fact))
+                .ToList();
+
+            id = nextId;
+            return result;
         }
 
         private List<TreeViewItemData<object>> FilterEventView(FactDatabase db, string filter, ref int id)
         {
-            List<TreeViewItemData<object>> items = new();
-            foreach (var @event in db.EventStorage)
-                if (MatchesFilter(@event.name, typeof(EventDefinition), filter))
-                    items.Add(new TreeViewItemData<object>(id++, @event));
-            return items;
+            int nextId = id;
+            var result = db.EventStorage
+                .Where(evt => evt != null && MatchesFilter(evt.name, typeof(EventDefinition), filter))
+                .Select(evt => new TreeViewItemData<object>(nextId++, evt))
+                .ToList();
+            id = nextId;
+            return result;
+
         }
 
         private void SaveTreeViewState()
@@ -405,23 +421,30 @@ namespace Lostbyte.Toolkit.FactSystem.Editor
                 var controller = _treeView.viewController;
                 if (controller == null) return;
 
-                bool save = false;
+                bool shouldSave = false;
                 foreach (var id in controller.GetAllItemIds())
                 {
                     if (_treeView.GetItemDataForId<object>(id) is ScriptableObject obj && obj is KeyContainer)
                     {
-                        save = true;
+                        shouldSave = true;
                         if (!controller.IsExpanded(id))
                         {
-                            string guid = (obj as KeyContainer)?.Guid ?? (obj as Definition)?.Guid ?? obj.GetInstanceID().ToString();
+                            var so = new SerializedObject(obj);
+                            var guidProp = so.FindProperty("Guid") ?? so.FindProperty("<Guid>k__BackingField");
+                            string guid = guidProp != null ? guidProp.stringValue : obj.GetInstanceID().ToString();
                             collapsed.Add(guid);
                         }
                     }
                 }
 
-                if (save)
+                if (shouldSave)
                 {
-                    EditorPrefs.SetString($"{nameof(FactsEditorWindow)}.TreeViewState", string.Join(",", collapsed));
+                    string newState = string.Join(",", collapsed);
+                    string prefKey = $"{nameof(FactsEditorWindow)}.TreeViewState";
+                    if (EditorPrefs.GetString(prefKey, string.Empty) != newState)
+                    {
+                        EditorPrefs.SetString(prefKey, newState);
+                    }
                 }
             }
         }
@@ -448,7 +471,10 @@ namespace Lostbyte.Toolkit.FactSystem.Editor
                     var index = controller.GetIndexForId(id);
                     if (controller.GetItemForIndex(index) is ScriptableObject obj)
                     {
-                        string guid = (obj as KeyContainer)?.Guid ?? (obj as Definition)?.Guid ?? obj.GetInstanceID().ToString();
+                        var so = new SerializedObject(obj);
+                        var guidProp = so.FindProperty("Guid") ?? so.FindProperty("<Guid>k__BackingField");
+                        string guid = guidProp != null ? guidProp.stringValue : obj.GetInstanceID().ToString();
+
                         if (collapsed.Contains(guid)) _treeView.CollapseItem(id, false);
                         else _treeView.ExpandItem(id, false);
                     }
@@ -466,12 +492,14 @@ namespace Lostbyte.Toolkit.FactSystem.Editor
 
         private KeyContainer GetParentKey(int index)
         {
-            if (_treeView == null) return null;
-            var item = GetItemByIndex(index);
+            if (_treeView == null || index < 0) return null;
+
+            var item = _treeView.GetItemDataForIndex<object>(index);
+            if (item == null) return null;
 
             for (int i = index - 1; i > -1; i--)
             {
-                if (GetItemByIndex(i) is KeyContainer parent)
+                if (_treeView.GetItemDataForIndex<object>(i) is KeyContainer parent)
                 {
                     if (item is KeyContainer key && parent.Children.Contains(key)) return parent;
                     if (item is FactDefinition fact && parent.DefinedFacts.Contains(fact)) return parent;
@@ -483,8 +511,18 @@ namespace Lostbyte.Toolkit.FactSystem.Editor
 
         private void OnGameStateChange(PlayModeStateChange stateChange)
         {
-            SaveTreeViewState();
-            BuildTreeView();
+            switch (stateChange)
+            {
+                case PlayModeStateChange.ExitingEditMode:
+                case PlayModeStateChange.ExitingPlayMode:
+                    SaveTreeViewState();
+                    break;
+
+                case PlayModeStateChange.EnteredPlayMode:
+                case PlayModeStateChange.EnteredEditMode:
+                    BuildTreeView();
+                    break;
+            }
         }
 
         private void CheckForDatabaseChanges()
@@ -498,7 +536,6 @@ namespace Lostbyte.Toolkit.FactSystem.Editor
             if (currentHash != _lastAssetHash)
             {
                 _lastAssetHash = currentHash;
-                SaveTreeViewState();
                 BuildTreeView();
             }
         }

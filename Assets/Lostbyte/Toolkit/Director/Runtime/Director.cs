@@ -1,28 +1,62 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Lostbyte.Toolkit.Common;
 using Lostbyte.Toolkit.CustomEditor;
 using UnityEngine;
+using UnityEngine.Playables;
 
 namespace Lostbyte.Toolkit.Director
 {
+    [DefaultExecutionOrder(-50)]
     public class Director : MonoBehaviour
     {
         public static Director Instance { get; private set; }
+        [field: SerializeField, Autowired, Required] public PlayableDirector Player { get; private set; }
         [field: SerializeField, ReadOnly] public bool IsPlaying { get; private set; }
         [field: SerializeField, ReadOnly] public Priority CurrentPriority { get; private set; } = Priority.Low;
-        private readonly Dictionary<Priority, Queue<IPlayableClipBehaviour>> _tracks = new();
+        private Queue<IPlayableClipBehaviour>[] _tracks;
+        [ClearStatic] private static readonly Queue<(IPlayableClipBehaviour clip, Priority priority)> _queue = new();
         private static Priority[] _priorities;
         internal static Priority[] Priorities => _priorities ??= Enum.GetValues(typeof(Priority)).Cast<Priority>().ToArray();
         private void Awake()
         {
             Instance = this;
+            _tracks = new Queue<IPlayableClipBehaviour>[Priorities.Length];
+            for (int i = 0; i < Priorities.Length; i++)
+            {
+                _tracks[i] = new Queue<IPlayableClipBehaviour>();
+            }
+            while (_queue.TryDequeue(out var data)) HandleQueue(data.clip, data.priority);
         }
-        public void Schedule(IPlayableData data, Priority priority = Priority.Default) => Schedule(data.GetClip(), priority);
-        public void Schedule(IPlayableClipBehaviour clip, Priority priority = Priority.Default)
+        public static void Schedule(IPlayableData data, Priority priority = Priority.Default) => Schedule(data.GetClip(), priority);
+        public static void Schedule(IPlayableClipBehaviour clip, Priority priority = Priority.Default)
         {
-            if (!_tracks.TryGetValue(priority, out var queue))
-                queue = _tracks[priority] = new();
+            if (Instance == null) _queue.Enqueue((clip, priority));
+            else Instance.HandleQueue(clip, priority);
+        }
+        public void ClearQueue()
+        {
+            _queue.Clear();
+
+            for (int i = 0; i < _tracks.Length; i++)
+            {
+                if (IsPlaying && i == (int)CurrentPriority)
+                {
+                    if (_tracks[i].TryPeek(out var activeClip))
+                    {
+                        _tracks[i].Clear();
+                        _tracks[i].Enqueue(activeClip);
+                        continue;
+                    }
+                }
+                _tracks[i].Clear();
+            }
+        }
+        private void HandleQueue(IPlayableClipBehaviour clip, Priority priority)
+        {
+            var queue = _tracks[(int)priority];
+
             if (IsPlaying)
             {
                 if (priority > CurrentPriority)
@@ -30,7 +64,7 @@ namespace Lostbyte.Toolkit.Director
                     InteruptClip(CurrentPriority);
                     CurrentPriority = priority;
                     queue.Enqueue(clip);
-                    clip.OnStart();
+                    SafeExecute(clip.OnStart);
                 }
                 else if (clip.SchedulingBehaviour == OnContinueBehaviour.Schedule)
                 {
@@ -42,25 +76,32 @@ namespace Lostbyte.Toolkit.Director
                 CurrentPriority = priority;
                 clip.Time = 0;
                 queue.Enqueue(clip);
-                clip.OnStart();
+                SafeExecute(clip.OnStart);
                 IsPlaying = true;
             }
         }
+        private void SafeExecute(Action action)
+        {
+            try { action?.Invoke(); }
+            catch (Exception e) { Print.MError($"Clip execution failed: {e}"); }
+        }
         private void InteruptClip(Priority priority)
         {
-            IPlayableClipBehaviour clip = _tracks[priority].Peek();
+            var queue = _tracks[(int)priority];
+            if (!queue.TryPeek(out var clip)) return;
+
             switch (clip.InteruptBehaviour)
             {
                 case InteruptBehaviour.Restart:
-                    clip.OnEnd();
+                    SafeExecute(clip.OnEnd);
                     clip.Time = 0;
                     break;
                 case InteruptBehaviour.Skip:
-                    clip.OnEnd();
-                    _tracks[priority].Dequeue();
+                    SafeExecute(clip.OnEnd);
+                    queue.Dequeue();
                     break;
                 case InteruptBehaviour.Continue:
-                    clip.OnPause();
+                    SafeExecute(clip.OnPause);
                     break;
             }
         }
@@ -69,10 +110,13 @@ namespace Lostbyte.Toolkit.Director
             for (int i = Priorities.Length - 1; i >= 0; i--)
             {
                 Priority priority = Priorities[i];
-                if (_tracks.ContainsKey(priority) && _tracks[priority].TryPeek(out var clip))
+                var queue = _tracks[(int)priority];
+
+                if (queue.TryPeek(out var clip))
                 {
-                    if (clip.Time == 0) clip.OnStart();
-                    else clip.OnContinue();
+                    if (clip.Time == 0) SafeExecute(clip.OnStart);
+                    else SafeExecute(clip.OnContinue);
+
                     return priority;
                 }
             }
@@ -82,22 +126,30 @@ namespace Lostbyte.Toolkit.Director
         private void Update()
         {
             if (!IsPlaying) return;
-            IPlayableClipBehaviour clip = _tracks[CurrentPriority].Peek();
-            if (!clip.IsFinished())
+
+            var queue = _tracks[(int)CurrentPriority];
+            if (queue.TryPeek(out var clip))
             {
-                clip.Time += Time.deltaTime;
-                clip.OnUpdate();
-            }
-            else
-            {
-                clip.OnEnd();
-                _tracks[CurrentPriority].Dequeue();
-                CurrentPriority = StartClip();
+                if (!clip.IsFinished())
+                {
+                    clip.Time += Time.deltaTime;
+                    SafeExecute(clip.OnUpdate);
+                }
+                else
+                {
+                    SafeExecute(clip.OnEnd);
+                    queue.Dequeue();
+                    CurrentPriority = StartClip();
+                }
             }
         }
+
         private void OnDestroy()
         {
-            if(IsPlaying)_tracks[CurrentPriority].Peek().OnEnd();
+            if (IsPlaying && _tracks[(int)CurrentPriority].TryPeek(out var clip))
+            {
+                clip.OnEnd();
+            }
         }
     }
     public enum Priority : int { Low, Default, Important, Vital }

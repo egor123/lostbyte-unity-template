@@ -5,6 +5,7 @@ using Lostbyte.Toolkit.Common;
 using Lostbyte.Toolkit.CustomEditor;
 using Lostbyte.Toolkit.FactSystem.Persistance;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Lostbyte.Toolkit.FactSystem
 {
@@ -17,7 +18,11 @@ namespace Lostbyte.Toolkit.FactSystem
         [field: SerializeField] public bool IsSerializable { get; internal set; }
         [field: SerializeField, TextArea] public string Description { get; internal set; }
         [SerializeField, ShowIf(nameof(IsSerializable))] private SaveSystem m_save;
+        [SerializeField] private Condition m_preCondition;
+        public bool PreConditionIsMet => (_parent == null || _parent.PreConditionIsMet) && (m_preCondition?.IsMet ?? true);
+        [FormerlySerializedAs("Children")]
         [SerializeField] private List<KeyContainer> m_children = new();
+        internal KeyContainer _parent;
         private List<KeyContainer> _children;
         public List<KeyContainer> Children
         {
@@ -61,8 +66,11 @@ namespace Lostbyte.Toolkit.FactSystem
         private readonly Dictionary<FactDefinition, IFactWrapper> _factStorage = new();
         private readonly Dictionary<EventDefinition, IEventWrapper> _eventStorage = new();
 
-        internal void ClearStorages()
+        public void DeleteData()
         {
+            m_save?.Delete();
+            _store.SetStore(new());
+
             foreach (var reg in FactRegistrations)
                 foreach (var reaction in reg.Reactions)
                     reaction?.Dispose();
@@ -73,7 +81,7 @@ namespace Lostbyte.Toolkit.FactSystem
 
             _factStorage.Clear();
             _eventStorage.Clear();
-            m_children.ForEach(k => k.ClearStorages());
+            m_children.ForEach(k => k.DeleteData());
         }
 
         private bool UseSaveSystem => IsSerializable && m_save.Enabled;
@@ -87,9 +95,10 @@ namespace Lostbyte.Toolkit.FactSystem
         }
 
         private readonly Store _store = new();
-
+        private bool _isLoading = false;
         public void Load(object file = null, bool forceReadFile = false)
         {
+            _isLoading = true;
             if (UseSaveSystem && (forceReadFile || m_save.AutoLoad)) _store.SetStore(m_save.Read<Dictionary<string, object>>());
             else _store.SetStore(file as Dictionary<string, object> ?? new());
 
@@ -98,8 +107,9 @@ namespace Lostbyte.Toolkit.FactSystem
             foreach (var reg in FactRegistrations)
             {
                 if (reg.Fact == null) continue;
-                foreach (var reaction in reg.Reactions)
-                    reaction?.Dispose();
+                if (reg.Reactions != null)
+                    foreach (var reaction in reg.Reactions)
+                        reaction?.Dispose();
 
                 if (_factStorage.TryGetValue(reg.Fact, out var wrapper) == false)
                 {
@@ -122,9 +132,9 @@ namespace Lostbyte.Toolkit.FactSystem
             foreach (var reg in EventRegistrations)
             {
                 if (reg.Event == null) continue;
-
-                foreach (var reaction in reg.Reactions)
-                    reaction?.Dispose();
+                if (reg.Reactions != null)
+                    foreach (var reaction in reg.Reactions)
+                        reaction?.Dispose();
 
                 if (_eventStorage.TryGetValue(reg.Event, out var wrapper) == false)
                 {
@@ -135,28 +145,36 @@ namespace Lostbyte.Toolkit.FactSystem
 
             foreach (var key in Children)
             {
+                key._parent = this;
                 key.Load(_store.GetData<Dictionary<string, object>>(key.Guid, null));
             }
-
-            if (UseSaveSystem && (forceReadFile || m_save.AutoLoad)) _store.OnLoad();
+            bool load = UseSaveSystem && (forceReadFile || m_save.AutoLoad);
+            if (load) _store.OnLoad();
 
             foreach (var reg in FactRegistrations)
             {
-                foreach (var reaction in reg.Reactions)
+                if (reg.Reactions != null)
                 {
-                    reaction?.Initialize(this, reg.Fact);
-                    reaction?.OnLoad(_store.GetData<object>($"{reg.Fact.Guid}_{reaction.Guid}", null));
+                    foreach (var reaction in reg.Reactions)
+                    {
+                        reaction?.Initialize(this, reg.Fact);
+                        if (file != null || load) reaction?.OnLoad(_store.GetData<object>($"{reg.Fact.Guid}_{reaction.Guid}", null));
+                    }
                 }
             }
 
             foreach (var reg in EventRegistrations)
             {
-                foreach (var reaction in reg.Reactions)
+                if (reg.Reactions != null)
                 {
-                    reaction?.Initialize(this, reg.Event);
-                    reaction?.OnLoad(_store.GetData<object>($"{reg.Event.Guid}_{reaction.Guid}", null));
+                    foreach (var reaction in reg.Reactions)
+                    {
+                        reaction?.Initialize(this, reg.Event);
+                        if (file != null || load) reaction?.OnLoad(_store.GetData<object>($"{reg.Event.Guid}_{reaction.Guid}", null));
+                    }
                 }
             }
+            _isLoading = false;
         }
 
         public object Save()
@@ -178,7 +196,6 @@ namespace Lostbyte.Toolkit.FactSystem
             {
                 if (reg.Fact == null) continue;
                 if (!_factStorage.TryGetValue(reg.Fact, out var wrapper)) continue;
-
                 bool isSerializable = reg.IsSerializable.GetValueOrDefault(reg.Fact.IsSerializable);
                 if (isSerializable)
                 {
@@ -245,7 +262,7 @@ namespace Lostbyte.Toolkit.FactSystem
 
         private void RaiseChange()
         {
-            if (UseSaveSystem && m_save.SaveOnChange) Save();
+            if (!_isLoading && UseSaveSystem && m_save.SaveOnChange) Save();
             OnChange?.Invoke();
         }
 

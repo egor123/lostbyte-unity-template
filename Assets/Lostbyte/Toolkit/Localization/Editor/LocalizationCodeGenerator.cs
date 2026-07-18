@@ -14,6 +14,7 @@ namespace Lostbyte.Toolkit.Localization.Editor
     {
         public const string FileTemplate =
     @"// AUTO-GENERATED FILE — DO NOT EDIT
+using System.Runtime.CompilerServices;
 using Lostbyte.Toolkit.FactSystem;
 using Lostbyte.Toolkit.Localization;
 
@@ -25,11 +26,14 @@ namespace {NAMESPACE}
         public const string TableTemplate =
     @"    public static class {TABLE_NAME}
     {
+        public const string Key = ""{KEY}"";
 {METHODS}
     }";
 
-        public const string MethodTemplate =
-    @"        public static LocalizedReference<{TYPES}> {METHOD_NAME}({ARGS}) => new(""{TABLE_ID}"", ""{KEY}""{ARG_VALUES});";
+        public const string RefMethodTemplate =
+    @"        [MethodImpl(MethodImplOptions.AggressiveInlining)] public static {TYPES} {METHOD_NAME}({ARGS}) => new(""{TABLE_ID}"", ""{KEY}""{ARG_VALUES});";
+        public const string ValMethodTemplate =
+    @"        [MethodImpl(MethodImplOptions.AggressiveInlining)] public static {TYPE} {METHOD_NAME}({ARGS}) => LocalizationDatabase.GetValue<{TYPE}>(""{TABLE_ID}"", ""{KEY}""{ARG_VALUES});";
 
         private const string Namespace = "Localization";
         private const string ClassName = "Localization";
@@ -74,35 +78,36 @@ namespace {NAMESPACE}
 
         private static string GenerateTable(LocalizationTableSchema schema)
         {
-            var name = $"{ToPascalCase(schema.Id)}Table";
             return TableTemplate
-                .Replace("{TABLE_NAME}", name)
+                .Replace("{TABLE_NAME}", $"{ToPascalCase(schema.Id)}Table")
+                .Replace("{KEY}", schema.Id)
                 .Replace("{METHODS}", string.Join("\n", schema.Keys.SelectMany(k => GenerateMethods(schema.Id, k))));
         }
 
         private static List<string> GenerateMethods(string tableId, LocalizationKey key)
         {
             List<string> methods = new();
+            var name = $"Get{ToPascalCase(key.Id)}Ref";
+            var argDecl = string.Join(", ", key.Args.Select(a => $"{GetLocArgName(a.Type)} {a.Name}"));
+            var argValues = key.Args.Count() > 0 ? ", " + string.Join(", ", key.Args.Select(a => a.Name)) : "";
+            methods.Add(RefMethodTemplate
+                .Replace("{TYPES}", $"LocalizedReference<{string.Join(", ", key.Types.Select(t => GetLocType(t, key.IsArray)))}>")
+                .Replace("{METHOD_NAME}", name)
+                .Replace("{TABLE_ID}", tableId)
+                .Replace("{KEY}", key.Id)
+                .Replace("{ARGS}", argDecl)
+                .Replace("{ARG_VALUES}", argValues));
             foreach (var type in key.Types)
             {
-                switch (type)
-                {
-                    case "string":
-                        var name = $"Get{ToPascalCase(key.Id)}String";
-                        var argDecl = string.Join(", ", key.Args.Select(a => $"{GetLocArgName(a.Type)} {a.Name}"));
-                        var argValues = key.Args.Count() > 0 ? ", " + string.Join(", ", key.Args.Select(a => a.Name)) : "";
-                        methods.Add(MethodTemplate
-                             .Replace("{TYPES}", string.Join(", ", key.Types.Select(t => GetLocType(t, key.IsArray))))
-                             .Replace("{METHOD_NAME}", name)
-                             .Replace("{TABLE_ID}", tableId)
-                             .Replace("{KEY}", key.Id)
-                             .Replace("{ARGS}", argDecl)
-                             .Replace("{ARG_VALUES}", argValues));
-                        break;
-                    default:
-                        Print.MWarn($"Type '{type}' is not yet supported");
-                        break;
-                }
+                name = $"Get{ToPascalCase(key.Id)}{ToPascalCase(type)}";
+                argDecl = string.Join(", ", key.Args.Select(a => $"{a.Type} {a.Name}"));
+                methods.Add(ValMethodTemplate
+                    .Replace("{TYPE}", GetLocType(type, key.IsArray))
+                    .Replace("{METHOD_NAME}", name)
+                    .Replace("{TABLE_ID}", tableId)
+                    .Replace("{KEY}", key.Id)
+                    .Replace("{ARGS}", argDecl)
+                    .Replace("{ARG_VALUES}", argValues));
             }
             return methods;
         }
@@ -125,7 +130,7 @@ namespace {NAMESPACE}
         {
             if (string.IsNullOrEmpty(input)) return "Unnamed";
             return string.Concat(
-                input.Replace("-", "")
+                input.Replace("-", "").Replace(".", "")
                     .Split('_', StringSplitOptions.RemoveEmptyEntries)
                     .Select(s => char.ToUpper(s[0]) + s[1..]));
         }

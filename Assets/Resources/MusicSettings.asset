@@ -60,19 +60,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  <Groups>k__BackingField:
-  - <Name>k__BackingField: 
-    <Clips>k__BackingField: []
-    <TransitionsOut>k__BackingField: []
-    <Volume>k__BackingField: 0
-    <FadeInDuration>k__BackingField: 0
-    <FadeOutDuration>k__BackingField: 0
-    <MinPlayTime>k__BackingField: 0
-    <Condition>k__BackingField:
-      m_rootNode:
-        rid: -2
+  <Groups>k__BackingField: []
   references:
     version: 2
-    RefIds:
-    - rid: -2
-      type: {class: , ns: , asm: }
+    RefIds: []

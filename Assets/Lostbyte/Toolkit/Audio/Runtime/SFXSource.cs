@@ -13,27 +13,29 @@ namespace Lostbyte.Toolkit.Audio
         private Vector3 _localPos;
         private float _timer;
         private Coroutine _corutine;
-        internal void Play(Transform parent, Vector3 position, SFXClip sound, float delay = 0f)
+        internal SFXClip _clip;
+        internal void Play(Transform parent, Vector3 position, SFXClip clip, float delay = 0f)
         {
+            _clip = clip;
             _parent = parent;
             if (_parent != null) _localPos = position;
             else transform.position = position;
             gameObject.SetActive(true);
             m_source.Stop();
-            if (sound.Clips != null && sound.Clips.Count > 0)
+            if (clip.Clips != null && clip.Clips.Count > 0)
             {
                 m_source.loop = false;
-                m_source.clip = sound.Clips[Random.Range(0, sound.Clips.Count)];
-                m_source.volume = Mathf.Clamp(Random.Range(sound.MinVolume, sound.MaxVolume), 0, 1);
-                m_source.pitch = Mathf.Clamp(Random.Range(sound.MinPitch, sound.MaxPitch), -3f, 3f);
-                m_source.spatialBlend = sound.SpatialBlend;
-                m_source.reverbZoneMix = sound.ReverbZoneMix;
-                m_source.panStereo = sound.StereoPan;
-                m_source.dopplerLevel = sound.DopplerLevel;
-                m_source.spread = sound.Spread;
-                m_source.rolloffMode = sound.RolloffMode;
-                m_source.minDistance = sound.MinDistance;
-                m_source.maxDistance = sound.MaxDistance;
+                m_source.clip = clip.Clips[Random.Range(0, clip.Clips.Count)];
+                m_source.volume = Mathf.Clamp(Random.Range(clip.MinVolume, clip.MaxVolume), 0, 1);
+                m_source.pitch = Mathf.Clamp(Random.Range(clip.MinPitch, clip.MaxPitch), -3f, 3f);
+                m_source.spatialBlend = clip.SpatialBlend;
+                m_source.reverbZoneMix = clip.ReverbZoneMix;
+                m_source.panStereo = clip.StereoPan;
+                m_source.dopplerLevel = clip.DopplerLevel;
+                m_source.spread = clip.Spread;
+                m_source.rolloffMode = clip.RolloffMode;
+                m_source.minDistance = clip.MinDistance;
+                m_source.maxDistance = clip.MaxDistance;
 
 
                 m_source.PlayDelayed(delay);

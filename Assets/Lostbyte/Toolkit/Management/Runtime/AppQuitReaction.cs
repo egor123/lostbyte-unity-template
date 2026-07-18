@@ -1,8 +1,7 @@
-using System.Collections;
-using System.Collections.Generic;
 using Lostbyte.Toolkit.Common;
 using Lostbyte.Toolkit.CustomEditor;
 using Lostbyte.Toolkit.FactSystem;
+using UnityEngine;
 
 namespace Lostbyte.Toolkit.Management
 {

@@ -51,6 +51,9 @@ namespace Lostbyte.Toolkit.FactSystem.Editor
 
             void RefreshOverrideField()
             {
+                if (parentProp == null) return;
+                if (parentProp.serializedObject == null) return;
+                if (parentProp.serializedObject.targetObject == null) return;
                 overrideToggle.SetValueWithoutNotify(valueOverrideProp.managedReferenceValue != null);
 
                 fieldContainer.Clear();

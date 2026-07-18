@@ -8,5 +8,5 @@ namespace Lostbyte.Toolkit.TimelineExtensions
     [TrackBindingType(typeof(Object))]
     [TrackClipType(typeof(UniversalClip))]
     [DisplayName("Custom/Universal Track")]
-    public class UniversalTrack : TrackAsset { }
+    public class UniversalTrack : TrackAsset {}
 }

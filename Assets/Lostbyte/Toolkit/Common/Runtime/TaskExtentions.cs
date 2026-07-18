@@ -19,7 +19,7 @@ namespace Lostbyte.Toolkit.Common
                 Print.Exception(e);
             }
         }
-        public static async void Then(this Task task, Action callback)
+        public static async Task Then(this Task task, Action callback)
         {
             try
             {

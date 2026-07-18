@@ -5,7 +5,7 @@ namespace Lostbyte.Toolkit.TimelineExtensions
     [AttributeUsage(AttributeTargets.Class)]
     public class TimelineExtensionAttribute : Attribute
     {
-        public Type BindingType { get; set; } = typeof(UnityEngine.GameObject);
+        public Type BindingType { get; set; } = null;
         public string Name { get; set; } = "Custom Action";
         public string ColorHex { get; set; } = "#FFFFFF";
     }

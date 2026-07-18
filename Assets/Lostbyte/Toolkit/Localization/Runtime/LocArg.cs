@@ -49,6 +49,7 @@ namespace Lostbyte.Toolkit.Localization
         private IFactWrapper<string> _dynamicWrapper;
         public string Value => GetWrapper()?.Value ?? m_staticValue;
         public object RawValue => GetWrapper()?.RawValue ?? m_staticValue;
+        public LocStringArg(char value) => (m_staticValue, _dynamicWrapper, m_isDynamic, m_key, m_fact) = (value.ToString(), null, false, null, null);
         public LocStringArg(string value) => (m_staticValue, _dynamicWrapper, m_isDynamic, m_key, m_fact) = (value, null, false, null, null);
         public LocStringArg(IFactWrapper<string> wrapper) => (m_staticValue, _dynamicWrapper, m_isDynamic, m_key, m_fact) = (default, wrapper, true, null, null);
         public void Subscribe(Action callback) { if (m_isDynamic) GetWrapper().Subscribe(callback); }
@@ -56,6 +57,8 @@ namespace Lostbyte.Toolkit.Localization
         private IFactWrapper<string> GetWrapper() => m_isDynamic ? (_dynamicWrapper ??= m_key.GetWrapper(m_fact)) : null;
 
         public static implicit operator LocStringArg(string value) => new(value);
+        public static implicit operator LocStringArg(char value) => new(value);
+
     }
     [Serializable]
     public struct LocIntArg : ILocArg<int>

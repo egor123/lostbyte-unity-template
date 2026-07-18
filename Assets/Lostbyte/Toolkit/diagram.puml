@@ -1,0 +1,71 @@
+@startuml ""
+!theme plain
+skinparam componentStyle uml2
+' skinparam linetype ortho
+' skinparam nodesep 70
+' skinparam ranksep 80
+skinparam defaultTextAlignment center
+
+title Unity Project Architecture - Core Systems & Gameplay
+
+package "Game Lifecycle & Flow" #EAF2F8 {
+    control "Bootstrapper" as Boot <<Entry Point>>
+    control "Scene Manager" as SceneMgr <<Tree Hierarchy>>
+    
+    package "Scene Objects (MonoBehaviours)" as SceneObjs #FFFFFF {
+        component "Player" as Player
+        component "NPC" as NPC
+        component "Interactables" as Interact
+        component "UI" as UI
+    }
+}
+
+package "Core State & Orchestration" #FEF9E7 {
+    database "Fact System" as FactSys <<Source of Truth & Event Bus>> {
+        [State Container]
+        [Event Bus / Reactions]
+    }
+    
+    control "Director" as Dir <<Event Orchestrator>>
+}
+
+package "Presentation & Media" #FDEDEC {
+    component "Localization System" as LocSys <<Addressables>>
+    component "Audio System" as AudioSys <<SFX Pool & Music>>
+    component "Animation System" as AnimSys <<Visual State>>
+}
+
+database "File System" as Storage <<Persistence>>
+
+' --- Game Lifecycle Flow ---
+Boot --> SceneMgr : " Blocks scene transitions\nuntil init is finished"
+Boot --> LocSys : " Loads initial resources\n(Localization DB)"
+SceneMgr --> SceneObjs : " Instantiates & Loads\n(via configured scenes)"
+
+' --- Core Logic & State Flow ---
+FactSys <--> Storage : " Persists/Loads state\nat runtime"
+
+' Director & Fact System
+Dir --> FactSys : " Reads conditions\nfor branching"
+Dir --> FactSys : " Mutates facts\nto progress state"
+FactSys --> Dir : " Fact change raises Event\n(Triggers Director actions)"
+
+' --- System Configuration Flow (Fact Driven) ---
+FactSys --> SceneMgr : " Configures scene\ntree constraints"
+FactSys --> LocSys : " Triggers locale\nchanges"
+FactSys --> AudioSys : " Schedules music\nConfigures SFX"
+FactSys --> AnimSys : " Configures\nanimations"
+
+' --- Scene Object Interactions (Event Bus) ---
+Player --> FactSys : " Reads / Writes facts\n(Gameplay actions)"
+NPC --> FactSys : " Reads / Writes facts\n(AI state)"
+Interact --> FactSys : " Reads / Writes facts\n(World interaction)"
+
+UI --> FactSys : " Reads facts\n(Initial state)"
+FactSys --> UI : " Event: Update UI\n(Observes changes)"
+
+' --- Media Feedback Loops ---
+AnimSys --> FactSys : " Emits animation events\n(Feedback)"
+AudioSys --> FactSys : " Emits audio events\n(Feedback)"
+
+@enduml

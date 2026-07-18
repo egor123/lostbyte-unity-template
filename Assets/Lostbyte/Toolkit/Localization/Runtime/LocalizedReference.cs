@@ -6,11 +6,13 @@ using UnityEngine.AddressableAssets;
 
 namespace Lostbyte.Toolkit.Localization
 {
+    [Serializable]
     public abstract class LocRef : IDisposable
     {
         [field: SerializeField] public string TableId { get; protected set; }
         [field: SerializeField] public string KeyId { get; protected set; }
         [SerializeField, SerializeReference] protected ILocArg[] m_args;
+        public IReadOnlyCollection<ILocArg> Args => m_args;
         private object[] _cachedArgs;
         protected bool _isDynamicInitialized;
         protected int _subscriberCount;
@@ -130,25 +132,24 @@ namespace Lostbyte.Toolkit.Localization
     [Serializable]
     public class LocalizedReference<T1> : LocRef
     {
-        private T1 _cached1; private Action<T1> _onChanged1;
-        public T1 Value1 => _isDynamicInitialized ? _cached1 : LocalizationDatabase.GetValue<T1>(TableId, KeyId, GetArgs());
+        private T1 _cached; private Action<T1> _onChanged;
+        public T1 Value => _isDynamicInitialized ? _cached : LocalizationDatabase.GetValue<T1>(TableId, KeyId, GetArgs());
         public LocalizedReference(string tableId, string keyId, params ILocArg[] args) : base(tableId, keyId, args) { }
 
-        public T1 Value => _isDynamicInitialized ? _cached1 : LocalizationDatabase.GetValue<T1>(TableId, KeyId, GetArgs());
 
 
-        public void Subscribe(Action<T1> cb) => Bind(ref _onChanged1, cb, _cached1);
-        public void Unsubscribe(Action<T1> cb) => Unbind(ref _onChanged1, cb);
+        public void Subscribe(Action<T1> cb) => Bind(ref _onChanged, cb, _cached);
+        public void Unsubscribe(Action<T1> cb) => Unbind(ref _onChanged, cb);
 
         protected override void ExecuteRefresh()
         {
             var args = GetArgs();
-            LocalizationDatabase.GetValueAsync<T1>(TableId, KeyId, args).Then(val => _onChanged1?.Invoke(_cached1 = val));
+            LocalizationDatabase.GetValueAsync<T1>(TableId, KeyId, args).Then(val => _onChanged?.Invoke(_cached = val));
         }
         public override void Dispose()
         {
-            ReleaseCachedAsset(ref _cached1);
-            _onChanged1 = null;
+            ReleaseCachedAsset(ref _cached);
+            _onChanged = null;
             base.Dispose();
         }
     }

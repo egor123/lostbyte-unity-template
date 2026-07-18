@@ -1,0 +1,77 @@
+@startuml ""
+!theme plain
+skinparam componentStyle uml2
+skinparam linetype ortho
+skinparam nodesep 70
+skinparam ranksep 80
+skinparam defaultTextAlignment center
+
+title Hardwired - Scene, OS & Network Architecture
+
+'========================
+' Game Management Layer
+'========================
+package "Core Game Management (Core Scene)" #EAF2F8 {
+    control "Bootstrapper\n& Fact System" as CoreSys
+    control "Scene Manager" as SceneMgr
+}
+
+'========================
+' Environment Layer
+'========================
+package "Environment (Common Game Scene)" #E8F8F5 {
+    component "Network Manager\n<<The 'Internet' Node>>" as NetManager {
+        [Scene IPs & Timers]
+        [Global Router]
+    }
+}
+
+'========================
+' Active Player Room
+'========================
+package "Room (Main Scene)" #FDEDEC {
+    component "Player Input" as Input
+    component "Monitor UI\n(IOutput)" as Monitor
+    
+    package "Player PC (NetworkNode)" #FFFFFF {
+        control "Operating System" as LocalOS
+        component "Cmd Process" as LocalCmd
+        component "Background Processes\n(PID: X)" as LocalProcs
+        component "Components\n(CCTV, Drives)" as LocalHW
+    }
+}
+
+'========================
+' Remote Servers
+'========================
+package "Additional Scenes (Locations / Servers)" #FEF9E7 {
+    package "Target Server (NetworkNode)" #FFFFFF {
+        control "Operating System" as RemoteOS
+        component "Server Processes\n(SSH, Ping)" as RemoteProcs
+        component "Server Components\n(CCTV, Locks)" as RemoteHW
+    }
+}
+
+' --- Scene & Hierarchy Flow ---
+CoreSys --> SceneMgr : " Dictates hierarchy"
+SceneMgr --> NetManager : " Loads Environment"
+SceneMgr --> Input : " Loads Room"
+
+' --- OS & Input Flow ---
+Input --> LocalCmd : " Sends Keystrokes\n(IInput)"
+LocalCmd --> Monitor : " Outputs Text\n(IOutput)"
+LocalCmd --> LocalOS : " Parses & Executes\nCommands"
+LocalOS --> LocalCmd : " Manages Lifecycle"
+LocalOS --> LocalProcs : " Spawns / Kills"
+LocalOS <--> LocalHW : " Controlls Hardware"
+
+' --- Networking & Scene Loading Flow ---
+LocalOS <--> NetManager : " Routes Packets\n(via Router/Gateway)"
+NetManager --> SceneMgr : " IP Match Found:\nRequest Scene Load/Unload"
+NetManager <--> RemoteOS : " Routes Packets\n(Once Scene is Active)"
+
+' --- Remote OS Flow ---
+RemoteOS --> RemoteProcs : " Manages lifecycle"
+RemoteOS <--> RemoteHW : " Controls Hardware"
+
+@enduml

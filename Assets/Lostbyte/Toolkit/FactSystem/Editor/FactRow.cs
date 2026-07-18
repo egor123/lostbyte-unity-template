@@ -203,7 +203,10 @@ namespace Lostbyte.Toolkit.FactSystem.Editor
                     wrapper.Subscribe(UpdateCurentValueField);
                 }
             }
-            _valueField = FieldFactory.CreateFactValueField(Fact.DefaultValueRaw.GetType(), "", initialValue, OnValueFieldValueChanged);
+            var type = Fact.GenericType;
+            if (Fact is EnumFactDefinition eFact) type = eFact.EnumType ?? typeof(Enum);
+
+            _valueField = FieldFactory.CreateFactValueField(type, "", initialValue, OnValueFieldValueChanged);
             wrapperField.Add(_valueField.ClearPaddingAndMargin());
 
             if (!Application.isPlaying && Key != null)
@@ -337,7 +340,8 @@ namespace Lostbyte.Toolkit.FactSystem.Editor
 
             _reactionIndicator = new Button()
                 .SetEnabledState(false).MakeRow().SetAlignItems(Align.Center).SetJustifyContent(Justify.Center)
-                .SetPadding(2, 4).SetMargin(0).SetTooltip("Right-click to manage reactions");
+                .SetPadding(2, 4).SetMargin(0).SetTooltip("Right-click to manage reactions")
+                .SetMinSize(30, 20);
 
             var icon = new Image { image = EditorGUIUtility.IconContent("d_EventSystem Icon").image }.SetSize(14, 14).SetMargin(0, 2, 0, 0);
             _reactionCountLabel = new Label("0").SetFontStyle(FontStyle.Normal);
@@ -345,56 +349,8 @@ namespace Lostbyte.Toolkit.FactSystem.Editor
             _reactionIndicator.Add(icon);
             _reactionIndicator.Add(_reactionCountLabel);
 
-            _reactionIndicator.AddContextualMenu(evt =>
-            {
-                var reactionTypes = TypeCache.GetTypesDerivedFrom<FactReaction>().Where(t => !t.IsAbstract && !t.IsGenericTypeDefinition);
-
-                foreach (var type in reactionTypes)
-                {
-                    var attr = (SupportedFactTypesAttribute)Attribute.GetCustomAttribute(type, typeof(SupportedFactTypesAttribute));
-                    if (attr == null || attr.IsTypeSupported(Fact.GenericType))
-                    {
-                        string cleanName = ObjectNames.NicifyVariableName(type.Name.Replace("Reaction", ""));
-                        evt.menu.AppendAction($"Add Reaction/{cleanName}", (e) => AddNewReactionOfType(type));
-                    }
-                }
-
-                int idx = GetRegistrationIndex();
-                if (idx >= 0 && Key.FactRegistrations[idx].Reactions?.Count > 0)
-                {
-                    evt.menu.AppendSeparator("");
-                    evt.menu.AppendAction("Clear All Reactions", (e) =>
-                    {
-                        var reg = Key.FactRegistrations[idx];
-                        reg.Reactions.Clear();
-                        Key.FactRegistrations[idx] = reg;
-                        ApplyChanges();
-                    });
-                }
-            });
-
-            AddColumnField(_reactionIndicator, 0.1f);
+            AddColumnField(_reactionIndicator, 0f);
         }
-
-        private void AddNewReactionOfType(Type type)
-        {
-            var newReaction = (FactReaction)Activator.CreateInstance(type);
-            int index = GetRegistrationIndex();
-
-            if (index < 0)
-            {
-                Key.FactRegistrations.Add(new FactRegistration { Fact = Fact, Reactions = new() });
-                index = Key.FactRegistrations.Count - 1;
-            }
-
-            var reg = Key.FactRegistrations[index];
-            reg.Reactions ??= new();
-            reg.Reactions.Add(newReaction);
-            Key.FactRegistrations[index] = reg;
-
-            ApplyChanges();
-        }
-
         private void UpdateIndicatorUI(int count)
         {
             if (_reactionCountLabel == null || _reactionIndicator == null) return;

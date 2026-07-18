@@ -20,7 +20,6 @@ namespace Lostbyte.Toolkit.Localization
         public const string k_addressableAssetGroupName = "Localized Data";
 
         [SerializeField, Required] private LocalizationDatabase m_database;
-        [SerializeField] private FactWrapper<string> m_localeFact;
         [SerializeField] private string[] m_locales = { };
 
         public static ReadOnlySpan<string> Locales => Instance.m_locales;
@@ -44,7 +43,6 @@ namespace Lostbyte.Toolkit.Localization
         private static void ClearState()
         {
             if (_instance == null) return;
-            _instance.m_localeFact.Unsubscribe(_instance.m_database.ChangeLocale);
             _instance = null;
         }
 #endif
@@ -65,7 +63,6 @@ namespace Lostbyte.Toolkit.Localization
                 db.m_targetLocale = null;
                 db.CurrentLocale = null;
 
-                _instance.m_localeFact.Subscribe(db.ChangeLocale);
                 if (Application.isPlaying)
                 {
                     Bootstrapper.RegisterTask(new SetupLocalesTask());
@@ -117,10 +114,10 @@ namespace Lostbyte.Toolkit.Localization
             {
 #if UNITY_EDITOR
                 Addressables.InitializeAsync().WaitForCompletion();
-                Database.ChangeLocaleSync(_instance.m_localeFact.Value);
+                Database.ChangeLocaleSync(Database.m_targetLocale);
                 return BootstrapResult.Completed;
 #else
-                return Database.ChangeLocaleAsync(_instance.m_localeFact.Value);
+                return Database.ChangeLocaleAsync(Database.m_targetLocale);
 #endif
             }
         }

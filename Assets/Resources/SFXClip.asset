@@ -13,12 +13,12 @@ MonoBehaviour:
   m_Name: SFXClip
   m_EditorClassIdentifier: 
   <Clips>k__BackingField: []
-  <MinVolume>k__BackingField: 0.3
-  <MaxVolume>k__BackingField: 0.91
+  <MinVolume>k__BackingField: 0.25
+  <MaxVolume>k__BackingField: 0.62
   <MinPitch>k__BackingField: 1
   <MaxPitch>k__BackingField: 2.15
   <StereoPan>k__BackingField: -0.457
-  <SpatialBlend>k__BackingField: 0
+  <SpatialBlend>k__BackingField: 0.154
   <ReverbZoneMix>k__BackingField: 0
   <DopplerLevel>k__BackingField: 1
   <Spread>k__BackingField: 0

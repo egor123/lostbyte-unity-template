@@ -7,50 +7,58 @@ namespace GameFacts
     public static class Keys
     {
         private static KeyContainer _Settings = null;
-        public static KeyContainer Settings = _Settings != null ? _Settings : _Settings = FactDatabase.Instance.GetKey("settings");
+        public static KeyContainer Settings => _Settings != null ? _Settings : _Settings = FactDatabase.Instance.GetKey("settings");
         private static KeyContainer _Env = null;
-        public static KeyContainer Env = _Env != null ? _Env : _Env = FactDatabase.Instance.GetKey("env");
+        public static KeyContainer Env => _Env != null ? _Env : _Env = FactDatabase.Instance.GetKey("env");
         private static KeyContainer _Game = null;
-        public static KeyContainer Game = _Game != null ? _Game : _Game = FactDatabase.Instance.GetKey("game");
+        public static KeyContainer Game => _Game != null ? _Game : _Game = FactDatabase.Instance.GetKey("game");
         private static KeyContainer _Player = null;
-        public static KeyContainer Player = _Player != null ? _Player : _Player = FactDatabase.Instance.GetKey("player");
+        public static KeyContainer Player => _Player != null ? _Player : _Player = FactDatabase.Instance.GetKey("player");
     }
     //------------- Fact Refs -------------
     public static class Facts
     {
         private static FactDefinition<System.Enum> _GameState = null;
-        public static FactDefinition<System.Enum> GameState = _GameState != null ? _GameState : _GameState = (FactDefinition<System.Enum>) FactDatabase.Instance.GetFact("game_state");
+        public static FactDefinition<System.Enum> GameState => _GameState != null ? _GameState : _GameState = (FactDefinition<System.Enum>) FactDatabase.Instance.GetFact("game_state");
         private static FactDefinition<System.Single> _MainVolume = null;
-        public static FactDefinition<System.Single> MainVolume = _MainVolume != null ? _MainVolume : _MainVolume = (FactDefinition<System.Single>) FactDatabase.Instance.GetFact("main_volume");
+        public static FactDefinition<System.Single> MainVolume => _MainVolume != null ? _MainVolume : _MainVolume = (FactDefinition<System.Single>) FactDatabase.Instance.GetFact("main_volume");
         private static FactDefinition<System.Single> _MusicVolume = null;
-        public static FactDefinition<System.Single> MusicVolume = _MusicVolume != null ? _MusicVolume : _MusicVolume = (FactDefinition<System.Single>) FactDatabase.Instance.GetFact("music_voulme");
+        public static FactDefinition<System.Single> MusicVolume => _MusicVolume != null ? _MusicVolume : _MusicVolume = (FactDefinition<System.Single>) FactDatabase.Instance.GetFact("music_voulme");
         private static FactDefinition<System.Single> _SfxVolume = null;
-        public static FactDefinition<System.Single> SfxVolume = _SfxVolume != null ? _SfxVolume : _SfxVolume = (FactDefinition<System.Single>) FactDatabase.Instance.GetFact("sfx_volume");
+        public static FactDefinition<System.Single> SfxVolume => _SfxVolume != null ? _SfxVolume : _SfxVolume = (FactDefinition<System.Single>) FactDatabase.Instance.GetFact("sfx_volume");
         private static FactDefinition<System.Single> _Sensetivity = null;
-        public static FactDefinition<System.Single> Sensetivity = _Sensetivity != null ? _Sensetivity : _Sensetivity = (FactDefinition<System.Single>) FactDatabase.Instance.GetFact("sensetivity");
+        public static FactDefinition<System.Single> Sensetivity => _Sensetivity != null ? _Sensetivity : _Sensetivity = (FactDefinition<System.Single>) FactDatabase.Instance.GetFact("sensetivity");
         private static FactDefinition<System.Boolean> _CursorLocked = null;
-        public static FactDefinition<System.Boolean> CursorLocked = _CursorLocked != null ? _CursorLocked : _CursorLocked = (FactDefinition<System.Boolean>) FactDatabase.Instance.GetFact("cursor_locked");
+        public static FactDefinition<System.Boolean> CursorLocked => _CursorLocked != null ? _CursorLocked : _CursorLocked = (FactDefinition<System.Boolean>) FactDatabase.Instance.GetFact("cursor_locked");
         private static FactDefinition<System.Boolean> _GamePaused = null;
-        public static FactDefinition<System.Boolean> GamePaused = _GamePaused != null ? _GamePaused : _GamePaused = (FactDefinition<System.Boolean>) FactDatabase.Instance.GetFact("game_paused");
+        public static FactDefinition<System.Boolean> GamePaused => _GamePaused != null ? _GamePaused : _GamePaused = (FactDefinition<System.Boolean>) FactDatabase.Instance.GetFact("game_paused");
         private static FactDefinition<System.String> _SaveFile = null;
-        public static FactDefinition<System.String> SaveFile = _SaveFile != null ? _SaveFile : _SaveFile = (FactDefinition<System.String>) FactDatabase.Instance.GetFact("save_file");
+        public static FactDefinition<System.String> SaveFile => _SaveFile != null ? _SaveFile : _SaveFile = (FactDefinition<System.String>) FactDatabase.Instance.GetFact("save_file");
         private static FactDefinition<System.String> _Locale = null;
-        public static FactDefinition<System.String> Locale = _Locale != null ? _Locale : _Locale = (FactDefinition<System.String>) FactDatabase.Instance.GetFact("locale");
+        public static FactDefinition<System.String> Locale => _Locale != null ? _Locale : _Locale = (FactDefinition<System.String>) FactDatabase.Instance.GetFact("locale");
         private static FactDefinition<System.Enum> _Level = null;
-        public static FactDefinition<System.Enum> Level = _Level != null ? _Level : _Level = (FactDefinition<System.Enum>) FactDatabase.Instance.GetFact("level");
+        public static FactDefinition<System.Enum> Level => _Level != null ? _Level : _Level = (FactDefinition<System.Enum>) FactDatabase.Instance.GetFact("level");
         private static FactDefinition<System.Single> _Hp = null;
-        public static FactDefinition<System.Single> Hp = _Hp != null ? _Hp : _Hp = (FactDefinition<System.Single>) FactDatabase.Instance.GetFact("hp");
+        public static FactDefinition<System.Single> Hp => _Hp != null ? _Hp : _Hp = (FactDefinition<System.Single>) FactDatabase.Instance.GetFact("hp");
         private static FactDefinition<System.Boolean> _IsAlive = null;
-        public static FactDefinition<System.Boolean> IsAlive = _IsAlive != null ? _IsAlive : _IsAlive = (FactDefinition<System.Boolean>) FactDatabase.Instance.GetFact("is_alive");
+        public static FactDefinition<System.Boolean> IsAlive => _IsAlive != null ? _IsAlive : _IsAlive = (FactDefinition<System.Boolean>) FactDatabase.Instance.GetFact("is_alive");
+        private static FactDefinition<System.Enum> _Test = null;
+        public static FactDefinition<System.Enum> Test => _Test != null ? _Test : _Test = (FactDefinition<System.Enum>) FactDatabase.Instance.GetFact("test");
+        private static FactDefinition<System.Enum> _Test2 = null;
+        public static FactDefinition<System.Enum> Test2 => _Test2 != null ? _Test2 : _Test2 = (FactDefinition<System.Enum>) FactDatabase.Instance.GetFact("test2");
     }
     //------------- Events -------------
     public static class Events
     {
+        private static EventDefinition _OnAppQuit = null;
+        public static EventDefinition OnAppQuit => _OnAppQuit != null ? _OnAppQuit : _OnAppQuit = (EventDefinition) FactDatabase.Instance.GetEvent("on_app_quit");
     }
     //------------- Enums -------------
     public static class Enums
     {
         public enum GameState { Menu, Game }
         public enum Level { Level1, Level2 }
+        public enum Test { A, B, C }
+        public enum Test2 { B, C }
     }
 }

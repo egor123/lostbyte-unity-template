@@ -13,8 +13,6 @@ MonoBehaviour:
   m_Name: LocalizationSettings
   m_EditorClassIdentifier: 
   m_database: {fileID: 11400000, guid: 316bea9ba79e46844932be2255f7aff9, type: 2}
-  m_localeFact:
-    <Key>k__BackingField: {fileID: 6628457045445381566, guid: 6c08054baf9457644b18f9b93ea7fec1, type: 2}
-    <Fact>k__BackingField: {fileID: 8265675034329682347, guid: 6c08054baf9457644b18f9b93ea7fec1, type: 2}
   m_locales:
   - en-US
+  - ru-RU

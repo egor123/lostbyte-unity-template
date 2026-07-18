@@ -25,7 +25,6 @@ namespace Lostbyte.Toolkit.Scenes
         public List<SceneCondition> Scenes = new();
 
         private Enum _currentScene;
-        private string _constraintId;
 
         public override FactReaction Copy() => new SceneLoadReaction()
         {
@@ -36,7 +35,6 @@ namespace Lostbyte.Toolkit.Scenes
 
         public override void Initialize(KeyContainer key, FactDefinition fact)
         {
-            _constraintId = Guid.NewGuid().ToString();
             bool adoptedEditorScenes = false;
             _currentScene = null;
 #if UNITY_EDITOR
@@ -48,7 +46,7 @@ namespace Lostbyte.Toolkit.Scenes
                 {
                     if (sceneData.Scene.ScenePath == activeScene.path && activeScene.isLoaded)
                     {
-                        if (SceneManager.TryRegisterEditorConstraint(_constraintId, ParentScene, sceneData.Scene, activeScene, UseLoadingScreen))
+                        if (SceneManager.TryRegisterEditorConstraint(Guid, ParentScene, sceneData.Scene, activeScene, UseLoadingScreen))
                         {
                             _currentScene = sceneData.Condition;
                             key.GetWrapper(fact).RawValue = sceneData.Condition;
@@ -76,7 +74,7 @@ namespace Lostbyte.Toolkit.Scenes
                 .Select(s => s.Scene)
                 .ToList();
 
-            SceneManager.UpdateConstraint(_constraintId, ParentScene, desiredScenes, UseLoadingScreen);
+            SceneManager.UpdateConstraint(Guid, ParentScene, desiredScenes, UseLoadingScreen);
         }
     }
 }

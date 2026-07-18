@@ -1,31 +1,31 @@
 using System;
-using System.Numerics;
 using Lostbyte.Toolkit.FactSystem.Nodes;
+using UnityEngine;
 
 namespace Lostbyte.Toolkit.FactSystem
 {
     [Serializable]
-    public class NumericEquation : FactEvaluator<float, IValueNode<float>>
+    public class NumericEquation : FactEvaluator<float, INumericNode>
     {
-        public NumericEquation(IValueNode<float> rootNode = null, IKeyContainer defaultKey = null) : base(rootNode, defaultKey) { }
+        public NumericEquation(INumericNode rootNode = null, IKeyContainer defaultKey = null) : base(rootNode, defaultKey) { }
         public NumericEquation Copy() => new(m_rootNode, _defaultKey);
     }
     [Serializable]
-    public class StringEquation : FactEvaluator<string, IValueNode<string>>
+    public class StringEquation : FactEvaluator<string, IStringNode>
     {
-        public StringEquation(IValueNode<string> rootNode = null, IKeyContainer defaultKey = null) : base(rootNode, defaultKey) { }
+        public StringEquation(IStringNode rootNode = null, IKeyContainer defaultKey = null) : base(rootNode, defaultKey) { }
         public StringEquation Copy() => new(m_rootNode, _defaultKey);
     }
     [Serializable]
-    public class VectorEquation : FactEvaluator<Vector4, IValueNode<Vector4>>
+    public class VectorEquation : FactEvaluator<Vector4, IVectorNode>
     {
-        public VectorEquation(IValueNode<Vector4> rootNode = null, IKeyContainer defaultKey = null) : base(rootNode, defaultKey) { }
+        public VectorEquation(IVectorNode rootNode = null, IKeyContainer defaultKey = null) : base(rootNode, defaultKey) { }
         public VectorEquation Copy() => new(m_rootNode, _defaultKey);
     }
     [Serializable]
-    public class BoolEquation : FactEvaluator<bool, IValueNode<bool>>
+    public class BoolEquation : FactEvaluator<bool, IBoolNode>
     {
-        public BoolEquation(IValueNode<bool> rootNode = null, IKeyContainer defaultKey = null) : base(rootNode, defaultKey) { }
+        public BoolEquation(IBoolNode rootNode = null, IKeyContainer defaultKey = null) : base(rootNode, defaultKey) { }
         public BoolEquation Copy() => new(m_rootNode, _defaultKey);
     }
 }

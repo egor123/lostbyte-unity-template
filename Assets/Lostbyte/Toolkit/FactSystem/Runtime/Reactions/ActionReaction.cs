@@ -71,9 +71,13 @@ namespace Lostbyte.Toolkit.FactSystem
         public override void OnLoad(object data)
         {
             if (data is int count) InvocationCount = count;
+            OnValueChanged(Wrapper.RawValue, Wrapper.RawValue);
         }
 
-        public override object OnSave() => InvocationCount;
+        public override object OnSave()
+        {
+            return InvocationCount > 0 ? InvocationCount : null;
+        }
 
         protected override void OnValueChanged(object oldValue, object newValue)
         {

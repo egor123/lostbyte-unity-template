@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Reflection;
 using UnityEditor;
 using UnityEditor.Experimental.GraphView;
@@ -24,7 +23,7 @@ namespace Lostbyte.Toolkit.CustomEditor.Editor.Graphs
         public TGraph Graph { get; protected set; }
         public TAsset Asset { get; protected set; }
         public TextField TitleField;
-
+        public string Name => TitleField.value;
         public CustomGraphNode(TAsset asset, TGraph graph, TNodeBase node)
         {
             (Asset, Graph, Node, userData) = (asset, graph, node, node);
@@ -44,6 +43,9 @@ namespace Lostbyte.Toolkit.CustomEditor.Editor.Graphs
 
             UpdateStyles();
             GenerateUI();
+
+            RefreshExpandedState();
+            RefreshPorts();
         }
 
         public virtual void UpdateStyles()
@@ -64,9 +66,6 @@ namespace Lostbyte.Toolkit.CustomEditor.Editor.Graphs
                 try { ProcessProperty(prop.Copy(), contentContainer, outputContainer, inputContainer); }
                 catch (Exception e) { Print.MError(e); }
             }
-
-            RefreshExpandedState();
-            RefreshPorts();
         }
 
         private void ProcessProperty(SerializedProperty prop, VisualElement fields, VisualElement outPorts, VisualElement inPorts)
@@ -132,12 +131,19 @@ namespace Lostbyte.Toolkit.CustomEditor.Editor.Graphs
                         var child = elementProp.Copy();
                         var end = elementProp.GetEndProperty();
                         bool enter = true;
-
-                        while (child.NextVisible(enter) && !SerializedProperty.EqualContents(child, end))
+                        if (child.GetTargetType().GetCustomAttribute<GraphElementAttribute>() != null)
                         {
-                            enter = false;
                             try { ProcessProperty(child.Copy(), fields, ports, null); }
                             catch (Exception e) { Print.MError(e); }
+                        }
+                        else
+                        {
+                            while (child.NextVisible(enter) && !SerializedProperty.EqualContents(child, end))
+                            {
+                                enter = false;
+                                try { ProcessProperty(child.Copy(), fields, ports, null); }
+                                catch (Exception e) { Print.MError(e); }
+                            }
                         }
                     }
                     else

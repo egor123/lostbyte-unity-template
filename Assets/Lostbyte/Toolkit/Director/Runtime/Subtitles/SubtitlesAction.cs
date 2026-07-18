@@ -12,19 +12,25 @@ namespace Lostbyte.Toolkit.Director
         private KeyContainer _actor;
         public override void OnStart(Playable playable, UnityEngine.Object boundObject)
         {
-            SubtitlesManager.Instance.Clear();
+            var sm = SubtitlesManager.Instance;
+            if (sm == null) return;
+            sm.Clear();
             if (boundObject != null) _actor = boundObject as KeyContainer;
         }
 
         public override void ProcessFrame(Playable playable, FrameData info, UnityEngine.Object boundObject)
         {
+            var sm = SubtitlesManager.Instance;
+            if (sm == null) return;
             if (_actor == null) return;
-            SubtitlesManager.Instance.SetFrame(_actor, String, (float)playable.GetTime(), (float)playable.GetDuration());
+            sm.SetFrame(_actor, String, (float)playable.GetTime(), (float)playable.GetDuration());
         }
 
         public override void OnStop(Playable playable, UnityEngine.Object boundObject)
         {
-            SubtitlesManager.Instance.Clear();
+            var sm = SubtitlesManager.Instance;
+            if (sm == null) return;
+            sm.Clear();
         }
 
     }

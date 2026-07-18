@@ -24,13 +24,13 @@ MonoBehaviour:
     <MaxPitch>k__BackingField: 1.45
     <Trigger>k__BackingField:
       rid: -2
-  - <Name>k__BackingField: Test 2
+  - <Name>k__BackingField: TestName
     <Clips>k__BackingField: []
     <Priority>k__BackingField: 0
     <StopActive>k__BackingField: 0
     <AllowMultiple>k__BackingField: 0
-    <MinVolume>k__BackingField: 0.39
-    <MaxVolume>k__BackingField: 0.82
+    <MinVolume>k__BackingField: 0.5
+    <MaxVolume>k__BackingField: 0.93
     <MinPitch>k__BackingField: 0
     <MaxPitch>k__BackingField: 0
     <Trigger>k__BackingField:

@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a5b7e347406f6d141b47d5355689c765, type: 3}
+  m_Name: SFXClip 1
+  m_EditorClassIdentifier: 
+  <Clips>k__BackingField: []
+  <MinVolume>k__BackingField: 0
+  <MaxVolume>k__BackingField: 0.61
+  <MinPitch>k__BackingField: -1.35
+  <MaxPitch>k__BackingField: -0.2
+  <StereoPan>k__BackingField: -0.457
+  <SpatialBlend>k__BackingField: 0
+  <ReverbZoneMix>k__BackingField: 0
+  <DopplerLevel>k__BackingField: 1
+  <Spread>k__BackingField: 0
+  <RolloffMode>k__BackingField: 0
+  <MinDistance>k__BackingField: 1
+  <MaxDistance>k__BackingField: 500

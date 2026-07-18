@@ -15,7 +15,8 @@ namespace Lostbyte.Toolkit.FactSystem.Persistance
         [field: SerializeField] public bool AutoLoad { get; private set; } = false;
         [field: SerializeField] public bool SaveOnChange { get; private set; } = false;
 
-        internal void Write(object data) => m_storage.Write(m_formatter, data);
-        internal T Read<T>() => m_storage.Read<T>(m_formatter);
+        public void Write(object data) => m_storage.Write(m_formatter, data);
+        public T Read<T>() => m_storage.Read<T>(m_formatter);
+        public void Delete() => m_storage?.Delete();
     }
 }

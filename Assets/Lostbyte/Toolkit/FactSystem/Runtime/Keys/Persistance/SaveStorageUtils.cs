@@ -44,11 +44,20 @@ namespace Lostbyte.Toolkit.FactSystem.Persistance
         public static T Read<T>(ISaveFormatter formatter, string savePath, string tempPath)
         {
             if (!File.Exists(savePath) && !File.Exists(tempPath))
+            {
+                Print.MLog($"No saved files found: {savePath}");
                 return default;
+            }
             if (TryDeserializeFile(savePath, formatter, out T data))
+            {
+                Print.MLog($"Successfully loaded: {savePath}");
                 return data;
+            }
             if (TryDeserializeFile(tempPath, formatter, out data))
+            {
+                Print.MWarn($"Successfully recovered file: {tempPath}");
                 return data;
+            }
             return default;
         }
 

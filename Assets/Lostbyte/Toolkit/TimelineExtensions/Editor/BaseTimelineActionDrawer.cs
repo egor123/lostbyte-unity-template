@@ -57,7 +57,7 @@ namespace Lostbyte.Toolkit.TimelineExtensions.Editor
             foreach (var type in TypeCache.GetTypesDerivedFrom<BaseTimelineAction>().Where(t => !t.IsAbstract))
             {
                 var attr = type.GetCustomAttribute<TimelineExtensionAttribute>();
-                Type reqType = attr?.BindingType ?? typeof(GameObject);
+                Type reqType = attr?.BindingType;
                 if (IsAssignable(boundObj, reqType))
                 {
                     string displayName = attr?.Name ?? type.Name;
@@ -82,6 +82,7 @@ namespace Lostbyte.Toolkit.TimelineExtensions.Editor
 
         private bool IsAssignable(UnityEngine.Object boundObj, Type reqType)
         {
+            if (reqType == null) return true;
             if (boundObj == null) return false;
             Type type = boundObj.GetType();
             if (type == reqType || type.IsAssignableFrom(reqType)) return true;

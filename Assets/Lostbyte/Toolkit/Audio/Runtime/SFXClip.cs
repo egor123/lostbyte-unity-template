@@ -25,5 +25,6 @@ namespace Lostbyte.Toolkit.Audio
         public void Play(Vector3 worldPosition = default, float delay = 0f) => SFXManager.PlaySFX(null, worldPosition, this, delay);
         public void Play(Transform parent, Vector3 localPosition, float delay = 0f) => SFXManager.PlaySFX(parent, localPosition, this, delay);
         public void Play(Transform parent, float delay = 0f) => SFXManager.PlaySFX(parent, Vector3.zero, this, delay);
+        public bool IsPlaying => SFXManager.CheckIfPlaying(this);
     }
 }

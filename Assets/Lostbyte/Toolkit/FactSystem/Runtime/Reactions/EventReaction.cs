@@ -15,18 +15,22 @@ namespace Lostbyte.Toolkit.FactSystem
 
         public virtual void Initialize(KeyContainer key, EventDefinition @event)
         {
-            Wrapper?.Unsubscribe(OnRaise);
+            Wrapper?.Unsubscribe(Raise);
 
             Key = key;
             Event = @event;
 
             Wrapper = Key.GetWrapper(Event);
-            Wrapper.Subscribe(OnRaise);
+            Wrapper.Subscribe(Raise);
         }
         public virtual void Dispose()
         {
-            Wrapper?.Unsubscribe(OnRaise);
+            Wrapper?.Unsubscribe(Raise);
             Wrapper = null;
+        }
+        public void Raise()
+        {
+            if (Key.PreConditionIsMet) OnRaise();
         }
         protected abstract void OnRaise();
         public virtual void OnLoad(object data) { }

@@ -1,5 +1,6 @@
 using System;
 using Lostbyte.Toolkit.Common;
+using Lostbyte.Toolkit.CustomEditor;
 using UnityEditor;
 using UnityEditor.UIElements;
 using UnityEngine;
@@ -66,7 +67,7 @@ namespace Lostbyte.Toolkit.FactSystem.Editor
                 return field;
             }
             Print.Warn($"Unsupported field type: {type}");
-            return new TextField("Unsupported");
+            return new TextField() { label = label, value = "Unsupported" }.SetEnabledState(false);
         }
 
         public static Type GetFactDefenitionTypeByArgType(Type argType)

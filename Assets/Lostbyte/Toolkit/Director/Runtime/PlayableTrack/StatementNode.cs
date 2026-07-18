@@ -3,7 +3,7 @@ using Lostbyte.Toolkit.FactSystem;
 
 namespace Lostbyte.Toolkit.Director
 {
-    [CustomGraphNode("State/Statement Node")]
+    [CustomGraphNode("Logic/Statement Node")]
     public class StatementNode : PlayableTrackNode
     {
         [GraphIn("In")] public PlayableTrackNode[] In;

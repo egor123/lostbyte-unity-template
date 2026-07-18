@@ -1,9 +1,6 @@
-using System;
 using System.Collections.Generic;
 using Lostbyte.Toolkit.CustomEditor.Graphs;
 using Lostbyte.Toolkit.FactSystem;
-using Lostbyte.Toolkit.Localization;
-using UnityEngine;
 
 namespace Lostbyte.Toolkit.Director
 {
@@ -15,46 +12,53 @@ namespace Lostbyte.Toolkit.Director
         [GraphField] public KeyContainer Actor;
         [GraphField] public List<Paragraph> Paragraphs = new();
 
-        public override IPlayableClipNodeBehaviour GetClip(PlayableTrackBehaviour track) => new DialogueNodeBehaviour(this, Actor, track);
+        public override IPlayableClipNodeBehaviour GetClip(PlayableTrackBehaviour track) => new DialogueNodeBehaviour(this, track);
     }
     public class DialogueNodeBehaviour : PlayableClipNodeBehaviour<DialogueNode>
     {
-        private ScriptableObject _actor;
-        private bool _isSet;
+        private int _state;
         private int _idx = 0;
-        public DialogueNodeBehaviour(DialogueNode node, ScriptableObject actor, PlayableTrackBehaviour track) : base(node, track) => _actor = actor;
+        private float _t = 0f;
+        public DialogueNodeBehaviour(DialogueNode node, PlayableTrackBehaviour track) : base(node, track) {}
         public override bool IsReady => true;
         public override bool IsFinished => _idx >= Node.Paragraphs.Count;
         public override IPlayableClipNodeBehaviour GetNext(PlayableTrackBehaviour track) => Node.Out ? Node.Out.GetClip(track) : null;
-        public override void OnStart() { }
-        public override void OnContinue() => _isSet = false;
-        public override void OnEnd()
+        public override void OnStart()
         {
             _idx = 0;
-            _isSet = false;
+            _state = 0;
+        }
+        public override void OnContinue()
+        {
+            _state = 0;
+        }
+        public override void OnEnd()
+        {
             SubtitlesManager.Instance.Clear();
-
         }
         public override void OnPause()
         {
             Time = 0;
-            _isSet = false;
+            _state = 0;
             SubtitlesManager.Instance.Clear();
         }
         public override void OnUpdate()
         {
             var paragraph = Node.Paragraphs[_idx];
-            if (Time > paragraph.Gap && !_isSet)
+            if (_state == 0)
             {
-                _isSet = true;
-                // SubtitlesManager.Instance.Set(_actor, paragraph.String.TableReference, paragraph.String.TableEntryReference, paragraph.Duration);
+                SubtitlesManager.Instance.Set(Node.Actor, paragraph.String);
+                _state++;
             }
-            if (Time > paragraph.Gap + paragraph.Gap) // FIXME
+            else if (_state == 1 && SubtitlesManager.Instance.CurrentText == null)
             {
-                _isSet = false;
-                Time = 0;
+                _t = Time;
+                _state++;
+            }
+            else if (_state == 2 && Time - _t > paragraph.Gap)
+            {
+                _state = 0;
                 _idx++;
-                SubtitlesManager.Instance.Clear();
             }
         }
     }

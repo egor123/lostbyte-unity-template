@@ -1,4 +1,5 @@
 using System;
+using Lostbyte.Toolkit.Common;
 using Lostbyte.Toolkit.CustomEditor;
 using Lostbyte.Toolkit.FactSystem;
 using UnityEngine;
@@ -6,12 +7,13 @@ using UnityEngine.Audio;
 
 namespace Lostbyte.Toolkit.Audio
 {
-    [Tag("Settings/Audio")]
+    [Tag("Audio")]
     [SupportedFactTypes(typeof(float))]
     public class AudioMixerReaction : FactReaction
     {
         public AudioMixer Mixer;
-        public string Group;
+        public float MaxValue = 100f;
+        public string Group = "master";
         public VolumeMapping MappingMode = VolumeMapping.LinearToDecibel;
 
         public enum VolumeMapping { LinearToDecibel, RawDecibel }
@@ -26,11 +28,13 @@ namespace Lostbyte.Toolkit.Audio
             MappingMode = MappingMode
         };
 
+        public override void OnLoad(object data) => OnValueChanged(null, Value);
+
         protected override void OnValueChanged(object oldValue, object newValue)
         {
             if (Mixer == null || string.IsNullOrEmpty(Group)) return;
             float dB = MappingMode == VolumeMapping.LinearToDecibel
-                ? LinearToDecibel((float)newValue)
+                ? LinearToDecibel((float)newValue / MaxValue)
                 : (float)newValue;
             Mixer.SetFloat(Group, dB);
         }

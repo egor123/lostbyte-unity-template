@@ -39,7 +39,7 @@ namespace Lostbyte.Toolkit.Localization
         [field: SerializeField, TextArea, ShowIf(nameof(Meta))] public string Meta { get; private set; }
 
         [SerializeField] private List<LocalizationKey> m_keys;
-        public readonly IReadOnlyList<LocalizationKey> Keys => m_keys.AsReadOnly();
+        public readonly IReadOnlyList<LocalizationKey> Keys => m_keys?.AsReadOnly();
 
         public LocalizationTableSchema(string schemaVersion, string tableId, string meta, List<LocalizationKey> keys)
         {

@@ -9,7 +9,7 @@ namespace Lostbyte.Toolkit.FactSystem
 {
     public class FactSettings : ScriptableObject
     {
-        [SerializeField, Required] private FactDatabase m_Database;
+        [SerializeField] private FactDatabase m_Database;
         [ClearStatic] private static FactSettings _instance;
         [field: SerializeField] public string SaveExtension { get; private set; } = ".bin";
         [field: SerializeField] public string TempExtension { get; private set; } = ".tmp";

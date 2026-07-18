@@ -6,7 +6,7 @@ using Lostbyte.Toolkit.CustomEditor;
 
 namespace Lostbyte.Toolkit.Audio.Editor
 {
-    [UnityEditor.CustomEditor(typeof(SFXClip))]
+    [UnityEditor.CustomEditor(typeof(SFXClip)), CanEditMultipleObjects]
     public class SFXClipEditor : UnityEditor.Editor
     {
         private SerializedProperty _clips;
@@ -51,7 +51,7 @@ namespace Lostbyte.Toolkit.Audio.Editor
                 showBorder = false,
                 virtualizationMethod = CollectionVirtualizationMethod.DynamicHeight,
                 style = { marginTop = 0, flexGrow = 1 },
-                makeItem = () => new PropertyField { style = { marginTop = 0, marginBottom = 0, paddingRight = 0 } },
+                makeItem = () => new PropertyField { label = null, style = { marginTop = 0, marginBottom = 0, paddingRight = 0 } },
                 bindItem = (element, i) =>
                     {
                         var propField = (PropertyField)element;

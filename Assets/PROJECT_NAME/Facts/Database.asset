@@ -56,6 +56,34 @@ MonoBehaviour:
   m_Name: on_app_quit
   m_EditorClassIdentifier: 
   <Guid>k__BackingField: on_app_quit
+  <Description>k__BackingField: 
+--- !u!114 &-3462768613734697883
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 09dee09cf1011e34686bb2d8b459687e, type: 3}
+  m_Name: test2
+  m_EditorClassIdentifier: 
+  <Guid>k__BackingField: test2
+  <IsSerializable>k__BackingField: 1
+  <Description>k__BackingField: 
+  <DefaultValue>k__BackingField:
+    rid: 1238504611132735488
+  <Values>k__BackingField:
+  - b
+  - c
+  references:
+    version: 2
+    RefIds:
+    - rid: 1238504611132735488
+      type: {class: Enums/Test2, ns: GameFacts, asm: Assembly-CSharp}
+      data:
+        value__: 0
 --- !u!114 &-3055759980319532786
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -144,6 +172,8 @@ MonoBehaviour:
   - {fileID: -7316681771992995001}
   - {fileID: -8472106169253750812}
   - {fileID: 5253352405738191616}
+  - {fileID: 5745094262353505950}
+  - {fileID: -3462768613734697883}
   <EventStorage>k__BackingField:
   - {fileID: -4104580026132030384}
 --- !u!114 &12290745125359689
@@ -185,6 +215,9 @@ MonoBehaviour:
       rid: 6512821319454162959
     <AutoLoad>k__BackingField: 0
     <SaveOnChange>k__BackingField: 0
+  m_preCondition:
+    m_rootNode:
+      rid: -2
   m_children:
   - {fileID: 7530528405163607904}
   <FactRegistrations>k__BackingField: []
@@ -192,6 +225,8 @@ MonoBehaviour:
   references:
     version: 2
     RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
     - rid: 6512821319454162955
       type: {class: BinarySaveFormatter, ns: Lostbyte.Toolkit.FactSystem.Persistance, asm: Lostbyte.Toolkit.FactSystem}
       data: 
@@ -223,6 +258,9 @@ MonoBehaviour:
       rid: -2
     <AutoLoad>k__BackingField: 0
     <SaveOnChange>k__BackingField: 0
+  m_preCondition:
+    m_rootNode:
+      rid: -2
   m_children: []
   <FactRegistrations>k__BackingField:
   - Fact: {fileID: 4818604433467273284}
@@ -248,6 +286,20 @@ MonoBehaviour:
       m_value: 0
     Reactions:
     - rid: 358180897263714305
+  - Fact: {fileID: 5745094262353505950}
+    ValueOverride:
+      rid: -2
+    IsSerializable:
+      m_hasValue: 0
+      m_value: 0
+    Reactions: []
+  - Fact: {fileID: -3462768613734697883}
+    ValueOverride:
+      rid: -2
+    IsSerializable:
+      m_hasValue: 0
+      m_value: 0
+    Reactions: []
   <EventRegistrations>k__BackingField:
   - Event: {fileID: -4104580026132030384}
     Reactions:
@@ -260,6 +312,7 @@ MonoBehaviour:
     - rid: 358180874591666217
       type: {class: SceneLoadReaction, ns: Lostbyte.Toolkit.Scenes, asm: Lostbyte.Toolkit.Scenes}
       data:
+        _guid: 7ff4bcab-68e1-429c-8ca8-c8c981a7bf0d
         ParentScene:
           m_sceneAsset: {fileID: 102900000, guid: aec339fccadfb0948a3e98ce71205a7e, type: 3}
           m_scenePath: Assets/PROJECT_NAME/Scenes/GameManagement.unity
@@ -286,6 +339,7 @@ MonoBehaviour:
     - rid: 358180897263714305
       type: {class: SceneLoadReaction, ns: Lostbyte.Toolkit.Scenes, asm: Lostbyte.Toolkit.Scenes}
       data:
+        _guid: 22130d04-c6b5-4aab-9ed6-b4609b33a89e
         ParentScene:
           m_sceneAsset: {fileID: 102900000, guid: ba744fbcbab29764d96811202c37722e, type: 3}
           m_scenePath: Assets/PROJECT_NAME/Scenes/Game.unity
@@ -361,6 +415,34 @@ MonoBehaviour:
   <IsSerializable>k__BackingField: 1
   <Description>k__BackingField: 
   <DefaultValue>k__BackingField: 1
+--- !u!114 &5745094262353505950
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 09dee09cf1011e34686bb2d8b459687e, type: 3}
+  m_Name: test
+  m_EditorClassIdentifier: 
+  <Guid>k__BackingField: test
+  <IsSerializable>k__BackingField: 1
+  <Description>k__BackingField: 
+  <DefaultValue>k__BackingField:
+    rid: 1238504300293128192
+  <Values>k__BackingField:
+  - a
+  - b
+  - c
+  references:
+    version: 2
+    RefIds:
+    - rid: 1238504300293128192
+      type: {class: Enums/Test, ns: GameFacts, asm: Assembly-CSharp}
+      data:
+        value__: 0
 --- !u!114 &6322980757709942554
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -400,6 +482,9 @@ MonoBehaviour:
       rid: 6512821319454162953
     <AutoLoad>k__BackingField: 1
     <SaveOnChange>k__BackingField: 1
+  m_preCondition:
+    m_rootNode:
+      rid: -2
   m_children: []
   <FactRegistrations>k__BackingField:
   - Fact: {fileID: -3055759980319532786}
@@ -432,7 +517,8 @@ MonoBehaviour:
     IsSerializable:
       m_hasValue: 0
       m_value: 0
-    Reactions: []
+    Reactions:
+    - rid: 1238504611132735489
   <EventRegistrations>k__BackingField: []
   references:
     version: 2
@@ -442,21 +528,31 @@ MonoBehaviour:
     - rid: 358180874591666195
       type: {class: AudioMixerReaction, ns: Lostbyte.Toolkit.Audio, asm: Lostbyte.Toolkit.Audio}
       data:
+        _guid: ef3a4180-ae56-4d45-98cd-bcd0f053d5c9
         Mixer: {fileID: 24100000, guid: 39a2a5d347698d54b8b2983049361511, type: 2}
+        MaxValue: 100
         Group: music
         MappingMode: 0
     - rid: 358180874591666196
       type: {class: AudioMixerReaction, ns: Lostbyte.Toolkit.Audio, asm: Lostbyte.Toolkit.Audio}
       data:
+        _guid: 423924b2-55a0-4ba8-9211-62e6804fccfe
         Mixer: {fileID: 24100000, guid: 39a2a5d347698d54b8b2983049361511, type: 2}
+        MaxValue: 100
         Group: sfx
         MappingMode: 0
     - rid: 358180874591666197
       type: {class: AudioMixerReaction, ns: Lostbyte.Toolkit.Audio, asm: Lostbyte.Toolkit.Audio}
       data:
+        _guid: c33faba4-c9e2-4bf9-8d9a-df0907f43840
         Mixer: {fileID: 24100000, guid: 39a2a5d347698d54b8b2983049361511, type: 2}
+        MaxValue: 100
         Group: main
         MappingMode: 0
+    - rid: 1238504611132735489
+      type: {class: LocaleChangeReaction, ns: Lostbyte.Toolkit.Localization, asm: Lostbyte.Toolkit.Localization}
+      data:
+        _guid: 
     - rid: 6512821319454162953
       type: {class: StaticPathStorage, ns: Lostbyte.Toolkit.FactSystem.Persistance, asm: Lostbyte.Toolkit.FactSystem}
       data:
@@ -487,6 +583,9 @@ MonoBehaviour:
       rid: -2
     <AutoLoad>k__BackingField: 0
     <SaveOnChange>k__BackingField: 0
+  m_preCondition:
+    m_rootNode:
+      rid: -2
   m_children: []
   <FactRegistrations>k__BackingField:
   - Fact: {fileID: -8472106169253750812}
@@ -513,7 +612,8 @@ MonoBehaviour:
     - rid: 1238504223764119770
       type: {class: FloatActionReaction, ns: Lostbyte.Toolkit.FactSystem, asm: Lostbyte.Toolkit.FactSystem}
       data:
-        InvocationCount: 3
+        _guid: 1ea2b00c-2d30-4d72-ac75-b0a80d689e72
+        InvocationCount: 2
         PreCondition:
           m_rootNode:
             rid: 1238504223764119773

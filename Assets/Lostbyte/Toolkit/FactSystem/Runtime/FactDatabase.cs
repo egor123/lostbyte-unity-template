@@ -2,12 +2,14 @@ using System.Collections.Generic;
 using System.Linq;
 using Lostbyte.Toolkit.Common;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Lostbyte.Toolkit.FactSystem
 {
     [CreateAssetMenu(fileName = "FactDatabase", menuName = "Facts/Fact Database")]
     public class FactDatabase : ScriptableObject
     {
+        [FormerlySerializedAs("RootKeys")]
         [SerializeField] private List<KeyContainer> m_rootKeys = new();
         [field: SerializeField] internal List<FactDefinition> FactStorage { get; private set; } = new();
         [field: SerializeField] internal List<EventDefinition> EventStorage { get; private set; } = new();

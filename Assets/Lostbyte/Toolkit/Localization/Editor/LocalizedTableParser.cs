@@ -62,7 +62,6 @@ namespace Lostbyte.Toolkit.Localization.Editor
                         MakeTableAddressable(savePath, tableAsset, localeName, tableSchema.Id);
                     }
                 }
-
                 foreach (var localeName in modifiedLocales)
                 {
                     if (filePaths.TryGetValue(localeName, out string path) && allLocalesData.TryGetValue(localeName, out JObject jobj))
@@ -80,6 +79,15 @@ namespace Lostbyte.Toolkit.Localization.Editor
                     }
                 }
             }
+            var settingsSo = new SerializedObject(LocalizationSettings.Instance);
+            var localesProp = settingsSo.FindProperty("m_locales");
+            var locales = configs.Keys.ToArray();
+            localesProp.arraySize = locales.Length;
+            for (int i = 0; i < locales.Length; i++)
+                localesProp.GetArrayElementAtIndex(i).stringValue = locales[i];
+            configs.Keys.ForEach(k => Print.MLog(k));
+            settingsSo.ApplyModifiedPropertiesWithoutUndo();
+
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
             Print.MLog("Localization Tables updated successfully.");

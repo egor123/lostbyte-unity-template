@@ -410,6 +410,12 @@ namespace Lostbyte.Toolkit.CustomEditor
 
         #region Element Creation
 
+        public static T SetParent<T>(this T element, VisualElement parent) where T: VisualElement
+        {
+            parent.Add(element);
+            return element;
+        }
+
         public static VisualElement AddRow(this VisualElement parent, string name = "")
         {
             var container = new VisualElement { name = name }.MakeRow();
