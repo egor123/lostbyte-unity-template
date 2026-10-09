@@ -57,7 +57,7 @@ namespace Lostbyte.Toolkit.FactSystem
             _keysByGuid.Clear();
             foreach (var key in RootKeys)
             {
-                key.Load();
+                key.Clear();
                 AddKey(key);
             }
             _factByGuid.Clear();

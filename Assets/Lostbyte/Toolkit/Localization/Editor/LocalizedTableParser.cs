@@ -313,7 +313,7 @@ namespace Lostbyte.Toolkit.Localization.Editor
                 }
                 if (configs.TryGetValue(currentLocale, out var conf) && !string.IsNullOrEmpty(conf.Fallback))
                 {
-                    Print.MWarn($"[Locale: {currentLocale}] Missing key/type '{keyId}:{reqType}'. Falling back to {conf.Fallback}.");
+                    Print.MWarn($"[Locale: {currentLocale}] Missing key/type '{tableId}/{keyId}:{reqType}'. Falling back to {conf.Fallback}.");
                     currentLocale = conf.Fallback;
                 }
                 else break;

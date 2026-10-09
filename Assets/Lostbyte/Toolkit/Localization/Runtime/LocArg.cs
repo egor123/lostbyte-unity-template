@@ -1,5 +1,4 @@
 using System;
-using Lostbyte.Toolkit.Common;
 using Lostbyte.Toolkit.FactSystem;
 using UnityEngine;
 
@@ -7,6 +6,7 @@ namespace Lostbyte.Toolkit.Localization
 {
     public interface ILocArg
     {
+        Type ArgType { get; }
         object RawValue { get; }
         void Subscribe(Action callback);
         void Unsubscribe(Action callback);
@@ -19,6 +19,7 @@ namespace Lostbyte.Toolkit.Localization
     [Serializable]
     public struct LocArg : ILocArg
     {
+        public readonly Type ArgType => typeof(object);
         [SerializeField, SerializeReference] private object m_staticValue;
         [SerializeField] private KeyContainer m_key;
         [SerializeField] private FactDefinition m_fact;
@@ -41,6 +42,8 @@ namespace Lostbyte.Toolkit.Localization
     [Serializable]
     public struct LocStringArg : ILocArg<string>
     {
+        public readonly Type ArgType => typeof(string);
+
         [SerializeField] private string m_staticValue;
         [SerializeField] private KeyContainer m_key;
         [SerializeField] private FactDefinition<string> m_fact;
@@ -63,6 +66,8 @@ namespace Lostbyte.Toolkit.Localization
     [Serializable]
     public struct LocIntArg : ILocArg<int>
     {
+        public readonly Type ArgType => typeof(int);
+
         [SerializeField] private int m_staticValue;
         [SerializeField] private KeyContainer m_key;
         [SerializeField] private FactDefinition<int> m_fact;
@@ -81,6 +86,8 @@ namespace Lostbyte.Toolkit.Localization
     [Serializable]
     public struct LocFloatArg : ILocArg<float>
     {
+        public readonly Type ArgType => typeof(float);
+
         [SerializeField] private float m_staticValue;
         [SerializeField] private KeyContainer m_key;
         [SerializeField] private FactDefinition<float> m_fact;
@@ -100,6 +107,8 @@ namespace Lostbyte.Toolkit.Localization
     [Serializable]
     public struct LocBoolArg : ILocArg<bool>
     {
+        public readonly Type ArgType => typeof(bool);
+
         [SerializeField] private bool m_staticValue;
         [SerializeField] private KeyContainer m_key;
         [SerializeField] private FactDefinition<bool> m_fact;

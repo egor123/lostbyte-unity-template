@@ -35,7 +35,7 @@ namespace Lostbyte.Toolkit.Management
         {
             if (_instance != null)
             {
-                DestroyImmediate(gameObject);
+                DestroyImmediate(this);
                 return;
             }
             _instance = this;

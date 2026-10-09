@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Lostbyte.Toolkit.Common;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
@@ -7,7 +8,7 @@ using UnityEngine.AddressableAssets;
 namespace Lostbyte.Toolkit.Localization
 {
     [Serializable]
-    public abstract class LocRef : IDisposable
+    public abstract class LocRef : IDisposable, IValidatable
     {
         [field: SerializeField] public string TableId { get; protected set; }
         [field: SerializeField] public string KeyId { get; protected set; }
@@ -16,6 +17,9 @@ namespace Lostbyte.Toolkit.Localization
         private object[] _cachedArgs;
         protected bool _isDynamicInitialized;
         protected int _subscriberCount;
+
+        public abstract bool IsArray { get; }
+        public abstract Type[] Types { get; }
 
         public LocRef(string tableId, string keyId, params ILocArg[] args) => (TableId, KeyId, m_args) = (tableId, keyId, args);
 
@@ -122,8 +126,52 @@ namespace Lostbyte.Toolkit.Localization
                     if (obj != null) Addressables.Release(obj);
             asset = default;
         }
-    }
 
+        public void Validate()
+        {
+            var table = LocalizationSettings.Database.Schema.Tables.FirstOrDefault(t => t.Id == TableId);
+            if (table.Id != TableId)
+            {
+                throw new Exception($"[LocRef] Table not found: '{TableId ?? "null"}'.");
+            }
+            var key = table.Keys.FirstOrDefault(k => k.Id == KeyId);
+            if (key.Id != KeyId)
+            {
+                throw new Exception($"[LocRef] Key not found: '{KeyId ?? "null"}' in table '{TableId}'.");
+            }
+            if (key.IsArray != IsArray)
+            {
+                throw new Exception($"[LocRef] Array mismatch for '{TableId}/{KeyId}': Reference IsArray is '{IsArray}', but schema expects '{key.IsArray}'.");
+            }
+            int argsCount = m_args?.Length ?? 0;
+            if (argsCount != key.Args.Count)
+            {
+                throw new Exception($"[LocRef] Argument count mismatch for '{TableId}/{KeyId}': Provided {argsCount} arguments, but schema expects exactly {key.Args.Count}.");
+            }
+            for (int i = 0; i < argsCount; i++)
+            {
+                Type expectedType = key.Args[i].ArgType;
+                Type providedType = m_args[i].ArgType;
+                if (expectedType != typeof(object) && expectedType != providedType)
+                {
+                    throw new Exception($"[LocRef] Argument type mismatch for '{TableId}/{KeyId}' at index [{i}]: Provided type '{providedType.Name}', but schema expects '{expectedType.Name}'.");
+                }
+            }
+            Type[] providedTypes = Types.Where(t => t != typeof(object)).ToArray();
+            HashSet<Type> allowedTypes = key.Types.Select(LocalizationKey.AllowedTypes.GetValueOrDefault).ToHashSet();
+            if (providedTypes.Length > allowedTypes.Count)
+            {
+                throw new Exception($"[LocRef] Type count exceeded for '{TableId}/{KeyId}': Provided {providedTypes.Length} types, but schema supports a maximum of {allowedTypes.Count}.");
+            }
+            foreach (var type in providedTypes)
+            {
+                if (!allowedTypes.Contains(type))
+                {
+                    throw new Exception($"[LocRef] Unsupported type for '{TableId}/{KeyId}': '{type.Name}' is not in the allowed types list.");
+                }
+            }
+        }
+    }
     internal struct LocDataWrap<T>
     {
         public T CachedValue;
@@ -132,8 +180,14 @@ namespace Lostbyte.Toolkit.Localization
     [Serializable]
     public class LocalizedReference<T1> : LocRef
     {
+        public override bool IsArray => false;
+        public override Type[] Types => new Type[] { typeof(T1) };
+
+
         private T1 _cached; private Action<T1> _onChanged;
         public T1 Value => _isDynamicInitialized ? _cached : LocalizationDatabase.GetValue<T1>(TableId, KeyId, GetArgs());
+
+
         public LocalizedReference(string tableId, string keyId, params ILocArg[] args) : base(tableId, keyId, args) { }
 
 
@@ -156,6 +210,9 @@ namespace Lostbyte.Toolkit.Localization
     [Serializable]
     public class LocalizedReference<T1, T2> : LocRef
     {
+        public override bool IsArray => false;
+        public override Type[] Types => new Type[] { typeof(T1), typeof(T2) };
+
         private T1 _cached1; private Action<T1> _onChanged1;
         private T2 _cached2; private Action<T2> _onChanged2;
         public T1 Value1 => _isDynamicInitialized ? _cached1 : LocalizationDatabase.GetValue<T1>(TableId, KeyId, GetArgs());

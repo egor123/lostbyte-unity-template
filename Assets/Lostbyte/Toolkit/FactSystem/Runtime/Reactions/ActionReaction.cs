@@ -23,7 +23,7 @@ namespace Lostbyte.Toolkit.FactSystem
         public CountMode Mode;
         public int TargetCount;
 
-        [SerializeReference, UniqeReference] public TCondition Condition;
+        [SerializeReference, UniqueReference] public TCondition Condition;
         [OfType(typeof(IInvokable))] public ScriptableObject Action;
 
         public bool IsCountMet(int currentCount, TValue oldValue, TValue newValue)
@@ -76,7 +76,7 @@ namespace Lostbyte.Toolkit.FactSystem
 
         public override object OnSave()
         {
-            return InvocationCount > 0 ? InvocationCount : null;
+            return InvocationCount;
         }
 
         protected override void OnValueChanged(object oldValue, object newValue)
@@ -91,7 +91,7 @@ namespace Lostbyte.Toolkit.FactSystem
                 if (rule.IsCountMet(InvocationCount, oldVal, newVal))
                 {
                     (rule.Action as IInvokable)?.Invoke();
-                    Print.Log($"Invoking Rule ({InvocationCount}): {rule.Action}");
+                    Print.Log($"[{Key.Name}/{Fact.name}] Invoking Rule ({InvocationCount}): {rule.Action}");
                     InvocationCount++;
                     break;
                 }
@@ -436,7 +436,7 @@ namespace Lostbyte.Toolkit.FactSystem
                 if (rule.IsCountMet(InvocationCount))
                 {
                     (rule.Action as IInvokable)?.Invoke();
-                    Print.Log($"Invoking Rule ({InvocationCount}): {rule.Action}");
+                    Print.Log($"[{Key.Name}/{Event.name}] Invoking Rule ({InvocationCount}): {rule.Action}");
                     InvocationCount++;
                     break;
                 }

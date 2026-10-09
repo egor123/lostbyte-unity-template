@@ -7,6 +7,7 @@
   <Project Path="Lostbyte.Toolkit.Audio.Editor.csproj" />
   <Project Path="Assembly-CSharp.csproj" />
   <Project Path="Lostbyte.Toolkit.Audio.Music.csproj" />
+  <Project Path="Lostbyte.Toolkit.Build.Editor.csproj" />
   <Project Path="Lostbyte.Toolkit.Graphs.csproj" />
   <Project Path="Lostbyte.Toolkit.Director.csproj" />
   <Project Path="Lostbyte.Toolkit.FactSystem.Editor.csproj" />
@@ -23,7 +24,6 @@
   <Project Path="Lostbyte.Toolkit.Director.PlayableTrack.Editor.csproj" />
   <Project Path="Lostbyte.Toolkit.Injection.csproj" />
   <Project Path="Lostbyte.Toolkit.Scenes.csproj" />
-  <Project Path="Lostbyte.Toolkit.Build.Editor.csproj" />
   <Project Path="Lostbyte.Toolkit.FSM.csproj" />
   <Project Path="Lostbyte.Toolkit.UI.Editor.csproj" />
   <Project Path="Lostbyte.Toolkit.Pools.csproj" />

@@ -79,7 +79,7 @@ namespace Lostbyte.Toolkit.Localization
 
             private async Task LoadLocalesTask()
             {
-#if UNITY_EDITOR
+#if !UNITY_WEBGL || UNITY_EDITOR
                 Addressables.InitializeAsync().WaitForCompletion();
 #else
                 await Addressables.InitializeAsync().Task;
@@ -112,12 +112,12 @@ namespace Lostbyte.Toolkit.Localization
             public int Priority => 1;
             public BootstrapResult Execute()
             {
-#if UNITY_EDITOR
+#if !UNITY_WEBGL || UNITY_EDITOR
                 Addressables.InitializeAsync().WaitForCompletion();
-                Database.ChangeLocaleSync(Database.m_targetLocale);
+                Database.ChangeLocaleSync(Database.m_targetLocale ?? Database.CurrentLocale);
                 return BootstrapResult.Completed;
 #else
-                return Database.ChangeLocaleAsync(Database.m_targetLocale);
+                return Database.ChangeLocaleAsync(Database.m_targetLocale ?? Database.CurrentLocale);
 #endif
             }
         }

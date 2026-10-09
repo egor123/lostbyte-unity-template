@@ -1,13 +1,14 @@
-using Lostbyte.Toolkit.Common;
 using Lostbyte.Toolkit.TimelineExtensions;
 using UnityEngine;
 using UnityEngine.Playables;
+using UnityEngine.Timeline;
 
 namespace Lostbyte.Toolkit.Scenes
 {
     [TimelineExtension(Name = "VFX/Fade", ColorHex = "#858585")]
     public class FadeAction : BaseTimelineAction
     {
+        public override ClipCaps ClipCaps => ClipCaps.Blending;
         public FadeType Fade = FadeType.FadeIn;
 
         public override void OnStart(Playable playable, Object boundObject)

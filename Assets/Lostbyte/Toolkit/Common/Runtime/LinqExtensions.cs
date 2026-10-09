@@ -14,6 +14,12 @@ namespace Lostbyte.Toolkit.Common
             foreach (var item in source)
                 action(item);
         }
+        public static void ForEach<T>(this IEnumerable<T> source, Action<int, T> action)
+        {
+            int i = -1;
+            foreach (var item in source)
+                action(i++, item);
+        }
         public static IEnumerable<int> ToStream(this int end)
         {
             for (int i = 0; i < end; i++)

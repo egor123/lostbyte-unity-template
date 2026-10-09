@@ -1,0 +1,50 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 28429c6b4bdd6c241af09a77664848de, type: 3}
+  m_Name: ProductionBuildProfile
+  m_EditorClassIdentifier: 
+  ProfileName: 
+  Options: 0
+  Subtarget: 0
+  BuildPlatforms:
+  - rid: 5282533463289495554
+  - rid: 5282533463289495555
+  - rid: 5282533463289495556
+  ScriptingDefines: []
+  SceneMode: 0
+  IncludedScenes: []
+  references:
+    version: 2
+    RefIds:
+    - rid: 5282533463289495554
+      type: {class: WindowsBuildPlatform, ns: Lostbyte.Toolkit.Build.Editor, asm: Lostbyte.Toolkit.Build.Editor}
+      data:
+        Depots: []
+        Architecture: 1
+        ScriptingBackend: 0
+    - rid: 5282533463289495555
+      type: {class: LinuxBuildPlatform, ns: Lostbyte.Toolkit.Build.Editor, asm: Lostbyte.Toolkit.Build.Editor}
+      data:
+        Depots: []
+        ScriptingBackend: 0
+    - rid: 5282533463289495556
+      type: {class: WebBuildPlatform, ns: Lostbyte.Toolkit.Build.Editor, asm: Lostbyte.Toolkit.Build.Editor}
+      data:
+        Depots:
+        - rid: 5282533463289495557
+        CompressionFormat: 0
+        CompilerOptimization: 1
+    - rid: 5282533463289495557
+      type: {class: ItchDepotConfig, ns: Lostbyte.Toolkit.Build.Editor, asm: Lostbyte.Toolkit.Build.Editor}
+      data:
+        AppName: template
+        ChannelName: webgl

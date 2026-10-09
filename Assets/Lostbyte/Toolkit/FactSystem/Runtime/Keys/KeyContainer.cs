@@ -69,7 +69,7 @@ namespace Lostbyte.Toolkit.FactSystem
         public void DeleteData()
         {
             m_save?.Delete();
-            _store.SetStore(new());
+            _store?.Clear();
 
             foreach (var reg in FactRegistrations)
                 foreach (var reaction in reg.Reactions)
@@ -91,6 +91,7 @@ namespace Lostbyte.Toolkit.FactSystem
 #if UNITY_EDITOR
             if (!Application.isPlaying) return;
 #endif
+            _store.Clear();
             Load();
         }
 
@@ -100,8 +101,7 @@ namespace Lostbyte.Toolkit.FactSystem
         {
             _isLoading = true;
             if (UseSaveSystem && (forceReadFile || m_save.AutoLoad)) _store.SetStore(m_save.Read<Dictionary<string, object>>());
-            else _store.SetStore(file as Dictionary<string, object> ?? new());
-
+            else if (file is Dictionary<string, object> sf) _store.SetStore(sf);
             _children = null;
 
             foreach (var reg in FactRegistrations)
@@ -179,7 +179,7 @@ namespace Lostbyte.Toolkit.FactSystem
 
         public object Save()
         {
-            _store.SetStore(new());
+            // _store.SetStore(new());
             foreach (var key in Children)
             {
                 if (key.IsSerializable)
@@ -202,12 +202,16 @@ namespace Lostbyte.Toolkit.FactSystem
                     object defaultValue = reg.ValueOverride?.RawValue ?? reg.Fact.DefaultValueRaw;
                     if (!defaultValue.Equals(wrapper.RawValue))
                         _store.SetData(reg.Fact.Guid, wrapper.RawValue);
+                    else
+                        _store.RemoveKey(reg.Fact.Guid);
                 }
-
-                foreach (var reaction in reg.Reactions)
+                if (reg.Reactions != null)
                 {
-                    var data = reaction?.OnSave();
-                    if (data != null) _store.SetData($"{reg.Fact.Guid}_{reaction.Guid}", data);
+                    foreach (var reaction in reg.Reactions)
+                    {
+                        var data = reaction?.OnSave();
+                        if (data != null) _store.SetData($"{reg.Fact.Guid}_{reaction.Guid}", data);
+                    }
                 }
             }
 

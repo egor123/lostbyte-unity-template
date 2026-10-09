@@ -13,6 +13,7 @@ namespace Lostbyte.Toolkit.Scenes
         private bool _skip = false;
         private bool _fadeIn = false;
         private bool _inTransition = false;
+        private bool _lock = false;
         private CancellationTokenSource _fadeCts;
 
         public override bool InTransition => _inTransition;
@@ -28,6 +29,7 @@ namespace Lostbyte.Toolkit.Scenes
 
         private async Task StartFade(bool fadeIn)
         {
+            if(_lock) return;
             if (!_inTransition && _fadeIn == fadeIn) return;
             StopCurrentFade();
 
@@ -89,6 +91,7 @@ namespace Lostbyte.Toolkit.Scenes
 
         public override void SetFadeIn(float progress)
         {
+            // if (_inTransition && !_fadeIn) return;
             StopCurrentFade();
 
             _fadeIn = true;
@@ -98,6 +101,7 @@ namespace Lostbyte.Toolkit.Scenes
 
         public override void SetFadeOut(float progress)
         {
+            // if (_inTransition && _fadeIn) return;
             StopCurrentFade();
 
             _fadeIn = false;
@@ -124,5 +128,7 @@ namespace Lostbyte.Toolkit.Scenes
             m_transitionGroup.alpha = alpha;
             m_transitionGroup.blocksRaycasts = alpha > 0f;
         }
+
+        public override void SetLock(bool value) => _lock = value;
     }
 }

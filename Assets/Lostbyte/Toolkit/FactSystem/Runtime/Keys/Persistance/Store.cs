@@ -12,6 +12,7 @@ namespace Lostbyte.Toolkit.FactSystem.Persistance
         internal void SetStore(Dictionary<string, object> store) => _store = store;
         internal Dictionary<string, object> GetStore() => _store;
         internal bool IsEmpty => _store == null || _store.Count == 0;
+        internal void Clear() => _store?.Clear();
         internal void OnLoad() => _persistents.ForEach(p => p.OnLoad(this));
         internal void OnSave() => _persistents.ForEach(p => p.OnSave(this));
         internal void Subscribe(IPersistent persistent)
@@ -46,7 +47,29 @@ namespace Lostbyte.Toolkit.FactSystem.Persistance
             }
             return @default;
         }
+        public void RemoveKey(string path)
+        {
+            if (_store == null) return;
+            string[] p = path.Split("/");
+            Dictionary<string, object> data = _store;
 
+            for (int i = 0; i < p.Length; i++)
+            {
+                if (i == p.Length - 1)
+                {
+                    data.Remove(p[i]);
+                    return;
+                }
+                if (data.TryGetValue(p[i], out var obj) && obj is Dictionary<string, object> dict)
+                {
+                    data = dict;
+                }
+                else
+                {
+                    return;
+                }
+            }
+        }
         public void SetData<T>(string path, T value)
         {
             string[] p = path.Split("/");

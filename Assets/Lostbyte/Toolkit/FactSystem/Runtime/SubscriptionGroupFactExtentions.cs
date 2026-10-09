@@ -6,95 +6,100 @@ namespace Lostbyte.Toolkit.FactSystem
 {
     public static class SubscriptionGroupFactExtentions
     {
-        public static void Subscribe<T>(this SubscriptionGroup goup, IKeyContainer key, FactDefinition<T> fact, Action action)
+        public static void Subscribe<T>(this SubscriptionGroup group, IKeyContainer key, FactDefinition<T> fact, Action action)
         {
-            goup.Subscribe(key.Subscribe, key.Unsubscribe, fact, action);
+            group.Subscribe(key.Subscribe, key.Unsubscribe, fact, action);
         }
-        public static void Subscribe(this SubscriptionGroup goup, IKeyContainer key, FactDefinition fact, Action<object> action)
+        public static void Subscribe(this SubscriptionGroup group, IKeyContainer key, FactDefinition fact, Action<object> action)
         {
-            goup.Subscribe(key.Subscribe, key.Unsubscribe, fact, action);
+            group.Subscribe(key.Subscribe, key.Unsubscribe, fact, action);
         }
-        public static void Subscribe(this SubscriptionGroup goup, IKeyContainer key, FactDefinition fact, Action action)
+        public static void Subscribe(this SubscriptionGroup group, IKeyContainer key, FactDefinition fact, Action action)
         {
-            goup.Subscribe(key.Subscribe, key.Unsubscribe, fact, action);
+            group.Subscribe(key.Subscribe, key.Unsubscribe, fact, action);
         }
-        public static void Subscribe<T>(this SubscriptionGroup goup, IKeyContainer key, FactDefinition<T> fact, Action<T> action, bool invokeImidiate = false)
+        public static void Subscribe<T>(this SubscriptionGroup group, IKeyContainer key, FactDefinition<T> fact, Action<T> action, bool invokeImidiate = false)
         {
             if (invokeImidiate) action.Invoke(key.GetValue(fact));
-            goup.Subscribe(key.Subscribe, key.Unsubscribe, fact, action);
+            group.Subscribe(key.Subscribe, key.Unsubscribe, fact, action);
         }
-        public static void Subscribe<T>(this SubscriptionGroup goup, IKeyContainer key, FactDefinition<T> fact, Action<T, T> action, bool invokeImidiate = false)
+        public static void Subscribe<T>(this SubscriptionGroup group, IKeyContainer key, FactDefinition<T> fact, Action<T, T> action, bool invokeImidiate = false)
         {
             if (invokeImidiate) action.Invoke(key.GetValue(fact), key.GetValue(fact));
-            goup.Subscribe(key.Subscribe, key.Unsubscribe, fact, action);
+            group.Subscribe(key.Subscribe, key.Unsubscribe, fact, action);
         }
         // ------------------
-        public static void Subscribe(this SubscriptionGroup goup, IKeyContainer key, IPersistent persistent)
-        {
-            goup.SubscribeValue(key.Subscribe, key.Unsubscribe, persistent);
-        }
-        // ------------------
-        public static void Subscribe(this SubscriptionGroup goup, IFactWrapper wrapper, Action action, bool invokeImidiate = false)
+        public static void Subscribe(this SubscriptionGroup group, IKeyContainer key, Action action, bool invokeImidiate = false)
         {
             if (invokeImidiate) action.Invoke();
-            goup.Subscribe(wrapper.Subscribe, wrapper.Unsubscribe, action);
+            group.SubscribeValue(key.AddOnChangeListener, key.RemoveOnChangeListener, action);
         }
-        public static void Subscribe(this SubscriptionGroup goup, IFactWrapper wrapper, Action<object> action, bool invokeImidiate = false)
+        public static void Subscribe(this SubscriptionGroup group, IKeyContainer key, IPersistent persistent)
+        {
+            group.SubscribeValue(key.Subscribe, key.Unsubscribe, persistent);
+        }
+        // ------------------
+        public static void Subscribe(this SubscriptionGroup group, IFactWrapper wrapper, Action action, bool invokeImidiate = false)
+        {
+            if (invokeImidiate) action.Invoke();
+            group.Subscribe(wrapper.Subscribe, wrapper.Unsubscribe, action);
+        }
+        public static void Subscribe(this SubscriptionGroup group, IFactWrapper wrapper, Action<object> action, bool invokeImidiate = false)
         {
             if (invokeImidiate) action.Invoke(wrapper.RawValue);
-            goup.Subscribe(wrapper.Subscribe, wrapper.Unsubscribe, action);
+            group.Subscribe(wrapper.Subscribe, wrapper.Unsubscribe, action);
         }
-        public static void Subscribe<T>(this SubscriptionGroup goup, IFactWrapper<T> wrapper, Action<T> action, bool invokeImidiate = false)
+        public static void Subscribe<T>(this SubscriptionGroup group, IFactWrapper<T> wrapper, Action<T> action, bool invokeImidiate = false)
         {
             if (invokeImidiate) action.Invoke(wrapper.Value);
-            goup.Subscribe(wrapper.Subscribe, wrapper.Unsubscribe, action);
+            group.Subscribe(wrapper.Subscribe, wrapper.Unsubscribe, action);
         }
-        public static void Subscribe<T>(this SubscriptionGroup goup, IFactWrapper<T> wrapper, Action<T, T> action, bool invokeImidiate = false)
+        public static void Subscribe<T>(this SubscriptionGroup group, IFactWrapper<T> wrapper, Action<T, T> action, bool invokeImidiate = false)
         {
             if (invokeImidiate) action.Invoke(wrapper.Value, wrapper.Value);
-            goup.Subscribe(wrapper.Subscribe, wrapper.Unsubscribe, action);
+            group.Subscribe(wrapper.Subscribe, wrapper.Unsubscribe, action);
         }
         // ------------------
-        public static void Subscribe<T>(this SubscriptionGroup goup, IKeyContainer key, EventDefinition @event, Action action, bool invokeImidiate = false)
+        public static void Subscribe(this SubscriptionGroup group, IKeyContainer key, EventDefinition @event, Action action, bool invokeImidiate = false)
         {
             if (invokeImidiate) action.Invoke();
-            goup.Subscribe(key.Subscribe, key.Unsubscribe, @event, action);
+            group.Subscribe(key.Subscribe, key.Unsubscribe, @event, action);
         }
         // ------------------
-        public static void Subscribe(this SubscriptionGroup goup, IEventWrapper wrapper, Action action, bool invokeImidiate = false)
+        public static void Subscribe(this SubscriptionGroup group, IEventWrapper wrapper, Action action, bool invokeImidiate = false)
         {
             if (invokeImidiate) action.Invoke();
-            goup.Subscribe(wrapper.Subscribe, wrapper.Unsubscribe, action);
+            group.Subscribe(wrapper.Subscribe, wrapper.Unsubscribe, action);
         }
         // ------------------
-        public static void Subscribe(this SubscriptionGroup goup, Condition condition, IKeyContainer defaultKey, Action action)
+        public static void Subscribe(this SubscriptionGroup group, Condition condition, IKeyContainer defaultKey, Action action)
         {
             condition.SetDefaultKey(defaultKey);
-            goup.Subscribe(condition.Subscribe, condition.Unsubscribe, action);
+            group.Subscribe(condition.Subscribe, condition.Unsubscribe, action);
         }
-        public static void Subscribe(this SubscriptionGroup goup, Condition condition, IKeyContainer defaultKey, Action<bool> action)
+        public static void Subscribe(this SubscriptionGroup group, Condition condition, IKeyContainer defaultKey, Action<bool> action)
         {
             condition.SetDefaultKey(defaultKey);
-            goup.Subscribe(condition.Subscribe, condition.Unsubscribe, action);
+            group.Subscribe(condition.Subscribe, condition.Unsubscribe, action);
         }
-        public static void Subscribe(this SubscriptionGroup goup, Condition condition, Action action)
+        public static void Subscribe(this SubscriptionGroup group, Condition condition, Action action)
         {
             condition.SetDefaultKey(null);
-            goup.Subscribe(condition.Subscribe, condition.Unsubscribe, action);
+            group.Subscribe(condition.Subscribe, condition.Unsubscribe, action);
         }
-        public static void Subscribe(this SubscriptionGroup goup, Condition condition, Action<bool> action)
+        public static void Subscribe(this SubscriptionGroup group, Condition condition, Action<bool> action)
         {
             condition.SetDefaultKey(null);
-            goup.Subscribe(condition.Subscribe, condition.Unsubscribe, action);
+            group.Subscribe(condition.Subscribe, condition.Unsubscribe, action);
         }
         // ------------------
-        public static void Subscribe(this SubscriptionGroup goup, IKeyContainer key, Action onChangeAction)
+        public static void Subscribe(this SubscriptionGroup group, IKeyContainer key, Action onChangeAction)
         {
-            goup.Subscribe(key.AddOnChangeListener, key.RemoveOnChangeListener, onChangeAction);
+            group.Subscribe(key.AddOnChangeListener, key.RemoveOnChangeListener, onChangeAction);
         }
-        public static void Subscribe(this SubscriptionGroup goup, IKeyContainer key, Action<FactDefinition> onFactAddedAction)
+        public static void Subscribe(this SubscriptionGroup group, IKeyContainer key, Action<FactDefinition> onFactAddedAction)
         {
-            goup.Subscribe(key.AddOnFactAddedListener, key.RemoveOnFactAddedListener, onFactAddedAction);
+            group.Subscribe(key.AddOnFactAddedListener, key.RemoveOnFactAddedListener, onFactAddedAction);
         }
         // ------------------
     }

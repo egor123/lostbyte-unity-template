@@ -1,7 +1,5 @@
 using System;
-using System.Collections;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -10,7 +8,7 @@ using UnityEngine;
 
 namespace Lostbyte.Toolkit.Common
 {
-    public static class Print // TODO all needed methods for custom logger
+    public static class Print
     {
         [System.ThreadStatic] private static StringBuilder _sb;
         private static readonly ConcurrentDictionary<string, string> _fileNameCache = new();
@@ -32,15 +30,12 @@ namespace Lostbyte.Toolkit.Common
             return _sb;
         }
 
-        // [Conditional("UNITY_EDITOR")]
-        // [Conditional("DEVELOPMENT_BUILD")]
-        // [Conditional("ENABLE_LOGS")]
         [HideInCallstack, MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void Log(object message, UnityEngine.Object context = null) => Debug.Log(message, context);
+        public static void Log(object message, UnityEngine.Object context = null) => Debug.Log(FormatMessage(message), context);
         [HideInCallstack, MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void Warn(object message, UnityEngine.Object context = null) => Debug.LogWarning(message, context);
+        public static void Warn(object message, UnityEngine.Object context = null) => Debug.LogWarning(FormatMessage(message), context);
         [HideInCallstack, MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void Error(object message, UnityEngine.Object context = null) => Debug.LogError(message, context);
+        public static void Error(object message, UnityEngine.Object context = null) => Debug.LogError(FormatMessage(message), context);
         [HideInCallstack, MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Exception(Exception exception, UnityEngine.Object context = null) => Debug.LogException(exception, context);
         [HideInCallstack, MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -62,6 +57,20 @@ namespace Lostbyte.Toolkit.Common
         {
             if (!condition) Debug.LogError(FormatManagerMessage($"<b>[ASSERT FAILED]</b> {message}", file), context);
         }
+
+        [HideInCallstack, MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static object FormatMessage(object message)
+        {
+#if DEVELOPMENT_BUILD
+            var sb = GetBuilder();
+            sb.Append('[').Append(DateTime.Now.ToString("HH:mm:ss")).Append("] ");
+            sb.Append(message);
+            return sb.ToString();
+#else
+            return message;
+#endif
+        }
+
         [HideInCallstack, MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static string FormatManagerMessage(object message, string filePath)
         {
@@ -74,6 +83,12 @@ namespace Lostbyte.Toolkit.Common
                 _fileNameCache[filePath] = headerText;
             }
             var sb = GetBuilder();
+#if DEVELOPMENT_BUILD
+            var sb = GetBuilder();
+            sb.Append('[').Append(DateTime.Now.ToString("HH:mm:ss")).Append("] ");
+            sb.Append(message);
+            return sb.ToString();
+#endif
             sb.Append(headerText);
             sb.Append(message);
             return sb.ToString();

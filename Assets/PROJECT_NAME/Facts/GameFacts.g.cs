@@ -38,14 +38,18 @@ namespace GameFacts
         public static FactDefinition<System.String> Locale => _Locale != null ? _Locale : _Locale = (FactDefinition<System.String>) FactDatabase.Instance.GetFact("locale");
         private static FactDefinition<System.Enum> _Level = null;
         public static FactDefinition<System.Enum> Level => _Level != null ? _Level : _Level = (FactDefinition<System.Enum>) FactDatabase.Instance.GetFact("level");
-        private static FactDefinition<System.Single> _Hp = null;
-        public static FactDefinition<System.Single> Hp => _Hp != null ? _Hp : _Hp = (FactDefinition<System.Single>) FactDatabase.Instance.GetFact("hp");
-        private static FactDefinition<System.Boolean> _IsAlive = null;
-        public static FactDefinition<System.Boolean> IsAlive => _IsAlive != null ? _IsAlive : _IsAlive = (FactDefinition<System.Boolean>) FactDatabase.Instance.GetFact("is_alive");
         private static FactDefinition<System.Enum> _Test = null;
         public static FactDefinition<System.Enum> Test => _Test != null ? _Test : _Test = (FactDefinition<System.Enum>) FactDatabase.Instance.GetFact("test");
         private static FactDefinition<System.Enum> _Test2 = null;
         public static FactDefinition<System.Enum> Test2 => _Test2 != null ? _Test2 : _Test2 = (FactDefinition<System.Enum>) FactDatabase.Instance.GetFact("test2");
+        private static FactDefinition<System.Enum> _Quality = null;
+        public static FactDefinition<System.Enum> Quality => _Quality != null ? _Quality : _Quality = (FactDefinition<System.Enum>) FactDatabase.Instance.GetFact("quality");
+        private static FactDefinition<System.Int32> _VsyncCount = null;
+        public static FactDefinition<System.Int32> VsyncCount => _VsyncCount != null ? _VsyncCount : _VsyncCount = (FactDefinition<System.Int32>) FactDatabase.Instance.GetFact("vsync_count");
+        private static FactDefinition<System.Int32> _TargetFps = null;
+        public static FactDefinition<System.Int32> TargetFps => _TargetFps != null ? _TargetFps : _TargetFps = (FactDefinition<System.Int32>) FactDatabase.Instance.GetFact("target_fps");
+        private static FactDefinition<System.Enum> _FullscreenMode = null;
+        public static FactDefinition<System.Enum> FullscreenMode => _FullscreenMode != null ? _FullscreenMode : _FullscreenMode = (FactDefinition<System.Enum>) FactDatabase.Instance.GetFact("fullscreen_mode");
     }
     //------------- Events -------------
     public static class Events
@@ -60,5 +64,7 @@ namespace GameFacts
         public enum Level { Level1, Level2 }
         public enum Test { A, B, C }
         public enum Test2 { B, C }
+        public enum Quality { Low, Mid, High }
+        public enum FullscreenMode { ExclusiveFullscreen, Fullscreen, Maximized, Windowed }
     }
 }

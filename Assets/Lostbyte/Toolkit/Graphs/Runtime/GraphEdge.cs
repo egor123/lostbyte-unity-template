@@ -12,7 +12,7 @@ namespace Lostbyte.Toolkit.Graphs
         public bool IsDirected;
         public GraphNode NodeA;
         public GraphNode NodeB;
-        [SerializeReference, UniqeReference] public List<IDistanceOverride> Overrides;
+        [SerializeReference, UniqueReference] public List<IDistanceOverride> Overrides;
 
         public interface IDistanceOverride
         {

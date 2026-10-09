@@ -8,22 +8,28 @@ namespace Lostbyte.Toolkit.CustomEditor
 {
     public class ButtonAttribute : CombinedAttribute
     {
-        public string MethodName;
-        public ButtonAttribute(string methodName)
+        public string[] MethodNames;
+        public ButtonAttribute(params string[] methodNames)
         {
-            MethodName = methodName;
+            MethodNames = methodNames;
         }
 #if UNITY_EDITOR
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
             position.y += EditorGUI.GetPropertyHeight(property);
             position.height = EditorGUIUtility.singleLineHeight;
-            if (GUI.Button(position, MethodName))
-                property.serializedObject.targetObject.GetType().GetMethod(MethodName, EditorExtensions.FIELD_FLAGS).Invoke(property.serializedObject.targetObject, null);
+            foreach (var methodName in MethodNames)
+            {
+                if (GUI.Button(position, methodName))
+                {
+                    property.serializedObject.targetObject.GetType().GetMethod(methodName, EditorExtensions.FIELD_FLAGS).Invoke(property.serializedObject.targetObject, null);
+                }
+                position.y += EditorGUIUtility.singleLineHeight;
+            }
         }
         public override float? GetPropertyHeight(SerializedProperty property, GUIContent label)
         {
-            return EditorGUI.GetPropertyHeight(property) + EditorGUIUtility.singleLineHeight;
+            return EditorGUI.GetPropertyHeight(property) + EditorGUIUtility.singleLineHeight * MethodNames.Length;
         }
 #endif
     }

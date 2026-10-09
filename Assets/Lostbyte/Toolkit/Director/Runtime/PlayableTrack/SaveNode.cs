@@ -15,7 +15,7 @@ namespace Lostbyte.Toolkit.Director
         public override IPlayableClipNodeBehaviour GetClip(PlayableTrackBehaviour track) => new SaveNodeBehaviour(this, Key, track);
         public class SaveNodeBehaviour : PlayableClipNodeBehaviour<SaveNode>
         {
-            private KeyContainer _key;
+            private readonly KeyContainer _key;
             public SaveNodeBehaviour(SaveNode node, KeyContainer key, PlayableTrackBehaviour track) : base(node, track) => _key = key;
             public override bool IsReady => true;
             public override bool IsFinished => true;

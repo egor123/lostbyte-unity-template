@@ -13,12 +13,11 @@ namespace Lostbyte.Toolkit.Build.Editor
 {
     public class SceneBuildValidation : IProcessSceneWithReport, IPreprocessBuildWithReport
     {
-        [ClearStatic] public static bool ValidateBuild = true;
         public int callbackOrder { get => 0; }
 
         public void OnPreprocessBuild(BuildReport report)
         {
-            if (!BuildPipeline.isBuildingPlayer || !ValidateBuild) return;
+            if (!BuildPipeline.isBuildingPlayer) return;
             Stopwatch sw = new();
             sw.Start();
             bool hasErrors = false;
@@ -40,7 +39,7 @@ namespace Lostbyte.Toolkit.Build.Editor
 
         public void OnProcessScene(Scene scene, BuildReport report)
         {
-            if (!BuildPipeline.isBuildingPlayer || !ValidateBuild) return;
+            if (!BuildPipeline.isBuildingPlayer) return;
             Stopwatch sw = new();
             sw.Start();
             bool hasErrors = false;
@@ -50,7 +49,7 @@ namespace Lostbyte.Toolkit.Build.Editor
                 .Distinct()
                 .ForEach(go => ValidateGameObject(go, ref hasErrors));
 
-            Print.MLog($"Scene '{scene.name}' validation took {sw.Elapsed.Seconds}s");
+            // Print.MLog($"Scene '{scene.name}' validation took {sw.Elapsed.Seconds}s");
             sw.Stop();
             if (hasErrors) throw new BuildFailedException($"Build aborted! {scene.name} has validation errors.");
         }

@@ -9,7 +9,7 @@ namespace Lostbyte.Toolkit.TimelineExtensions
     public class UniversalClip : PlayableAsset, ITimelineClipAsset
     {
         [SerializeReference] public BaseTimelineAction action;
-        public virtual ClipCaps clipCaps => ClipCaps.All;
+        public virtual ClipCaps clipCaps => action?.ClipCaps ?? ClipCaps.None;
         public override Playable CreatePlayable(PlayableGraph graph, GameObject owner)
         {
             var playable = ScriptPlayable<UniversalBehaviour>.Create(graph);

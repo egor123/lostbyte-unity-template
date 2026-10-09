@@ -126,6 +126,18 @@ namespace Lostbyte.Toolkit.Director
         private void Update()
         {
             if (!IsPlaying) return;
+#if UNITY_EDITOR
+            if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.Backspace))
+            {
+                var q = _tracks[(int)CurrentPriority];
+                if (q.TryPeek(out var c))
+                {
+                    SafeExecute(c.OnEnd);
+                    q.Dequeue();
+                    CurrentPriority = StartClip();
+                }
+            }
+#endif
 
             var queue = _tracks[(int)CurrentPriority];
             if (queue.TryPeek(out var clip))

@@ -45,6 +45,9 @@ namespace Lostbyte.Toolkit.Localization
 
         public void ChangeLocaleSync(string newLocale)
         {
+#if UNITY_WEBGL
+            ChangeLocaleAsync(newLocale).Forget();
+#else
             if (!TryGetLocationsHandle(newLocale, out var locationsHandle)) return;
             locationsHandle.WaitForCompletion();
 
@@ -53,6 +56,7 @@ namespace Lostbyte.Toolkit.Localization
 
             ReleaseCurrentLocale();
             SetLocalizationData(locationsHandle, tempAssetsHandle, newLocale);
+#endif
         }
         private void ReleaseCurrentLocale()
         {

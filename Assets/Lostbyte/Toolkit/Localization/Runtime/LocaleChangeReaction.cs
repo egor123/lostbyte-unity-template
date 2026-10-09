@@ -12,6 +12,7 @@ namespace Lostbyte.Toolkit.Localization
         public override void OnLoad(object data) => OnValueChanged(null, Value);
         protected override void OnValueChanged(object oldValue, object newValue)
         {
+            Print.MLog(newValue);
             LocalizationSettings.Database.ChangeLocaleSync((string)newValue);
         }
     }

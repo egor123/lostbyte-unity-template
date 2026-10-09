@@ -26,7 +26,7 @@ namespace Lostbyte.Toolkit.Audio
         [field: SerializeField, Range(-3, 3)] public float MaxPitch { get; private set; }
 
         public readonly AudioSettingsRunner Create(KeyContainer key, FactAudio audio) => new(key, audio, this);
-        [field: SerializeField, SerializeReference, UniqeReference] public IAudioTrigger Trigger { get; private set; }
+        [field: SerializeField, SerializeReference, UniqueReference] public IAudioTrigger Trigger { get; private set; }
     }
     public interface IAudioTrigger
     {

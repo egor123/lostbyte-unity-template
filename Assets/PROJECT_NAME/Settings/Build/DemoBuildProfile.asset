@@ -9,10 +9,17 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9402999cea10921459bfc3237e4243bf, type: 3}
-  m_Name: FactAnimatorSettings
+  m_Script: {fileID: 11500000, guid: 28429c6b4bdd6c241af09a77664848de, type: 3}
+  m_Name: DemoBuildProfile
   m_EditorClassIdentifier: 
-  <Properties>k__BackingField: []
+  ProfileName: Demo
+  Options: 0
+  Subtarget: 0
+  BuildPlatforms: []
+  ScriptingDefines:
+  - DEMO_BUILD
+  SceneMode: 1
+  IncludedScenes: []
   references:
     version: 2
     RefIds: []

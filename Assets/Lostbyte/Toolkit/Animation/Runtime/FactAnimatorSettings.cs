@@ -10,7 +10,7 @@ namespace Lostbyte.Toolkit.Animation
     [CreateAssetMenu(fileName = nameof(FactAnimatorSettings), menuName = "Facts/Animation/FactAnimatorSettings")]
     public class FactAnimatorSettings : ScriptableObject
     {
-        [field: SerializeField, SerializeReference, UniqeReference] public List<IAnimationParameter> Properties { get; private set; }
+        [field: SerializeField, SerializeReference, UniqueReference] public List<IAnimationParameter> Properties { get; private set; }
         public interface IAnimationParameter
         {
             ParameterBehaviour GetBehaviour(Animator animator, KeyContainer key);

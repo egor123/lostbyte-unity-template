@@ -27,7 +27,12 @@ namespace Lostbyte.Toolkit.Common
         public static implicit operator Optional<T>(T value) => new(value);
         public static explicit operator T(Optional<T> optional) => optional.Value;
 
-        public T GetValueOrDefault(T defaultValue = default)
+        public readonly bool TryGetValue(out T value)
+        {
+            value = m_value;
+            return m_hasValue;
+        }
+        public readonly T GetValueOrDefault(T defaultValue = default)
         {
             return m_hasValue ? m_value : defaultValue;
         }

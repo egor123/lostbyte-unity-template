@@ -31,7 +31,6 @@ namespace Lostbyte.Toolkit.Scenes
         private readonly Dictionary<string, Action> _beforeSceneUnloadsCallback = new();
         private readonly Dictionary<string, Action> _afterSceneUnloadsCallback = new();
 
-
         private SceneNode _rootNode;
         private int _loadingScreenFades = 0;
         private bool _initialized = false;
@@ -68,7 +67,6 @@ namespace Lostbyte.Toolkit.Scenes
                 node.Children.ForEach(rootQueue.Enqueue);
                 TriggerBeforeSceneLoad(node.Path);
                 TriggerAfterSceneLoad(node.Path);
-
             }
             foreach (var node in orphanedNodes)
             {
@@ -114,6 +112,12 @@ namespace Lostbyte.Toolkit.Scenes
         public SceneNode LoadScene(SceneReference scene, Scene parent)
         {
             if (!TryGetNode(parent, out var parentNode)) return null;
+            if (SceneUtility.GetBuildIndexByScenePath(scene.ScenePath) < 0)
+            {
+                Print.MWarn($"Scene '{scene.ScenePath}' is not in Build Settings. Load aborted.");
+                return null;
+            }
+
             TriggerBeforeSceneLoad(scene.ScenePath);
             UnityEngine.SceneManagement.SceneManager.LoadScene(scene.SceneName, LoadSceneMode.Additive);
             Scene loadedScene = UnityEngine.SceneManagement.SceneManager.GetSceneByPath(scene.ScenePath);
@@ -125,6 +129,12 @@ namespace Lostbyte.Toolkit.Scenes
         public async Task<SceneNode> LoadSceneAsync(SceneReference scene, Scene parent)
         {
             if (!TryGetNode(parent, out var parentNode)) return null;
+            if (SceneUtility.GetBuildIndexByScenePath(scene.ScenePath) < 0)
+            {
+                Print.MWarn($"Scene '{scene.ScenePath}' is not in Build Settings. LoadAsync aborted.");
+                return null;
+            }
+
             TriggerBeforeSceneLoad(scene.ScenePath);
             await WaitOperation(UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(scene.SceneName));
             Scene loadedScene = UnityEngine.SceneManagement.SceneManager.GetSceneByPath(scene.ScenePath);
@@ -160,6 +170,7 @@ namespace Lostbyte.Toolkit.Scenes
             Instance._stateChanged = true;
             Instance.ApplyAllConstraintChanges().Forget();
         }
+
         public void AddBeforeSceneLoadedCallback(SceneReference scene, Action callback)
         {
             _beforeSceneLoadsCallback.TryGetValue(scene.ScenePath, out var existingAction);
@@ -236,11 +247,11 @@ namespace Lostbyte.Toolkit.Scenes
             if (_afterSceneUnloadsCallback.TryGetValue(scene, out var callbacks)) callbacks?.Invoke();
         }
 
-
         private async Task ApplyAllConstraintChanges()
         {
             if (_isApplyingConstraints) return;
             _isApplyingConstraints = true;
+            await Bootstrapper.Finished;
             bool _fadedIn = false;
             try
             {
@@ -263,6 +274,14 @@ namespace Lostbyte.Toolkit.Scenes
                                 foreach (var desiredRef in constraint.DesiredScenes)
                                 {
                                     if (!desiredRef.IsValid) continue;
+
+                                    // Check if scene exists in Build Settings to prevent loading crashes
+                                    if (SceneUtility.GetBuildIndexByScenePath(desiredRef.ScenePath) < 0)
+                                    {
+                                        Print.MWarn($"Scene '{desiredRef.ScenePath}' is not in Build Settings. Ignoring constraint request.");
+                                        continue;
+                                    }
+
                                     if (desiredPathFades.TryGetValue(desiredRef.ScenePath, out bool existingFade))
                                         desiredPathFades[desiredRef.ScenePath] = existingFade || constraint.UseLoadingScreen;
                                     else

@@ -233,14 +233,12 @@ with socketserver.TCPServer(('', PORT), UnityHandler) as httpd:
 
             Dictionary<string, string> builds = new();
             int attempted = 0;
-            SceneBuildValidation.ValidateBuild = true;
 
             if (buildWindows)
             {
                 attempted++;
                 PlayerSettings.SetScriptingBackend(BuildTargetGroup.Standalone, ScriptingImplementation.Mono2x);
                 if (!BuildTargetPlatform(BuildTargetGroup.Standalone, BuildTarget.StandaloneWindows64, "Windows", ".exe", out var winPath)) { AbortPipeline("Windows"); return; }
-                SceneBuildValidation.ValidateBuild = false;
                 builds["windows"] = winPath;
             }
             if (buildMac)
@@ -248,15 +246,14 @@ with socketserver.TCPServer(('', PORT), UnityHandler) as httpd:
                 attempted++;
                 PlayerSettings.SetScriptingBackend(BuildTargetGroup.Standalone, ScriptingImplementation.Mono2x);
                 if (!BuildTargetPlatform(BuildTargetGroup.Standalone, BuildTarget.StandaloneOSX, "Mac", ".app", out var macPath)) { AbortPipeline("Mac"); return; }
-                SceneBuildValidation.ValidateBuild = false;
                 builds["mac"] = macPath;
             }
             if (buildLinux)
             {
                 attempted++;
                 PlayerSettings.SetScriptingBackend(BuildTargetGroup.Standalone, ScriptingImplementation.IL2CPP);
+                
                 if (!BuildTargetPlatform(BuildTargetGroup.Standalone, BuildTarget.StandaloneLinux64, "Linux", ".x86_64", out var linuxPath)) { AbortPipeline("Linux"); return; }
-                SceneBuildValidation.ValidateBuild = false;
                 builds["linux"] = linuxPath;
             }
             if (buildWebGL)
@@ -264,12 +261,10 @@ with socketserver.TCPServer(('', PORT), UnityHandler) as httpd:
                 attempted++;
                 PlayerSettings.SetScriptingBackend(BuildTargetGroup.WebGL, ScriptingImplementation.IL2CPP);
                 if (!BuildTargetPlatform(BuildTargetGroup.WebGL, BuildTarget.WebGL, "WebGL", "", out var webGLPath)) { AbortPipeline("WebGL"); return; }
-                SceneBuildValidation.ValidateBuild = false;
                 builds["webgl"] = webGLPath;
             }
 
             Print.MLog($"Finished Successfully! {builds.Count}/{attempted} builds generated.");
-            SceneBuildValidation.ValidateBuild = true;
 
             if (builds.Count > 0 && autoZip)
             {
@@ -286,7 +281,6 @@ with socketserver.TCPServer(('', PORT), UnityHandler) as httpd:
 
         private void AbortPipeline(string failedPlatform)
         {
-            SceneBuildValidation.ValidateBuild = true;
             Print.MError($"ABORTED! {failedPlatform} build failed. Halting remaining jobs.");
         }
 
@@ -359,14 +353,14 @@ with socketserver.TCPServer(('', PORT), UnityHandler) as httpd:
 
             // string globalBuildCache = "Library/BuildCache";
             // if (Directory.Exists(globalBuildCache))
-            // {
+            // {ow
             //     Directory.Delete(globalBuildCache, true);
             // }
 
             Print.MLog("Cleaning and building Addressables Content...");
             try
             {
-                // UnityEditor.Build.Pipeline.Utilities.BuildCache.PurgeCache(false);
+                UnityEditor.Build.Pipeline.Utilities.BuildCache.PurgeCache(false);
 
                 AddressableAssetSettings.CleanPlayerContent(settings.ActivePlayerDataBuilder);
                 AddressableAssetSettings.BuildPlayerContent(out var result);

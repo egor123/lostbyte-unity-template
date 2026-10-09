@@ -10,6 +10,7 @@ namespace Lostbyte.Toolkit.Scenes
         public abstract Task FadeOut();
         public abstract void SetFadeIn(float progress);
         public abstract void SetFadeOut(float progress);
+        public abstract void SetLock(bool value);
         public abstract void Skip();
     }
 }

@@ -1,4 +1,5 @@
 using System;
+using Lostbyte.Toolkit.Common;
 using Lostbyte.Toolkit.FactSystem.Nodes;
 
 namespace Lostbyte.Toolkit.FactSystem

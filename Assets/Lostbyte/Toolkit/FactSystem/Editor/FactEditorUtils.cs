@@ -639,15 +639,30 @@ namespace Lostbyte.Toolkit.FactSystem.Editor
                 this.onSelect = onSelect;
                 this.nameSelector = nameSelector;
                 this.typeSelector = typeSelector;
+                minimumSize = new Vector2(250, 300);
             }
 
             protected override AdvancedDropdownItem BuildRoot()
             {
                 var root = new AdvancedDropdownItem(ObjectNames.NicifyVariableName(typeof(T).Name));
-                values.ForEach(i => root.AddChild(new Item(i, nameSelector(i), typeSelector(i))));
+                var groups = new Dictionary<string, AdvancedDropdownItem>();
+
+                foreach (var i in values)
+                {
+                    string typeName = typeSelector(i);
+
+                    if (!groups.TryGetValue(typeName, out var groupItem))
+                    {
+                        groupItem = new AdvancedDropdownItem(typeName);
+                        groups[typeName] = groupItem;
+                        root.AddChild(groupItem);
+                    }
+
+                    groupItem.AddChild(new Item(i, nameSelector(i), typeName));
+                }
+
                 return root;
             }
-
             protected override void ItemSelected(AdvancedDropdownItem item)
             {
                 if (item is Item i) onSelect?.Invoke(i.value);

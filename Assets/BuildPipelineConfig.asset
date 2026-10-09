@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &1
+MonoBehaviour:
+  m_ObjectHideFlags: 53
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: de645620a9924504fbf3da0625d81f83, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  BuildPath: Builds
+  UploadPlatforms:
+  - rid: 5282533463289495552
+  BuildProfiles:
+  - m_hasValue: 0
+    m_value: {fileID: 11400000, guid: 67088c6c34f59a04aa6ae4657e3b5f41, type: 2}
+  - m_hasValue: 0
+    m_value: {fileID: 11400000, guid: c8d3fb4d12b065d488be15959180bf56, type: 2}
+  - m_hasValue: 1
+    m_value: {fileID: 11400000, guid: 58444906ecc78d948abedc6e06340885, type: 2}
+  references:
+    version: 2
+    RefIds:
+    - rid: 5282533463289495552
+      type: {class: ItchConfig, ns: Lostbyte.Toolkit.Build.Editor, asm: Lostbyte.Toolkit.Build.Editor}
+      data:
+        ItchUsername: lostbyte
+        ButlerPath: C:\Programs\butler-windows-amd64\butler.exe

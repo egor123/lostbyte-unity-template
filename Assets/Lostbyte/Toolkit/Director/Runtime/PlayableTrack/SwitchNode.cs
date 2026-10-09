@@ -1,7 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using Lostbyte.Toolkit.Common;
 using Lostbyte.Toolkit.CustomEditor.Graphs;
 using Lostbyte.Toolkit.FactSystem;
 
@@ -25,15 +23,11 @@ namespace Lostbyte.Toolkit.Director
 
     public class SwitchNodeBehaviour : PlayableClipNodeBehaviour<SwitchNode>
     {
-        public SwitchNodeBehaviour(SwitchNode node, PlayableTrackBehaviour track) : base(node, track)
-        {
-            _nodes = Node.Nodes?.Select(n => new SerializedTuple<Condition, IPlayableClipNodeBehaviour>(n.Condition, n.Out != null ? n.Out.GetClip(track) : null)).ToList();
-        }
-        private IPlayableClipNodeBehaviour _nextNode;
-        private readonly List<SerializedTuple<Condition, IPlayableClipNodeBehaviour>> _nodes;
+        public SwitchNodeBehaviour(SwitchNode node, PlayableTrackBehaviour track) : base(node, track) { }
+        private IPlayableClipNodeBehaviour _nextNode = null;
         public override bool IsReady => true;
         private bool _conditionIsMet = false;
-        public override bool IsFinished => _nodes.Count == 0 || _conditionIsMet;
+        public override bool IsFinished => Node.Nodes.Count == 0 || _conditionIsMet;
         public override IPlayableClipNodeBehaviour GetNext(PlayableTrackBehaviour track) => _nextNode;
 
         public override void OnContinue() => _nextNode = null;
@@ -42,11 +36,12 @@ namespace Lostbyte.Toolkit.Director
         public override void OnStart() => _nextNode = null;
         public override void OnUpdate()
         {
-            foreach (var node in _nodes)
+            foreach (var option in Node.Nodes)
             {
-                if (node.Item1.IsMet)
+                if (option.Condition.IsMet)
                 {
-                    _nextNode = node.Item2;
+                    if (option.Out)
+                        _nextNode = option.Out.GetClip(Track);
                     _conditionIsMet = true;
                     return;
                 }
